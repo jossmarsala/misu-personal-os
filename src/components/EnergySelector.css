@@ -1,0 +1,93 @@
+.energy-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.energy-selector__label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-tertiary);
+}
+
+.energy-selector__track {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  background: var(--bg-input);
+  padding: 4px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-primary);
+}
+
+.energy-selector__btn {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  transition: all var(--transition-base);
+  color: var(--text-secondary);
+}
+
+.energy-selector__btn:hover {
+  background: var(--energy-surface);
+  transform: scale(1.05);
+}
+
+.energy-selector__btn.active {
+  background: var(--energy-gradient);
+  color: white;
+  box-shadow: var(--shadow-glow);
+  transform: scale(1.08);
+}
+
+.energy-selector__btn-emoji {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.energy-selector__btn-level {
+  font-size: 0.5rem;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.energy-selector__btn.active .energy-selector__btn-level {
+  opacity: 1;
+}
+
+.energy-selector__info {
+  text-align: center;
+  animation: fadeIn 0.25s ease;
+}
+
+.energy-selector__name {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 1rem;
+  color: var(--energy-primary);
+  transition: color var(--transition-base);
+}
+
+.energy-selector__desc {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+  margin-top: 1px;
+}
+
+@media (max-width: 768px) {
+  .energy-selector__btn {
+    width: 38px;
+    height: 38px;
+  }
+}
