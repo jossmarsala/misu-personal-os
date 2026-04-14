@@ -1,11 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTasks } from '../context/TaskContext';
 import { loadSettings, saveSettings, exportToJSON, importFromJSON } from '../services/storage';
-import { X, Download, Upload, Trash2, Key } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
+import { X, Download, Upload, Trash2, Key, LogOut } from 'lucide-react';
 import './SettingsModal.css';
 
 export default function SettingsModal({ onClose }) {
   const { tasks, importTasksFromJSON, clearAll } = useTasks();
+  const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const [apiKey, setApiKey] = useState('');
   const [confirmClear, setConfirmClear] = useState(false);
   const [importStatus, setImportStatus] = useState(null);
@@ -32,7 +36,7 @@ export default function SettingsModal({ onClose }) {
     try {
       const imported = await importFromJSON(file);
       importTasksFromJSON(imported);
-      setImportStatus(`Imported ${imported.length} tasks successfully!`);
+      setImportStatus(`${t('settings.import')} success!`);
       setTimeout(() => setImportStatus(null), 3000);
     } catch (err) {
       setImportStatus(`Error: ${err.message}`);
@@ -58,9 +62,9 @@ export default function SettingsModal({ onClose }) {
 
   return (
     <div className="settings-overlay" onClick={handleOverlayClick} id="settings-modal">
-      <div className="settings-modal">
+      <div className="settings-modal scale-in">
         <div className="settings-modal__header">
-          <h2 className="settings-modal__title">Settings</h2>
+          <h2 className="settings-modal__title">{t('common.settings')}</h2>
           <button className="btn btn-ghost btn-icon" onClick={onClose} aria-label="Close settings">
             <X size={18} />
           </button>
@@ -70,22 +74,22 @@ export default function SettingsModal({ onClose }) {
         <div className="settings-modal__section">
           <h3 className="settings-modal__section-title">
             <Key size={14} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-            Gemini API Key
+            {t('settings.apiKey')}
           </h3>
           <p className="settings-modal__section-desc">
-            Required for AI-powered weekly planning.
+            {t('settings.apiKeyDesc')}
           </p>
           <div style={{ display: 'flex', gap: '8px' }}>
             <input
               className="input"
               type="password"
-              placeholder="Enter your Gemini API key"
+              placeholder="..."
               value={apiKey}
               onChange={e => setApiKey(e.target.value)}
               id="api-key-input"
             />
             <button className="btn btn-primary btn-sm" onClick={handleSaveApiKey}>
-              Save
+              {t('common.save')}
             </button>
           </div>
         </div>
@@ -94,13 +98,21 @@ export default function SettingsModal({ onClose }) {
 
         {/* Export / Import */}
         <div className="settings-modal__section">
-          <h3 className="settings-modal__section-title">Data Management</h3>
+          <h3 className="settings-modal__section-title">{t('settings.dataManagement')}</h3>
+          <div className="settings-section">
+            <h3 className="settings-subtitle">Account</h3>
+            <p className="settings-desc">Currently signed in as: <strong>{user?.email}</strong></p>
+            <button className="btn btn-ghost" onClick={logout} style={{ width: '100%', marginTop: 'var(--space-2)' }}>
+              <LogOut size={16} /> Disconnect Account
+            </button>
+          </div>
+          
           <div className="settings-modal__actions">
             <button className="btn btn-secondary" onClick={handleExport}>
-              <Download size={16} /> Export Tasks
+              <Download size={16} /> {t('settings.export')}
             </button>
             <button className="btn btn-secondary" onClick={() => fileInputRef.current?.click()}>
-              <Upload size={16} /> Import Tasks
+              <Upload size={16} /> {t('settings.import')}
             </button>
             <input
               ref={fileInputRef}
@@ -125,13 +137,13 @@ export default function SettingsModal({ onClose }) {
 
         {/* Danger Zone */}
         <div className="settings-modal__section">
-          <h3 className="settings-modal__section-title">Danger Zone</h3>
+          <h3 className="settings-modal__section-title">{t('settings.dangerZone')}</h3>
           <button
             className={`btn ${confirmClear ? 'btn-danger' : 'btn-secondary'}`}
             onClick={handleClear}
           >
             <Trash2 size={16} />
-            {confirmClear ? 'Click again to confirm' : 'Clear All Tasks'}
+            {confirmClear ? t('settings.confirmClear') : t('settings.clearAll')}
           </button>
         </div>
       </div>

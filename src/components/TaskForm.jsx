@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useTasks } from '../context/TaskContext';
 import { Plus, X } from 'lucide-react';
 import { ENERGY_LEVELS } from '../utils/energy';
+import { useLanguage } from '../context/LanguageContext';
 import './TaskForm.css';
 
 export default function TaskForm() {
   const { addTask } = useTasks();
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [form, setForm] = useState({
     title: '',
@@ -41,7 +43,7 @@ export default function TaskForm() {
           id="add-task-btn"
         >
           <Plus size={18} />
-          Add new task
+          {t('tasks.addNew')}
         </button>
       </div>
     );
@@ -52,11 +54,11 @@ export default function TaskForm() {
       <form onSubmit={handleSubmit} className="task-form__body glass-subtle" id="task-form">
         <div className="task-form__grid">
           <div className="task-form__group full-width">
-            <label className="input-label">Title *</label>
+            <label className="input-label">{t('tasks.fieldTitle')} *</label>
             <input
               className="input"
               type="text"
-              placeholder="What needs to be done?"
+              placeholder={t('tasks.fieldTitle') + '...'}
               value={form.title}
               onChange={e => handleChange('title', e.target.value)}
               autoFocus
@@ -66,7 +68,7 @@ export default function TaskForm() {
           </div>
 
           <div className="task-form__group">
-            <label className="input-label">Deadline</label>
+            <label className="input-label">{t('tasks.fieldDeadline')}</label>
             <input
               className="input"
               type="date"
@@ -77,7 +79,7 @@ export default function TaskForm() {
           </div>
 
           <div className="task-form__group">
-            <label className="input-label">Estimated Hours</label>
+            <label className="input-label">{t('tasks.fieldHours')}</label>
             <input
               className="input"
               type="number"
@@ -92,7 +94,7 @@ export default function TaskForm() {
           </div>
 
           <div className="task-form__group full-width">
-            <label className="input-label">Energy Required</label>
+            <label className="input-label">{t('tasks.fieldEnergy')}</label>
             <div className="task-form__energy-row">
               {ENERGY_LEVELS.map(e => (
                 <button
@@ -100,18 +102,19 @@ export default function TaskForm() {
                   type="button"
                   className={`task-form__energy-btn ${form.energyRequired === e.level ? 'selected' : ''}`}
                   onClick={() => handleChange('energyRequired', e.level)}
+                  title={t(`energy.${e.level}.label`)}
                 >
-                  {e.emoji} {e.label}
+                  {e.emoji} {t(`energy.${e.level}.label`)}
                 </button>
               ))}
             </div>
           </div>
 
           <div className="task-form__group full-width">
-            <label className="input-label">Description (optional)</label>
+            <label className="input-label">{t('tasks.fieldDescription')}</label>
             <textarea
               className="input"
-              placeholder="Add context or notes..."
+              placeholder="..."
               value={form.description}
               onChange={e => handleChange('description', e.target.value)}
               rows={3}
@@ -126,7 +129,7 @@ export default function TaskForm() {
             className="btn btn-ghost"
             onClick={() => setIsOpen(false)}
           >
-            <X size={16} /> Cancel
+            <X size={16} /> {t('common.cancel')}
           </button>
           <button
             type="submit"
@@ -134,7 +137,7 @@ export default function TaskForm() {
             disabled={!form.title.trim()}
             id="task-submit-btn"
           >
-            <Plus size={16} /> Create Task
+            <Plus size={16} /> {t('tasks.create')}
           </button>
         </div>
       </form>

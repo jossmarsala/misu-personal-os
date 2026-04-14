@@ -1,5 +1,6 @@
 import { Settings } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
+import LanguageSwitcher from './LanguageSwitcher';
 import './Header.css';
 
 export default function Header({ onOpenSettings }) {
@@ -12,6 +13,7 @@ export default function Header({ onOpenSettings }) {
           </div>
 
           <div className="header__right">
+            <LanguageSwitcher />
             <ThemeToggle />
             <button
               className="btn btn-ghost btn-icon"

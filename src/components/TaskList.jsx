@@ -3,10 +3,12 @@ import { useTasks } from '../context/TaskContext';
 import TaskCard from './TaskCard';
 import TaskForm from './TaskForm';
 import { getDaysUntil } from '../utils/dateUtils';
+import { useLanguage } from '../context/LanguageContext';
 import './TaskList.css';
 
 export default function TaskList() {
   const { tasks } = useTasks();
+  const { t } = useLanguage();
   const [filter, setFilter] = useState('active');
   const [sort, setSort] = useState('deadline');
 
@@ -43,14 +45,14 @@ export default function TaskList() {
       <TaskForm />
 
       <div className="task-list__header">
-        <div className="task-list__filters">
+        <div className="task-list__filters" style={{ display: 'flex', gap: 'var(--space-2)' }}>
           {['active', 'all', 'completed'].map(f => (
             <button
               key={f}
-              className={`task-list__filter-btn ${filter === f ? 'active' : ''}`}
+              className={`btn btn-sm ${filter === f ? 'btn-primary' : 'btn-ghost'}`}
               onClick={() => setFilter(f)}
             >
-              {f.charAt(0).toUpperCase() + f.slice(1)}
+              {t(`common.${f}`)}
               <span style={{ marginLeft: '4px', opacity: 0.5 }}>
                 {counts[f]}
               </span>
@@ -58,15 +60,15 @@ export default function TaskList() {
           ))}
         </div>
 
-        <div className="task-list__sort">
+        <div className="task-list__sort" style={{ display: 'flex', gap: 'var(--space-2)' }}>
           {[
-            { key: 'deadline', label: 'Deadline' },
-            { key: 'energy', label: 'Energy' },
-            { key: 'duration', label: 'Duration' },
+            { key: 'deadline', label: t('tasks.fieldDeadline') },
+            { key: 'energy', label: t('tasks.fieldEnergy') },
+            { key: 'duration', label: t('common.hours') },
           ].map(s => (
             <button
               key={s.key}
-              className={`task-list__sort-btn ${sort === s.key ? 'active' : ''}`}
+              className={`btn btn-sm ${sort === s.key ? 'btn-primary' : 'btn-ghost'}`}
               onClick={() => setSort(s.key)}
             >
               {s.label}
@@ -88,8 +90,8 @@ export default function TaskList() {
           </div>
           <p className="task-list__empty-text">
             {filter === 'completed'
-              ? 'No completed tasks yet. Finish something great!'
-              : 'No tasks here. Add one above to begin your odyssey.'}
+              ? t('tasks.emptyState')
+              : t('tasks.emptyState')}
           </p>
         </div>
       )}

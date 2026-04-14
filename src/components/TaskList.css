@@ -7,38 +7,6 @@
   flex-wrap: wrap;
 }
 
-.task-list__filters {
-  display: flex;
-  gap: 2px;
-  background: var(--bg-input);
-  padding: 3px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--border-primary);
-}
-
-.task-list__filter-btn {
-  padding: 6px 14px;
-  border: none;
-  border-radius: var(--radius-full);
-  background: transparent;
-  color: var(--text-secondary);
-  font-family: 'Outfit', sans-serif;
-  font-size: 0.78rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.task-list__filter-btn.active {
-  background: var(--card-bg);
-  color: var(--text-primary);
-  box-shadow: var(--shadow-xs);
-}
-
-.task-list__filter-btn:hover:not(.active) {
-  color: var(--text-primary);
-}
-
 .task-list__count {
   font-size: 0.7rem;
   color: var(--text-tertiary);
@@ -67,26 +35,4 @@
 .task-list__empty-text {
   font-size: 0.85rem;
   font-weight: 300;
-}
-
-.task-list__sort {
-  display: flex;
-  gap: 2px;
-}
-
-.task-list__sort-btn {
-  padding: 4px 8px;
-  border: none;
-  border-radius: var(--radius-full);
-  background: transparent;
-  color: var(--text-tertiary);
-  font-family: 'Outfit', sans-serif;
-  font-size: 0.68rem;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.task-list__sort-btn:hover,
-.task-list__sort-btn.active {
-  color: var(--energy-primary);
 }

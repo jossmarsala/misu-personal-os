@@ -4,12 +4,14 @@ import { useEnergy } from '../context/EnergyContext';
 import { getRecommendations } from '../utils/recommendations';
 import { getEnergyDef } from '../utils/energy';
 import { formatDeadline, getDeadlineStatus } from '../utils/dateUtils';
-import { Sparkles } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { Compass } from 'lucide-react';
 import './Recommendations.css';
 
 export default function Recommendations() {
   const { tasks } = useTasks();
   const { currentEnergy } = useEnergy();
+  const { t } = useLanguage();
   const energyDef = getEnergyDef(currentEnergy);
 
   const recommended = useMemo(() => {
@@ -27,14 +29,22 @@ export default function Recommendations() {
     }[status] || 'badge badge-energy';
   };
 
+  const getDeadlineText = (deadline) => {
+    const status = getDeadlineStatus(deadline);
+    if (status === 'today') return t('common.today');
+    if (status === 'tomorrow') return t('common.tomorrow');
+    if (status === 'overdue') return t('common.overdue');
+    return formatDeadline(deadline); // Fallback to util for complex cases
+  };
+
   return (
     <div className="recommendations" id="recommendations">
       <div className="recommendations__header">
         <div className="recommendations__title">
-          <Sparkles size={18} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--energy-primary)' }} />
-          What can I do right now?
+          <Compass size={18} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--energy-primary)' }} />
+          {t('recommendations.title')}
         </div>
-        <div className="recommendations__message">{energyDef.message}</div>
+        <div className="recommendations__message">{t(`energy.${currentEnergy}.msg`)}</div>
       </div>
 
       {recommended.length > 0 ? (
@@ -46,10 +56,10 @@ export default function Recommendations() {
               <div className="recommendations__item-meta">
                 {task.deadline && (
                   <span className={deadlineBadgeClass(task.deadline)}>
-                    {formatDeadline(task.deadline)}
+                    {getDeadlineText(task.deadline)}
                   </span>
                 )}
-                <span className="task-card__duration">{task.estimatedHours}h</span>
+                <span className="task-card__duration">{task.estimatedHours}{t('common.hours').substring(0, 1)}</span>
               </div>
             </div>
           ))}
@@ -59,7 +69,7 @@ export default function Recommendations() {
           <span className="recommendations__empty-icon">
             {currentEnergy <= 2 ? '🌙' : '🏛️'}
           </span>
-          {energyDef.emptyMessage}
+          {t(`energy.${currentEnergy}.empty`)}
         </div>
       )}
     </div>

@@ -8,7 +8,7 @@ import { getStartOfWeek } from '../utils/dateUtils';
 /**
  * Generate a weekly plan using Gemini AI
  */
-export async function generateWeeklyPlan(tasks, apiKey) {
+export async function generateWeeklyPlan(tasks, apiKey, language = 'en') {
   if (!apiKey) {
     throw new Error('Gemini API key is required. Please add it in Settings.');
   }
@@ -37,7 +37,16 @@ export async function generateWeeklyPlan(tasks, apiKey) {
     description: t.description || '',
   }));
 
+  const langMap = {
+    en: 'English',
+    es: 'Spanish',
+    it: 'Italian'
+  };
+  const langName = langMap[language] || 'English';
+
   const prompt = `You are an intelligent weekly task planner. Given the following tasks, create an optimal weekly schedule.
+  
+  LANGUAGE: Use ${langName} for any generated content.
 
 TASKS:
 ${JSON.stringify(taskList, null, 2)}
@@ -52,6 +61,7 @@ RULES:
 5. Aim for 4-6 productive hours per weekday, 2-3 hours on weekends
 6. Leave buffer time between tasks
 7. If a task has no deadline, schedule it in available gaps
+8. Output any generated text (like "Part 1 of 2") in ${langName}.
 
 RESPOND WITH ONLY valid JSON in this exact format (no markdown, no backticks, no explanation):
 {
@@ -64,16 +74,15 @@ RESPOND WITH ONLY valid JSON in this exact format (no markdown, no backticks, no
   "sunday": []
 }
 
-For chunked tasks, set "isChunk": true and "chunkLabel": "Part 1 of 3" etc.
+For chunked tasks, set "isChunk": true and "chunkLabel" to something like "Parte 1 di 2" if Italian, "Parte 1 de 2" if Spanish, etc.
 If a day has no tasks, use an empty array.`;
 
   try {
-    const response = await ai.models.generateContent({
+    const result = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
-      contents: prompt,
+      contents: prompt
     });
-
-    const text = response.text.trim();
+    const text = result.text.trim();
     
     // Try to extract JSON from the response
     let jsonStr = text;

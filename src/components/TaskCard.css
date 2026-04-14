@@ -1,18 +1,20 @@
 .task-card {
   position: relative;
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
+  padding: var(--space-5) var(--space-6);
+  border-radius: 20px;
   background: var(--card-bg);
   border: 1px solid var(--border-primary);
-  transition: all var(--transition-base);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
-  gap: var(--space-3);
-  align-items: flex-start;
+  gap: var(--space-5);
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0,0,0,0.02);
 }
 
 .task-card:hover {
-  border-color: var(--border-hover);
-  box-shadow: var(--shadow-xs);
+  transform: translateY(-2px);
+  border-color: var(--energy-color-a, var(--border-focus));
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05), 0 4px 8px rgba(0,0,0,0.03);
 }
 
 .task-card.completed {
@@ -24,43 +26,29 @@
   color: var(--text-tertiary);
 }
 
-/* Energy-stripe at left */
-.task-card::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 8px;
-  bottom: 8px;
-  width: 3px;
-  border-radius: 3px;
-  transition: background 0.4s ease;
-}
-
-.task-card[data-task-energy="1"]::before { background: linear-gradient(to bottom, #a8c5a0, #e8d98e); }
-.task-card[data-task-energy="2"]::before { background: linear-gradient(to bottom, #93c5fd, #c4b5fd); }
-.task-card[data-task-energy="3"]::before { background: linear-gradient(to bottom, #818cf8, #c084fc); }
-.task-card[data-task-energy="4"]::before { background: linear-gradient(to bottom, #fdba74, #fb923c); }
-.task-card[data-task-energy="5"]::before { background: linear-gradient(to bottom, #f472b6, #a855f7); }
+/* Removed energy stripes per user request for minimalist greek elegance */
 
 /* Checkbox */
 .task-card__checkbox {
   position: relative;
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  border-radius: var(--radius-sm);
-  border: 2px solid var(--border-primary);
-  background: transparent;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--btn-glass-border);
+  background: var(--btn-glass-bg);
+  box-shadow: var(--btn-glass-shadow);
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition: all var(--transition-base), transform var(--transition-spring);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 2px;
+  margin-top: 0;
 }
 
 .task-card__checkbox:hover {
   border-color: var(--energy-primary);
+  transform: scale(1.05);
 }
 
 .task-card__checkbox.checked {
@@ -79,8 +67,8 @@
 }
 
 .task-card__title {
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 1.05rem;
+  font-weight: 400;
   color: var(--text-primary);
   transition: all var(--transition-base);
   word-break: break-word;

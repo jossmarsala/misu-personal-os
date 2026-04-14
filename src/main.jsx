@@ -4,8 +4,24 @@ import { TaskProvider } from './context/TaskContext';
 import { EnergyProvider } from './context/EnergyContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { useEnergy } from './context/EnergyContext';
+import { LanguageProvider } from './context/LanguageContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import AuthPage from './components/AuthPage';
 import App from './App';
 import './index.css';
+
+function AuthGate() {
+  const { user } = useAuth();
+  if (!user) return <AuthPage />;
+  
+  return (
+    <TaskProvider>
+      <EnergyProvider>
+        <ThemedApp />
+      </EnergyProvider>
+    </TaskProvider>
+  );
+}
 
 function ThemedApp() {
   const { currentEnergy } = useEnergy();
@@ -18,10 +34,10 @@ function ThemedApp() {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <TaskProvider>
-      <EnergyProvider>
-        <ThemedApp />
-      </EnergyProvider>
-    </TaskProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <AuthGate />
+      </AuthProvider>
+    </LanguageProvider>
   </StrictMode>
 );

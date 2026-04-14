@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { useTasks } from '../context/TaskContext';
-import { Check, Pencil, Trash2, X, Save, ChevronDown, ChevronUp } from 'lucide-react';
+import { Check, Pencil, Trash2, X, Save, ChevronDown, ChevronUp, Play } from 'lucide-react';
 import { getEnergyDef } from '../utils/energy';
 import { formatDeadline, getDeadlineStatus } from '../utils/dateUtils';
+import { useLanguage } from '../context/LanguageContext';
+import { playPop } from '../utils/audio';
 import './TaskCard.css';
 
 export default function TaskCard({ task }) {
-  const { toggleComplete, updateTask, deleteTask } = useTasks();
+  const { toggleComplete, updateTask, deleteTask, setFocusedTaskId } = useTasks();
+  const { t } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
   const [expanded, setExpanded] = useState(false);
@@ -14,7 +17,17 @@ export default function TaskCard({ task }) {
 
   const energy = getEnergyDef(task.energyRequired);
   const deadlineStatus = getDeadlineStatus(task.deadline);
-  const deadlineText = formatDeadline(task.deadline);
+  
+  const getDeadlineText = (deadline) => {
+    if (!deadline) return '';
+    const status = getDeadlineStatus(deadline);
+    if (status === 'today') return t('common.today');
+    if (status === 'tomorrow') return t('common.tomorrow');
+    if (status === 'overdue') return t('common.overdue');
+    return formatDeadline(deadline); 
+  };
+
+  const deadlineText = getDeadlineText(task.deadline);
 
   const handleSaveEdit = () => {
     if (editTitle.trim()) {
@@ -56,8 +69,11 @@ export default function TaskCard({ task }) {
     >
       <button
         className={`task-card__checkbox ${task.completed ? 'checked' : ''}`}
-        onClick={() => toggleComplete(task.id)}
-        aria-label={task.completed ? 'Mark incomplete' : 'Mark complete'}
+        onClick={() => {
+          toggleComplete(task.id);
+          playPop();
+        }}
+        aria-label={task.completed ? t('common.active') : t('common.completed')}
       >
         {task.completed && <Check size={14} color="white" strokeWidth={3} />}
       </button>
@@ -105,23 +121,33 @@ export default function TaskCard({ task }) {
           )}
           <span className="badge badge-energy">{energy.emoji} {energy.name}</span>
           {task.estimatedHours && (
-            <span className="task-card__duration">{task.estimatedHours}h</span>
+            <span className="task-card__duration">{task.estimatedHours}{t('common.hours').substring(0,1)}</span>
           )}
         </div>
       </div>
 
       <div className="task-card__actions">
+        {!task.completed && (
+          <button
+            className="btn btn-ghost btn-icon btn-sm"
+            onClick={() => setFocusedTaskId(task.id)}
+            aria-label="Zen Focus"
+            title="Zen Focus"
+          >
+            <Play size={14} />
+          </button>
+        )}
         <button
           className="btn btn-ghost btn-icon btn-sm"
           onClick={() => { setIsEditing(true); setEditTitle(task.title); }}
-          aria-label="Edit task"
+          aria-label={t('common.edit')}
         >
           <Pencil size={14} />
         </button>
         <button
           className={`btn ${confirmDelete ? 'btn-danger' : 'btn-ghost'} btn-icon btn-sm`}
           onClick={handleDelete}
-          aria-label={confirmDelete ? 'Confirm delete' : 'Delete task'}
+          aria-label={confirmDelete ? t('common.delete') : t('common.delete')}
         >
           <Trash2 size={14} />
         </button>

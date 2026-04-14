@@ -32,7 +32,8 @@ export function getWeekDays(date = new Date()) {
 export function formatDate(date) {
   if (!date) return '';
   const d = new Date(date);
-  return d.toLocaleDateString('en-US', {
+  const locale = document.documentElement.lang || 'en-US';
+  return d.toLocaleDateString(locale, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -44,7 +45,8 @@ export function formatDate(date) {
  */
 export function formatDayShort(date) {
   const d = new Date(date);
-  return d.toLocaleDateString('en-US', { weekday: 'short' });
+  const locale = document.documentElement.lang || 'en-US';
+  return d.toLocaleDateString(locale, { weekday: 'short' });
 }
 
 /**
@@ -52,7 +54,8 @@ export function formatDayShort(date) {
  */
 export function formatDayLong(date) {
   const d = new Date(date);
-  return d.toLocaleDateString('en-US', { weekday: 'long' });
+  const locale = document.documentElement.lang || 'en-US';
+  return d.toLocaleDateString(locale, { weekday: 'long' });
 }
 
 /**

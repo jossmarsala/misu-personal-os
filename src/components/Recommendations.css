@@ -1,26 +1,10 @@
 .recommendations {
-  padding: var(--space-5);
-  border-radius: var(--card-radius);
-  background: var(--card-bg);
-  box-shadow: var(--card-shadow);
-  position: relative;
-  overflow: hidden;
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-/* Gradient stripe top */
-.recommendations::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--energy-gradient);
-  transition: background 0.6s ease;
-}
+/* Removed top gradient stripe per user request */
 
 .recommendations__header {
   margin-bottom: var(--space-4);
@@ -51,33 +35,30 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
-  background: var(--bg-input);
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: var(--card-bg);
   border: 1px solid var(--border-primary);
-  transition: all var(--transition-base);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
   cursor: default;
 }
 
 .recommendations__item:hover {
+  transform: translateY(-2px);
   border-color: var(--energy-color-a);
-  box-shadow: 0 0 10px var(--energy-glow);
-  transform: translateX(3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
 }
 
 .recommendations__item-rank {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  font-weight: 700;
-  width: 22px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-full);
-  background: var(--energy-gradient);
-  color: white;
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  width: 24px;
+  color: var(--energy-primary);
   flex-shrink: 0;
+  text-align: center;
+  opacity: 0.6;
 }
 
 .recommendations__item-title {

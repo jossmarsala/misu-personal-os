@@ -10,7 +10,11 @@ import WeeklyPlanner from './components/WeeklyPlanner';
 import SettingsModal from './components/SettingsModal';
 import EnergySelector from './components/EnergySelector';
 import PrismaticBurst from './components/PrismaticBurst';
+import CommandPalette from './components/CommandPalette';
 import { Clock, CheckCircle2 } from 'lucide-react';
+import FocusMode from './components/FocusMode';
+import { useLanguage } from './context/LanguageContext';
+import { motion, AnimatePresence } from 'framer-motion';
 import './App.css';
 
 const DEFAULT_API_KEY = 'AIzaSyD3FlFwMgIYzfPsqbdEUXp7Dkzw-tiG3RY';
@@ -19,6 +23,7 @@ function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { currentEnergy } = useEnergy();
   const { tasks } = useTasks();
+  const { t } = useLanguage();
   const energyDef = getEnergyDef(currentEnergy);
 
   useEffect(() => {
@@ -38,6 +43,7 @@ function App() {
   return (
     <div className="app">
       <Header onOpenSettings={() => setSettingsOpen(true)} />
+      <CommandPalette />
 
       <main className="app__main">
         <div className="container">
@@ -60,12 +66,12 @@ function App() {
               </div>
               <div className="hero-card__content">
                 <h2 className="hero-card__title">
-                  Manage your tasks with{' '}
+                  {t('hero.title')}{' '}
                   <span style={{ fontStyle: 'italic' }}>{energyDef.name}</span>{' '}
-                  energy.
+                  {t('hero.energySuffix')}
                 </h2>
                 <p className="hero-card__subtitle">
-                  {energyDef.description}. Misu adapts to your energy level for smarter productivity.
+                  {t(`energy.${currentEnergy}.desc`)}. {t('hero.subtitle')}
                 </p>
               </div>
               <div className="hero-card__energy">
@@ -78,34 +84,34 @@ function App() {
               <div className="stat-card bento-card">
                 <span className="stat-card__label">
                   <Clock size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />
-                  Hours to go
+                  {t('stats.hoursToGo')}
                 </span>
                 <span className="stat-card__value">{stats.totalHours}</span>
-                <span className="stat-card__hint">{stats.active} active tasks remaining</span>
+                <span className="stat-card__hint">{stats.active} {t('stats.activeTasks')}</span>
               </div>
               <div className="stat-card bento-card bento-card--gradient">
                 <span className="stat-card__label" style={{ opacity: 0.7 }}>
                   <CheckCircle2 size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />
-                  Completed
+                  {t('common.completed')}
                 </span>
                 <span className="stat-card__value">{stats.completed}</span>
-                <span className="stat-card__hint" style={{ opacity: 0.6 }}>tasks finished</span>
+                <span className="stat-card__hint" style={{ opacity: 0.6 }}>{t('stats.tasksFinished')}</span>
               </div>
             </div>
 
             {/* Recommendations sidebar */}
-            <div className="bento-grid__reco">
+            <div className="bento-grid__reco bento-card reco-card">
               <Recommendations />
             </div>
 
             {/* Tasks */}
             <div className="bento-grid__tasks bento-card">
-              <h2 className="section-title" style={{ marginBottom: 'var(--space-4)' }}>Tasks</h2>
+              <h2 className="section-title" style={{ marginBottom: 'var(--space-4)' }}>{t('tasks.title')}</h2>
               <TaskList />
             </div>
 
             {/* Weekly Planner */}
-            <div className="bento-grid__planner">
+            <div className="bento-grid__planner bento-card">
               <WeeklyPlanner />
             </div>
           </div>
@@ -115,6 +121,8 @@ function App() {
       {settingsOpen && (
         <SettingsModal onClose={() => setSettingsOpen(false)} />
       )}
+      
+      <FocusMode />
     </div>
   );
 }
