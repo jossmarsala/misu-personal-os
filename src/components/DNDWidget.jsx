@@ -18,21 +18,25 @@ export default function DNDWidget({ visible }) {
 
   const initAudio = () => {
     if (!audioCtxRef.current) {
-        audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
-        gainNodeRef.current = audioCtxRef.current.createGain();
-        gainNodeRef.current.connect(audioCtxRef.current.destination);
+      audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      gainNodeRef.current = audioCtxRef.current.createGain();
+      gainNodeRef.current.gain.setValueAtTime(volume, audioCtxRef.current.currentTime);
+      gainNodeRef.current.connect(audioCtxRef.current.destination);
     }
     if (audioCtxRef.current.state === 'suspended') {
-        audioCtxRef.current.resume();
+      audioCtxRef.current.resume();
     }
   };
 
   const createNoise = (type) => {
+    initAudio();
     if (!audioCtxRef.current) return;
     
     if (noiseNodeRef.current) {
+      try {
         noiseNodeRef.current.stop();
-        noiseNodeRef.current.disconnect();
+      } catch (e) {}
+      noiseNodeRef.current.disconnect();
     }
 
     const bufferSize = 2 * audioCtxRef.current.sampleRate;
@@ -67,26 +71,40 @@ export default function DNDWidget({ visible }) {
     source.start();
   };
 
-  const toggleNoise = () => {
+  const startNoise = (type = noiseType) => {
     initAudio();
+    createNoise(type);
+    setIsPlaying(true);
+  };
+
+  const stopNoise = () => {
+    if (noiseNodeRef.current) {
+      try {
+        noiseNodeRef.current.stop();
+      } catch (e) {}
+    }
+    setIsPlaying(false);
+  };
+
+  const toggleNoise = () => {
     if (isPlaying) {
-        noiseNodeRef.current?.stop();
-        setIsPlaying(false);
+      stopNoise();
     } else {
-        createNoise(noiseType);
-        setIsPlaying(true);
+      startNoise();
     }
   };
 
   useEffect(() => {
     if (gainNodeRef.current) {
-        gainNodeRef.current.gain.setValueAtTime(volume, audioCtxRef.current.currentTime);
+      gainNodeRef.current.gain.setTargetAtTime(volume, audioCtxRef.current.currentTime, 0.05);
     }
   }, [volume]);
 
-  useEffect(() => {
-    if (isPlaying) createNoise(noiseType);
-  }, [noiseType]);
+  // Handle noise changes via direct user action
+  const handleNoiseChange = (type) => {
+    setNoiseType(type);
+    startNoise(type);
+  };
 
   // Handle DND Muting logic
   useEffect(() => {
@@ -121,15 +139,15 @@ export default function DNDWidget({ visible }) {
             <div className="dnd-btn-row">
               <button 
                 className={`dnd-btn ${isPlaying && noiseType === 'white' ? 'active' : ''}`}
-                onClick={() => { setNoiseType('white'); if(!isPlaying) toggleNoise(); }}
+                onClick={() => handleNoiseChange('white')}
               >{t('dnd.white')}</button>
               <button 
                 className={`dnd-btn ${isPlaying && noiseType === 'pink' ? 'active' : ''}`}
-                onClick={() => { setNoiseType('pink'); if(!isPlaying) toggleNoise(); }}
+                onClick={() => handleNoiseChange('pink')}
               >{t('dnd.pink')}</button>
               <button 
                 className={`dnd-btn ${isPlaying && noiseType === 'brown' ? 'active' : ''}`}
-                onClick={() => { setNoiseType('brown'); if(!isPlaying) toggleNoise(); }}
+                onClick={() => handleNoiseChange('brown')}
               >{t('dnd.brown')}</button>
             </div>
           </div>
