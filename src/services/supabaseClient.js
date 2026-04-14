@@ -1,12 +1,26 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+let supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Supabase credentials are missing! Make sure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in your environment variables.');
+// Auto-correct if the user accidentally pasted just the project ID instead of the full URL
+if (supabaseUrl && !supabaseUrl.startsWith('http')) {
+  if (supabaseUrl.includes('.')) {
+    supabaseUrl = `https://${supabaseUrl}`;
+  } else {
+    supabaseUrl = `https://${supabaseUrl}.supabase.co`;
+  }
 }
 
-export const supabase = (supabaseUrl && supabaseAnonKey) 
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
+let client = null;
+
+try {
+  if (supabaseUrl && supabaseAnonKey) {
+    client = createClient(supabaseUrl, supabaseAnonKey);
+  }
+} catch (err) {
+  console.error("Supabase Initialization Error:", err);
+  // Fails gracefully to trigger the config UI instead of a black screen
+}
+
+export const supabase = client;
