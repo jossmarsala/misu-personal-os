@@ -9,7 +9,7 @@
 }
 
 /* ═══════════════════════════════════════
-   BENTO GRID — Bionova-inspired layout
+   BENTO GRID
    ═══════════════════════════════════════ */
 .bento-grid {
   display: grid;
@@ -45,10 +45,26 @@
   .bento-grid {
     grid-template-columns: 1fr 1fr;
   }
-  .bento-grid__hero { grid-column: 1 / -1; grid-row: 1; }
-  .bento-grid__reco { grid-column: 1 / -1; grid-row: 2; }
-  .bento-grid__tasks { grid-column: 1 / -1; grid-row: 3; }
-  .bento-grid__planner { grid-column: 1 / -1; grid-row: 4; }
+
+  .bento-grid__hero {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .bento-grid__reco {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .bento-grid__tasks {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+
+  .bento-grid__planner {
+    grid-column: 1 / -1;
+    grid-row: 4;
+  }
 }
 
 @media (max-width: 768px) {
@@ -146,6 +162,7 @@
     padding: var(--space-5);
     min-height: auto;
   }
+
   .hero-card__title {
     font-size: 2rem;
   }
@@ -231,7 +248,9 @@
 }
 
 @media (max-width: 1024px) {
-  .stats-row { grid-column: 1 / -1; }
+  .stats-row {
+    grid-column: 1 / -1;
+  }
 }
 
 /* ─── WIDGET TOGGLE BUTTONS ─── */
@@ -281,23 +300,31 @@
     bottom: 16px;
     right: 16px;
   }
+
   .widget-toggle-btn {
     width: 38px;
     height: 38px;
   }
 }
+
 /* ─── DND MODE OVERRIDES ─── */
 .app--dnd-active .bento-grid__reco {
   display: none !important;
 }
 
 .app--dnd-active .bento-grid {
-  grid-template-columns: 1fr 1fr; /* Fill space left by recommendations */
+  grid-template-columns: 1fr 1fr;
+  /* Fill space left by recommendations */
 }
 
 @media (min-width: 1025px) {
-  .app--dnd-active .bento-grid__hero { grid-column: 1 / 3; }
-  .app--dnd-active .bento-grid__tasks { grid-column: 1 / 3; }
+  .app--dnd-active .bento-grid__hero {
+    grid-column: 1 / 3;
+  }
+
+  .app--dnd-active .bento-grid__tasks {
+    grid-column: 1 / 3;
+  }
 }
 
 .app--dnd-active .bento-card:not(.hero-card):not(.bento-grid__tasks) {

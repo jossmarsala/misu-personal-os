@@ -120,43 +120,43 @@ body::before {
    LIGHT THEME (default – Bionova style)
    ═══════════════════════════════════════════════════════════ */
 :root[data-theme="light"] {
-  --bg-primary: #eeeaeb;
-  --bg-secondary: #f5f2f3;
-  --bg-tertiary: #e8e4e5;
+  --bg-primary: #fdfbf7;      /* Warm Vanilla/Bone */
+  --bg-secondary: #f7f3ee;    /* Soft Oatmeal */
+  --bg-tertiary: #efeae2;     /* Toasted Sand */
   --bg-card: #ffffff;
   --bg-card-hover: #ffffff;
-  --bg-input: rgba(0, 0, 0, 0.03);
-  --bg-overlay: rgba(238, 234, 235, 0.85);
+  --bg-input: rgba(60, 40, 20, 0.04);
+  --bg-overlay: rgba(253, 251, 247, 0.85);
 
-  --text-primary: #1a1a2e;
-  --text-secondary: #555566;
-  --text-tertiary: #8e8e9e;
+  --text-primary: #2d2a28;    /* Warm Charcoal */
+  --text-secondary: #6b645e;  /* Stone */
+  --text-tertiary: #9c948c;   /* Soft Mud */
   --text-inverse: #ffffff;
 
-  --border-primary: rgba(0, 0, 0, 0.06);
-  --border-hover: rgba(0, 0, 0, 0.12);
+  --border-primary: rgba(60, 40, 20, 0.08); /* Warmer border */
+  --border-hover: rgba(60, 40, 20, 0.14);
   --border-focus: var(--energy-primary);
 
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.02), 0 0 0 1px rgba(0, 0, 0, 0.04);
-  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
-  --shadow-glow: 0 0 20px var(--energy-glow);
+  --shadow-xs: 0 1px 2px rgba(60, 40, 20, 0.03), 0 0 0 1px rgba(60, 40, 20, 0.05);
+  --shadow-sm: 0 4px 12px rgba(60, 40, 20, 0.05), 0 0 0 1px rgba(60, 40, 20, 0.05);
+  --shadow-md: 0 16px 48px rgba(60, 40, 20, 0.08), 0 0 0 1px rgba(60, 40, 20, 0.05);
+  --shadow-lg: 0 32px 80px rgba(60, 40, 20, 0.10), 0 0 0 1px rgba(60, 40, 20, 0.05);
+  --shadow-glow: 0 0 25px var(--energy-glow);
 
-  --btn-glass-bg: rgba(255, 255, 255, 0.4);
-  --btn-glass-border: rgba(255, 255, 255, 0.5);
-  --btn-glass-shadow: inset 0 2px 10px rgba(255, 255, 255, 0.8),
-                      inset 0 -2px 10px rgba(0, 0, 0, 0.03),
-                      0 4px 12px rgba(0, 0, 0, 0.05);
+  --btn-glass-bg: rgba(255, 255, 255, 0.5);
+  --btn-glass-border: rgba(255, 255, 255, 0.6);
+  --btn-glass-shadow: inset 0 2px 10px rgba(255, 255, 255, 0.9),
+                      inset 0 -2px 10px rgba(60, 40, 20, 0.03),
+                      0 6px 16px rgba(60, 40, 20, 0.06);
 
   --card-bg: #ffffff;
-  --card-radius: 32px;
-  --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), 
-                 inset 0 0 0 1px rgba(0, 0, 0, 0.03),
-                 inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --card-radius: 40px; /* Softer, cozier corners */
+  --card-shadow: 0 12px 40px rgba(60, 40, 20, 0.05), 
+                 inset 0 0 0 1px rgba(60, 40, 20, 0.02),
+                 inset 0 1px 0 rgba(255, 255, 255, 0.9);
 
-  --danger: #dc2626;
-  --danger-soft: rgba(220, 38, 38, 0.08);
+  --danger: #e11d48;
+  --danger-soft: rgba(225, 29, 72, 0.08);
   --success: #059669;
   --success-soft: rgba(5, 150, 105, 0.08);
   --warning: #d97706;
@@ -167,47 +167,47 @@ body::before {
    DARK THEME
    ═══════════════════════════════════════════════════════════ */
 :root[data-theme="dark"] {
-  --bg-primary: #111116;
-  --bg-secondary: #18181f;
-  --bg-tertiary: #1f1f28;
-  --bg-card: #1c1c26;
-  --bg-card-hover: #222230;
-  --bg-input: rgba(255, 255, 255, 0.04);
-  --bg-overlay: rgba(17, 17, 22, 0.85);
+  --bg-primary: #1c1b1a;      /* Warm Pepper/Mocha */
+  --bg-secondary: #232221;    /* Cocoa */
+  --bg-tertiary: #2a2927;     /* Toasted Nut */
+  --bg-card: #252422;
+  --bg-card-hover: #2d2c2a;
+  --bg-input: rgba(255, 255, 255, 0.05);
+  --bg-overlay: rgba(28, 27, 26, 0.85);
 
-  --text-primary: #ededf0;
-  --text-secondary: #9898a8;
-  --text-tertiary: #5c5c6e;
-  --text-inverse: #111116;
+  --text-primary: #f2ede9;    /* Linen White */
+  --text-secondary: #a8a29e;  /* Warm Pebble */
+  --text-tertiary: #756f6b;   /* Roasted Ground */
+  --text-inverse: #1c1b1a;
 
-  --border-primary: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(255, 255, 255, 0.12);
+  --border-primary: rgba(255, 255, 255, 0.05);
+  --border-hover: rgba(255, 255, 255, 0.10);
   --border-focus: var(--energy-primary);
 
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.04);
-  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04);
-  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
-  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
-  --shadow-glow: 0 0 20px var(--energy-glow);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --shadow-md: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --shadow-lg: 0 32px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --shadow-glow: 0 0 25px var(--energy-glow);
 
-  --btn-glass-bg: rgba(22, 22, 30, 0.6);
-  --btn-glass-border: rgba(255, 255, 255, 0.06);
-  --btn-glass-shadow: inset 0 2px 20px rgba(255, 255, 255, 0.05),
-                      inset 0 -4px 10px rgba(0, 0, 0, 0.4),
-                      0 4px 12px rgba(0, 0, 0, 0.2);
+  --btn-glass-bg: rgba(45, 43, 40, 0.6);
+  --btn-glass-border: rgba(255, 255, 255, 0.04);
+  --btn-glass-shadow: inset 0 2px 20px rgba(255, 255, 255, 0.03),
+                      inset 0 -4px 10px rgba(0, 0, 0, 0.3),
+                      0 8px 16px rgba(0, 0, 0, 0.3);
 
-  --card-bg: #1c1c24;
-  --card-radius: 32px;
-  --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.3),
+  --card-bg: #22211f;
+  --card-radius: 40px;
+  --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.4),
                  inset 0 0 0 1px rgba(255, 255, 255, 0.03),
-                 inset 0 1px 0 rgba(255, 255, 255, 0.05);
+                 inset 0 1px 0 rgba(255, 255, 255, 0.04);
 
-  --danger: #ef4444;
-  --danger-soft: rgba(239, 68, 68, 0.12);
-  --success: #10b981;
-  --success-soft: rgba(16, 185, 129, 0.12);
-  --warning: #f59e0b;
-  --warning-soft: rgba(245, 158, 11, 0.12);
+  --danger: #fb7185;
+  --danger-soft: rgba(251, 113, 133, 0.12);
+  --success: #34d399;
+  --success-soft: rgba(52, 211, 153, 0.12);
+  --warning: #fbbf24;
+  --warning-soft: rgba(251, 191, 36, 0.12);
 }
 
 /* ─── SPACING SCALE ─── */
@@ -222,10 +222,10 @@ body::before {
   --space-8: 64px;
   --space-9: 96px;
 
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 36px;
   --radius-full: 9999px;
 
   --transition-fast: 0.15s ease;

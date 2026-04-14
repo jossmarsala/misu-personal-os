@@ -88,7 +88,7 @@ export const translations = {
       breathing: "Inhale (4s), Hold (7s), Exhale (8s). Repeat 4 times to recalibrate your nervous system.",
       idleAdvice: "You've been at peak energy for a while without moving tasks. Maybe a 2-minute breathing break would help you break the friction?",
       dndIntro: "Focus Shield Active",
-      dndHelp: "White masks noise, Pink balances frequencies (rain), Brown is deep & rumbling (immersion)."
+      dndHelp: "White: improves concentration and blocks distractions. Pink: balances and calms the mind. Brown: induces deep relaxation and supports sleep."
     }
   },
   es: {
@@ -116,7 +116,7 @@ export const translations = {
     hero: {
       title: "Gestiona tus tareas con energía",
       energySuffix: "",
-      subtitle: "Armonizá tu productividad sincronizando tus tareas con tu flujo cognitivo actual.",
+      subtitle: "Armoniza tu productividad sincronizando tus tareas con tu flujo cognitivo actual.",
     },
     stats: {
       hoursToGo: "Horas restantes",
@@ -158,29 +158,29 @@ export const translations = {
     },
     auth: {
       loginTitle: "¡Hola de nuevo!",
-      signupTitle: "Empezá hoy",
-      welcomeBack: "Gestioná tus tareas con inteligencia emocional.",
+      signupTitle: "Empieza hoy",
+      welcomeBack: "Gestiona tus tareas con inteligencia emocional.",
       initSpace: "Tu espacio personal para fluir y producir.",
       loginBtn: "Iniciar Sesión",
       signupBtn: "Crear Cuenta",
-      switchToSignup: "¿Sos nuevo? Empezá hoy.",
-      switchToLogin: "¿Ya tenés cuenta? Iniciá sesión.",
-      successTitle: "Revisá tu bandeja 📧",
-      successMsg: "Te enviamos un link de confirmación a tu correo. Hacé clic para activar tu cuenta y volvé acá para iniciar sesión.",
+      switchToSignup: "¿Eres nuevo? Empieza hoy.",
+      switchToLogin: "¿Ya tienes cuenta? Inicia sesión.",
+      successTitle: "Revisa tu bandeja 📧",
+      successMsg: "Te enviamos un enlace de confirmación a tu correo. Haz clic para activar tu cuenta y vuelve aquí para iniciar sesión.",
       passwordHint: "Mínimo 6 caracteres",
     },
     energy: {
-      1: { label: "Susurro", desc: "Momento de calma profunda y descanso", musicDesc: "Ambiente • Sin música", msg: "Tomate un momento. Algo suave para vos...", empty: "¿Nada ligero? Quizás descansá un poco." },
-      2: { label: "Calma", desc: "Enfoque ligero para tareas tranquilas", musicDesc: "Suave y nostálgico • Piano", msg: "Empezá con algo manejable...", empty: "No hay tareas coincidentes — disfrutá la calma." },
-      3: { label: "Ritmo", desc: "Ritmo constante para avanzar con fluidez", musicDesc: "Lo-fi", msg: "Buen ritmo. Probá estas...", empty: "¡Todo despejado! Vas antes de lo previsto." },
-      4: { label: "Impulso", desc: "Alta creatividad y energía mental", musicDesc: "Beats animados", msg: "¡Estás inspirado! Animate a algo creativo...", empty: "No quedan tareas grandes — ¡canalizá esa chispa!" },
-      5: { label: "Pulso", desc: "Máxima potencia para tus desafíos más grandes", musicDesc: "Jazz viejo", msg: "¡Estás en la zona! Enfrentate a los grandes...", empty: "Todo terminado — ¡nada puede detenerte!" }
+      1: { label: "Susurro", desc: "Momento de calma profunda y descanso", musicDesc: "Ambiente • Sin música", msg: "Tómate un momento. Algo suave para ti...", empty: "¿Nada ligero? Quizás descansa un poco." },
+      2: { label: "Calma", desc: "Enfoque ligero para tareas tranquilas", musicDesc: "Suave y nostálgico • Piano", msg: "Empieza con algo manejable...", empty: "No hay tareas coincidentes — disfruta la calma." },
+      3: { label: "Ritmo", desc: "Ritmo constante para avanzar con fluidez", musicDesc: "Lo-fi", msg: "Buen ritmo. Prueba estas...", empty: "¡Todo despejado! Vas antes de lo previsto." },
+      4: { label: "Impulso", desc: "Alta creatividad y energía mental", musicDesc: "Beats animados", msg: "¡Estás inspirado! Anímate a algo creativo...", empty: "No quedan tareas grandes — ¡canaliza esa chispa!" },
+      5: { label: "Pulso", desc: "Máxima potencia para tus desafíos más grandes", musicDesc: "Jazz viejo", msg: "¡Estás en la zona! Enfréntate a los grandes...", empty: "Todo terminado — ¡nada puede detenerte!" }
     },
     mindfulness: {
       breathing: "Inhala (4s), Mantén (7s), Exhala (8s). Repetir 4 veces para recalibrar tu sistema nervioso.",
-      idleAdvice: "Llevás un tiempo en máxima energía sin mover tareas. ¿Quizás 2 minutos de respiración te ayuden a romper la inercia?",
+      idleAdvice: "Llevas un tiempo en máxima energía sin mover tareas. ¿Quizás 2 minutos de respiración te ayuden a romper la inercia?",
       dndIntro: "Escudo de Enfoque Activo",
-      dndHelp: "Blanco enmascara ruidos, Rosa equilibra frecuencias (lluvia), Marrón es profundo y envolvente (inmersión)."
+      dndHelp: "Blanco: mejora la concentración y bloquea distracciones. Rosa: equilibra y calma la mente. Marrón: induce relajación profunda y favorece el sueño."
     }
   },
   it: {
@@ -272,7 +272,7 @@ export const translations = {
       breathing: "Inspira (4s), Trattieni (7s), Espira (8s). Ripeti 4 volte per ricalibrare il sistema nervoso.",
       idleAdvice: "Sei al massimo dell'energia da un po' senza aggiornare compiti. Forse 2 minuti di respirazione ti aiuteranno a ritrovare il flusso?",
       dndIntro: "Scudo Focus Attivo",
-      dndHelp: "Bianco maschera rumori, Rosa equilibra frequenze (pioggia), Marrone è profondo e avvolgente (immersione)."
+      dndHelp: "Bianco: migliora la concentrazione e blocca le distrazioni. Rosa: equilibra e calma la mente. Marrone: induce un rilassamento profondo e favorisce il sonno."
     }
   }
 };

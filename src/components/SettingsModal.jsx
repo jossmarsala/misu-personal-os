@@ -3,7 +3,7 @@ import { useTasks } from '../context/TaskContext';
 import { loadSettings, saveSettings, exportToJSON, importFromJSON } from '../services/storage';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-import { X, Download, Upload, Trash2, Key, LogOut } from 'lucide-react';
+import { X, Download, Upload, Trash2, Key, LogOut, Check } from 'lucide-react';
 import './SettingsModal.css';
 
 export default function SettingsModal({ onClose }) {
@@ -13,6 +13,7 @@ export default function SettingsModal({ onClose }) {
   const [apiKey, setApiKey] = useState('');
   const [confirmClear, setConfirmClear] = useState(false);
   const [importStatus, setImportStatus] = useState(null);
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -23,6 +24,8 @@ export default function SettingsModal({ onClose }) {
   const handleSaveApiKey = () => {
     const settings = loadSettings();
     saveSettings({ ...settings, geminiApiKey: apiKey.trim() });
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 2000);
   };
 
   const handleExport = () => {
@@ -88,8 +91,12 @@ export default function SettingsModal({ onClose }) {
               onChange={e => setApiKey(e.target.value)}
               id="api-key-input"
             />
-            <button className="btn btn-primary btn-sm" onClick={handleSaveApiKey}>
-              {t('common.save')}
+            <button 
+              className={`btn btn-sm ${saveSuccess ? 'btn-success' : 'btn-primary'}`} 
+              onClick={handleSaveApiKey}
+              style={{ minWidth: '70px', transition: 'all 0.3s ease' }}
+            >
+              {saveSuccess ? <Check size={18} className="animate-scale-in" /> : t('common.save')}
             </button>
           </div>
         </div>
