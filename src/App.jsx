@@ -13,6 +13,7 @@ import PrismaticBurst from './components/PrismaticBurst';
 import CommandPalette from './components/CommandPalette';
 import PomodoroWidget from './components/PomodoroWidget';
 import MusicPlayer from './components/MusicPlayer';
+import GlassIcons from './components/GlassIcons';
 import { Clock, CheckCircle2, Timer, Music } from 'lucide-react';
 import { useLanguage } from './context/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -48,22 +49,16 @@ function App() {
       <Header onOpenSettings={() => setSettingsOpen(true)} />
       <CommandPalette />
 
-      {/* Widget toggle buttons */}
-      <div className="widget-toggles">
-        <button
-          className={`widget-toggle-btn ${showPomodoro ? 'active' : ''}`}
-          onClick={() => setShowPomodoro(!showPomodoro)}
-          title="Pomodoro Timer"
-        >
-          <Timer size={16} />
-        </button>
-        <button
-          className={`widget-toggle-btn ${showMusic ? 'active' : ''}`}
-          onClick={() => setShowMusic(!showMusic)}
-          title="Music Player"
-        >
-          <Music size={16} />
-        </button>
+      {/* Widget toggle buttons via GlassIcons */}
+      <div className="widget-toggles" style={{ display: 'flex', gap: '16px', fontSize: '10px' }}>
+        <GlassIcons 
+          items={[
+            { icon: <Timer size={20} />, color: showPomodoro ? 'orange' : 'gray', label: 'Focus', onClick: () => setShowPomodoro(!showPomodoro) },
+            { icon: <Music size={20} />, color: showMusic ? 'blue' : 'gray', label: 'Audio', onClick: () => setShowMusic(!showMusic) }
+          ]} 
+          colorful={true}
+          className="widget-glass-container"
+        />
       </div>
 
       <main className="app__main">
@@ -88,7 +83,7 @@ function App() {
               <div className="hero-card__content">
                 <h2 className="hero-card__title">
                   {t('hero.title')}{' '}
-                  <span style={{ fontStyle: 'italic' }}>{energyDef.name}</span>{' '}
+                  <span style={{ fontStyle: 'italic' }}>{t(`energy.${currentEnergy}.label`)}</span>{' '}
                   {t('hero.energySuffix')}
                 </h2>
                 <p className="hero-card__subtitle">

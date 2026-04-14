@@ -66,15 +66,11 @@ export default function Recommendations() {
           ))}
         </div>
       ) : (
-        <div className="recommendations__empty" style={{ padding: '2rem 0', display: 'flex', justifyContent: 'center' }}>
-          <GlassIcons 
-            items={[{
-              icon: currentEnergy <= 2 ? <Gamepad2 size={32} strokeWidth={1.5} /> : <Headphones size={32} strokeWidth={1.5} />,
-              color: getEnergyColor(currentEnergy),
-              label: t(`energy.${currentEnergy}.empty`)
-            }]}
-            colorful={true}
-          />
+        <div className="recommendations__empty">
+          <span className="recommendations__empty-icon">
+            {currentEnergy <= 2 ? '🎮' : '🎧'}
+          </span>
+          {t(`energy.${currentEnergy}.empty`)}
         </div>
       )}
     </div>

@@ -75,11 +75,11 @@ export const translations = {
       passwordHint: "Minimum 6 characters",
     },
     energy: {
-      1: { label: "Gentle Hum", desc: "Soft & slow — comforting tasks only", msg: "Take it easy. Something gentle for you...", empty: "Nothing light enough — maybe just rest a little?" },
-      2: { label: "Quiet Drift", desc: "Gentle pace — low-pressure tasks", msg: "Ease into something manageable...", empty: "No matching tasks — enjoy the calm." },
-      3: { label: "Focus Flow", desc: "Steady mode — distraction-free productivity", msg: "Good rhythm going. Try these...", empty: "All clear — you're ahead of schedule!" },
-      4: { label: "Creative Spark", desc: "Exploration mode — ideas and creative work", msg: "Feeling inspired! Take on something creative...", empty: "No big tasks left — channel that spark elsewhere!" },
-      5: { label: "Wild Rhythm", desc: "High energy — fast-paced, high-output work", msg: "You're in the zone! Tackle the big ones...", empty: "Everything's done — you're unstoppable!" }
+      1: { label: "Whisper", desc: "Ambient & Lo-fi mellow", msg: "Take it easy. Something gentle for you...", empty: "Nothing light enough — maybe just rest a little?" },
+      2: { label: "Calm", desc: "Chill & Downtempo relaxed", msg: "Ease into something manageable...", empty: "No matching tasks — enjoy the calm." },
+      3: { label: "Rhythm", desc: "Deep House & Focus beats", msg: "Good rhythm going. Try these...", empty: "All clear — you're ahead of schedule!" },
+      4: { label: "Pulse", desc: "Synthwave & Indie pop", msg: "Feeling inspired! Take on something creative...", empty: "No big tasks left — channel that spark elsewhere!" },
+      5: { label: "Peak", desc: "Techno & Industrial intense", msg: "You're in the zone! Tackle the big ones...", empty: "Everything's done — you're unstoppable!" }
     }
   },
   es: {
@@ -158,11 +158,11 @@ export const translations = {
       passwordHint: "Mínimo 6 caracteres",
     },
     energy: {
-      1: { label: "Gentle Hum", desc: "Suave y lento — solo tareas reconfortantes", msg: "Tomate un momento. Algo suave para vos...", empty: "¿Nada ligero? Quizás descansá un poco." },
-      2: { label: "Quiet Drift", desc: "Ritmo calmo — tareas de baja presión", msg: "Empezá con algo manejable...", empty: "No hay tareas coincidentes — disfrutá la calma." },
-      3: { label: "Focus Flow", desc: "Modo enfocado — productividad sin distracciones", msg: "Buen ritmo. Probá estas...", empty: "¡Todo despejado! Vas antes de lo previsto." },
-      4: { label: "Creative Spark", desc: "Modo exploración — ideas y trabajo creativo", msg: "¡Estás inspirado! Animate a algo creativo...", empty: "No quedan tareas grandes — ¡canalizá esa chispa!" },
-      5: { label: "Wild Rhythm", desc: "Energía alta — trabajo rápido e intenso", msg: "¡Estás en la zona! Enfrentate a los grandes...", empty: "Todo terminado — ¡nada puede detenerte!" }
+      1: { label: "Susurro", desc: "Ambient & Lo-fi suave", msg: "Tomate un momento. Algo suave para vos...", empty: "¿Nada ligero? Quizás descansá un poco." },
+      2: { label: "Calma", desc: "Chill & Downtempo relajado", msg: "Empezá con algo manejable...", empty: "No hay tareas coincidentes — disfrutá la calma." },
+      3: { label: "Ritmo", desc: "Deep House & Focus beats", msg: "Buen ritmo. Probá estas...", empty: "¡Todo despejado! Vas antes de lo previsto." },
+      4: { label: "Impulso", desc: "Synthwave & Indie pop", msg: "¡Estás inspirado! Animate a algo creativo...", empty: "No quedan tareas grandes — ¡canalizá esa chispa!" },
+      5: { label: "Pulso", desc: "Techno & Industrial intenso", msg: "¡Estás en la zona! Enfrentate a los grandes...", empty: "Todo terminado — ¡nada puede detenerte!" }
     }
   },
   it: {
@@ -241,11 +241,11 @@ export const translations = {
       passwordHint: "Minimo 6 caratteri",
     },
     energy: {
-      1: { label: "Gentle Hum", desc: "Morbido e lento — solo compiti confortanti", msg: "Prenditela con calma. Qualcosa di leggero per te...", empty: "Niente di abbastanza leggero — forse riposa un po'?" },
-      2: { label: "Quiet Drift", desc: "Ritmo calmo — compiti a bassa pressione", msg: "Inizia con qualcosa di gestibile...", empty: "Nessun compito corrispondente — goditi la calma." },
-      3: { label: "Focus Flow", desc: "Modalità concentrazione — produttività senza distrazioni", msg: "Buon ritmo. Prova questi...", empty: "Tutto libero — sei in anticipo!" },
-      4: { label: "Creative Spark", desc: "Modalità esplorazione — idee e lavoro creativo", msg: "Sei ispirato! Affronta qualcosa di creativo...", empty: "Nessun compito grande rimasto — canalizza quella scintilla!" },
-      5: { label: "Wild Rhythm", desc: "Alta energia — lavoro veloce e intenso", msg: "Sei nella zona! Affronta i più grandi...", empty: "Tutto finito — sei inarrestabile!" }
+      1: { label: "Sussurro", desc: "Ambient & Lo-fi rilassante", msg: "Prenditela con calma. Qualcosa di leggero per te...", empty: "Niente di abbastanza leggero — forse riposa un po'?" },
+      2: { label: "Calma", desc: "Chill & Downtempo calmo", msg: "Inizia con qualcosa di gestibile...", empty: "Nessun compito corrispondente — goditi la calma." },
+      3: { label: "Ritmo", desc: "Deep House & Focus beats", msg: "Buon ritmo. Prova questi...", empty: "Tutto libero — sei in anticipo!" },
+      4: { label: "Impulso", desc: "Synthwave & Indie pop", msg: "Sei ispirato! Affronta qualcosa di creativo...", empty: "Nessun compito grande rimasto — canalizza quella scintilla!" },
+      5: { label: "Battito", desc: "Techno & Industrial intenso", msg: "Sei nella zona! Affronta i più grandi...", empty: "Tutto finito — sei inarrestabile!" }
     }
   }
 };

@@ -22,7 +22,7 @@ export default function EnergySelector() {
               playTick();
             }}
             aria-label={`${t('header.currentEnergy')} ${t(`energy.${e.level}.label`)}`}
-            title={`${e.name} — ${t(`energy.${e.level}.label`)}`}
+            title={t(`energy.${e.level}.label`)}
             style={{ width: '42px', height: '42px', flexDirection: 'column', gap: '2px' }}
           >
             <span style={{ fontSize: '1.1rem', lineHeight: '1' }}>{e.emoji}</span>
@@ -31,7 +31,7 @@ export default function EnergySelector() {
         ))}
       </div>
       <div className="energy-selector__info">
-        <div className="energy-selector__name">{current.name}</div>
+        <div className="energy-selector__name">{t(`energy.${currentEnergy}.label`)}</div>
         <div className="energy-selector__desc">{t(`energy.${currentEnergy}.desc`)}</div>
       </div>
     </div>
