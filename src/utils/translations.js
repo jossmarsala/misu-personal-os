@@ -77,11 +77,11 @@ export const translations = {
       passwordHint: "Minimum 6 characters",
     },
     energy: {
-      1: { label: "Whisper", desc: "Ambient & Lo-fi mellow", msg: "Take it easy. Something gentle for you...", empty: "Nothing light enough — maybe just rest a little?" },
-      2: { label: "Calm", desc: "Chill & Downtempo relaxed", msg: "Ease into something manageable...", empty: "No matching tasks — enjoy the calm." },
-      3: { label: "Rhythm", desc: "Deep House & Focus beats", msg: "Good rhythm going. Try these...", empty: "All clear — you're ahead of schedule!" },
-      4: { label: "Pulse", desc: "Synthwave & Indie pop", msg: "Feeling inspired! Take on something creative...", empty: "No big tasks left — channel that spark elsewhere!" },
-      5: { label: "Peak", desc: "Techno & Industrial intense", msg: "You're in the zone! Tackle the big ones...", empty: "Everything's done — you're unstoppable!" }
+      1: { label: "Whisper", desc: "Ambient sounds — No music", msg: "Take it easy. Something gentle for you...", empty: "Nothing light enough — maybe just rest a little?" },
+      2: { label: "Calm", desc: "Soft nostalgic sounds — Piano", msg: "Ease into something manageable...", empty: "No matching tasks — enjoy the calm." },
+      3: { label: "Rhythm", desc: "Lo-fi beats", msg: "Good rhythm going. Try these...", empty: "All clear — you're ahead of schedule!" },
+      4: { label: "Pulse", desc: "Animated beats", msg: "Feeling inspired! Take on something creative...", empty: "No big tasks left — channel that spark elsewhere!" },
+      5: { label: "Peak", desc: "Old Jazz classics", msg: "You're in the zone! Tackle the big ones...", empty: "Everything's done — you're unstoppable!" }
     }
   },
   es: {
@@ -162,11 +162,11 @@ export const translations = {
       passwordHint: "Mínimo 6 caracteres",
     },
     energy: {
-      1: { label: "Susurro", desc: "Ambient & Lo-fi suave", msg: "Tomate un momento. Algo suave para vos...", empty: "¿Nada ligero? Quizás descansá un poco." },
-      2: { label: "Calma", desc: "Chill & Downtempo relajado", msg: "Empezá con algo manejable...", empty: "No hay tareas coincidentes — disfrutá la calma." },
-      3: { label: "Ritmo", desc: "Deep House & Focus beats", msg: "Buen ritmo. Probá estas...", empty: "¡Todo despejado! Vas antes de lo previsto." },
-      4: { label: "Impulso", desc: "Synthwave & Indie pop", msg: "¡Estás inspirado! Animate a algo creativo...", empty: "No quedan tareas grandes — ¡canalizá esa chispa!" },
-      5: { label: "Pulso", desc: "Techno & Industrial intenso", msg: "¡Estás en la zona! Enfrentate a los grandes...", empty: "Todo terminado — ¡nada puede detenerte!" }
+      1: { label: "Susurro", desc: "Sonidos de ambiente — Sin música", msg: "Tomate un momento. Algo suave para vos...", empty: "¿Nada ligero? Quizás descansá un poco." },
+      2: { label: "Calma", desc: "Sonidos suaves nostálgicos — Piano", msg: "Empezá con algo manejable...", empty: "No hay tareas coincidentes — disfrutá la calma." },
+      3: { label: "Ritmo", desc: "Lo-fi", msg: "Buen ritmo. Probá estas...", empty: "¡Todo despejado! Vas antes de lo previsto." },
+      4: { label: "Impulso", desc: "Música animada — Beats", msg: "¡Estás inspirado! Animate a algo creativo...", empty: "No quedan tareas grandes — ¡canalizá esa chispa!" },
+      5: { label: "Pulso", desc: "Jazz viejo", msg: "¡Estás en la zona! Enfrentate a los grandes...", empty: "Todo terminado — ¡nada puede detenerte!" }
     }
   },
   it: {
@@ -247,11 +247,11 @@ export const translations = {
       passwordHint: "Minimo 6 caratteri",
     },
     energy: {
-      1: { label: "Sussurro", desc: "Ambient & Lo-fi rilassante", msg: "Prenditela con calma. Qualcosa di leggero per te...", empty: "Niente di abbastanza leggero — forse riposa un po'?" },
-      2: { label: "Calma", desc: "Chill & Downtempo calmo", msg: "Inizia con qualcosa di gestibile...", empty: "Nessun compito corrispondente — goditi la calma." },
-      3: { label: "Ritmo", desc: "Deep House & Focus beats", msg: "Buon ritmo. Prova questi...", empty: "Tutto libero — sei in anticipo!" },
-      4: { label: "Impulso", desc: "Synthwave & Indie pop", msg: "Sei ispirato! Affronta qualcosa di creativo...", empty: "Nessun compito grande rimasto — canalizza quella scintilla!" },
-      5: { label: "Battito", desc: "Techno & Industrial intenso", msg: "Sei nella zona! Affronta i più grandi...", empty: "Tutto finito — sei inarrestabile!" }
+      1: { label: "Sussurro", desc: "Suoni d'ambiente — Senza musica", msg: "Prenditela con calma. Qualcosa di leggero per te...", empty: "Niente di abbastanza leggero — forse riposa un po'?" },
+      2: { label: "Calma", desc: "Suoni nostalgici — Piano", msg: "Inizia con qualcosa di gestibile...", empty: "Nessun compito corrispondente — goditi la calma." },
+      3: { label: "Ritmo", desc: "Lo-fi", msg: "Buon ritmo. Prova questi...", empty: "Tutto libero — sei in anticipo!" },
+      4: { label: "Impulso", desc: "Musica vivace — Beats", msg: "Sei ispirato! Affronta qualcosa di creativo...", empty: "Nessun compito grande rimasto — canalizza quella scintilla!" },
+      5: { label: "Battito", desc: "Jazz d'epoca", msg: "Sei nella zona! Affronta i più grandi...", empty: "Tutto finito — sei inarrestabile!" }
     }
   }
 };
