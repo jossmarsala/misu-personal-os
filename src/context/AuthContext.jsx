@@ -8,6 +8,12 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!supabase) {
+      console.error("Supabase client not initialized. Check environment variables.");
+      setLoading(false);
+      return;
+    }
+
     // Check active sessions and subscribe to auth changes
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
