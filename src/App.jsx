@@ -53,8 +53,18 @@ function App() {
       <div className="widget-toggles" style={{ display: 'flex', gap: '16px', fontSize: '10px' }}>
         <GlassIcons 
           items={[
-            { icon: <Timer size={20} />, color: showPomodoro ? 'orange' : 'gray', label: 'Focus', onClick: () => setShowPomodoro(!showPomodoro) },
-            { icon: <Music size={20} />, color: showMusic ? 'blue' : 'gray', label: 'Audio', onClick: () => setShowMusic(!showMusic) }
+            { 
+              icon: <Timer size={20} />, 
+              color: showPomodoro ? energyDef.colorA : 'gray', 
+              label: 'Focus', 
+              onClick: () => setShowPomodoro(!showPomodoro) 
+            },
+            { 
+              icon: <Music size={20} />, 
+              color: showMusic ? energyDef.colorA : 'gray', 
+              label: 'Audio', 
+              onClick: () => setShowMusic(!showMusic) 
+            }
           ]} 
           colorful={true}
           className="widget-glass-container"
