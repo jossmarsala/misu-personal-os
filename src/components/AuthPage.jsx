@@ -111,16 +111,22 @@ export default function AuthPage() {
             hoverDampness={0.25}
             rayCount={0}
             mixBlendMode="lighten"
-            colors={[energyDef.colorA || '#8B98E3', energyDef.colorB || '#F5C8E7', '#ffffff']}
+            colors={['#FF5F6D', '#FFC371', '#00C9FF', '#92FE9D', '#FF9A9E', '#FFFFFF']}
           />
         </div>
 
         {/* Form Right Pane */}
         <div className="auth-card__right">
           <div className="auth-header">
-            <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <Headphones className="auth-logo" size={24} style={{ margin: 0 }} />
-              <BlurText text={isLogin ? "Welcome Back!" : "Get Started"} animateBy="words" delay={100} direction="bottom" />
+            <Headphones className="auth-logo" size={32} />
+            <h2>
+              <BlurText 
+                text={isLogin ? t('auth.loginTitle') : t('auth.signupTitle')} 
+                animateBy="words" 
+                delay={100} 
+                direction="bottom" 
+                className="auth-title-large"
+              />
             </h2>
             <p>{isLogin ? t('auth.welcomeBack') : t('auth.initSpace')}</p>
           </div>
