@@ -2,10 +2,11 @@ import { useMemo } from 'react';
 import { useTasks } from '../context/TaskContext';
 import { useEnergy } from '../context/EnergyContext';
 import { getRecommendations } from '../utils/recommendations';
-import { getEnergyDef } from '../utils/energy';
+import { getEnergyDef, getEnergyColor } from '../utils/energy';
 import { formatDeadline, getDeadlineStatus } from '../utils/dateUtils';
 import { useLanguage } from '../context/LanguageContext';
-import { Compass } from 'lucide-react';
+import { Compass, Gamepad2, Headphones } from 'lucide-react';
+import GlassIcons from './GlassIcons';
 import './Recommendations.css';
 
 export default function Recommendations() {
@@ -34,7 +35,7 @@ export default function Recommendations() {
     if (status === 'today') return t('common.today');
     if (status === 'tomorrow') return t('common.tomorrow');
     if (status === 'overdue') return t('common.overdue');
-    return formatDeadline(deadline); // Fallback to util for complex cases
+    return formatDeadline(deadline); 
   };
 
   return (
@@ -65,11 +66,15 @@ export default function Recommendations() {
           ))}
         </div>
       ) : (
-        <div className="recommendations__empty">
-          <span className="recommendations__empty-icon">
-            {currentEnergy <= 2 ? '🎮' : '🎧'}
-          </span>
-          {t(`energy.${currentEnergy}.empty`)}
+        <div className="recommendations__empty" style={{ padding: '2rem 0', display: 'flex', justifyContent: 'center' }}>
+          <GlassIcons 
+            items={[{
+              icon: currentEnergy <= 2 ? <Gamepad2 size={32} strokeWidth={1.5} /> : <Headphones size={32} strokeWidth={1.5} />,
+              color: getEnergyColor(currentEnergy),
+              label: t(`energy.${currentEnergy}.empty`)
+            }]}
+            colorful={true}
+          />
         </div>
       )}
     </div>

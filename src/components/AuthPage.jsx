@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Headphones, Mail, Lock, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
+import StarBorder from './StarBorder';
+import BlurText from './BlurText';
 import './AuthPage.css';
 
 const ERROR_MAP = {
@@ -56,7 +58,6 @@ export default function AuthPage() {
         await login(email, password);
       } else {
         const result = await signup(email, password);
-        // If Supabase returns a user but no session, email confirmation is needed
         if (result?.user && !result?.session) {
           setSignupSuccess(true);
         }
@@ -68,7 +69,6 @@ export default function AuthPage() {
     }
   };
 
-  // Success state after signup
   if (signupSuccess) {
     return (
       <div className="auth-container">
@@ -96,7 +96,9 @@ export default function AuthPage() {
       <div className="auth-card bento-card bento-card--accent">
         <div className="auth-header">
           <Headphones className="auth-logo" size={32} />
-          <h2>misu</h2>
+          <h2>
+            <BlurText text="misu" animateBy="letters" delay={150} direction="bottom" />
+          </h2>
           <p>{isLogin ? t('auth.welcomeBack') : t('auth.initSpace')}</p>
         </div>
 
@@ -137,10 +139,20 @@ export default function AuthPage() {
             )}
           </div>
 
-          <button type="submit" className="btn btn-primary btn-full" disabled={loading} style={{ marginTop: 'var(--space-4)' }}>
-            {loading ? <Loader2 className="spin" size={16} /> : (isLogin ? t('auth.loginBtn') : t('auth.signupBtn'))}
-            {!loading && <ArrowRight size={16} />}
-          </button>
+          <div style={{ marginTop: 'var(--space-4)', width: '100%' }}>
+            <StarBorder 
+              as="button" 
+              type="submit" 
+              disabled={loading} 
+              style={{ width: '100%', cursor: loading ? 'not-allowed' : 'pointer' }}
+              innerClassName="btn btn-primary btn-full"
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%' }}>
+                {loading ? <Loader2 className="spin" size={16} /> : (isLogin ? t('auth.loginBtn') : t('auth.signupBtn'))}
+                {!loading && <ArrowRight size={16} />}
+              </div>
+            </StarBorder>
+          </div>
         </form>
 
         <div className="auth-switch">

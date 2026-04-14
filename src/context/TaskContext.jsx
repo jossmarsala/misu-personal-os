@@ -6,14 +6,39 @@ import { useAuth } from './AuthContext';
 const TaskContext = createContext();
 
 export function TaskProvider({ children }) {
-  const { user, logout } = useAuth();
-  const [tasks, setTasks] = useState([]);
+  const { user } = useAuth();
+  
+  const [tasks, setTasks] = useState(() => {
+    try {
+      const cached = localStorage.getItem('misu-offline-tasks');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return [];
+  });
+  
   const [loading, setLoading] = useState(true);
+  const [isOffline, setIsOffline] = useState(typeof window !== 'undefined' ? !navigator.onLine : false);
+  const [needsSync, setNeedsSync] = useState(false);
   const isInitialMount = useRef(true);
 
-  // Fetch from Supabase on mount/user change
+  // Monitor network status
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  // Fetch from Supabase on mount
   useEffect(() => {
     const init = async () => {
+      // If we boot offline, we just use local cache (already loaded)
+      if (isOffline) { setLoading(false); return; }
       try {
         const { data, error } = await supabase
           .from('user_data')
@@ -21,10 +46,12 @@ export function TaskProvider({ children }) {
           .eq('user_id', user.id)
           .single();
 
-        if (error && error.code !== 'PGRST116') { // PGRST116 is 'no rows'
+        if (error && error.code !== 'PGRST116') { 
           console.error("Supabase fetch error:", error);
         } else if (data?.payload?.tasks) {
+          // Sync UI & LocalStorage with fresh cloud data
           setTasks(data.payload.tasks);
+          localStorage.setItem('misu-offline-tasks', JSON.stringify(data.payload.tasks));
         }
       } catch (err) {
         console.error("Failed to load tasks from Supabase:", err);
@@ -35,27 +62,55 @@ export function TaskProvider({ children }) {
     if (user?.id) init();
     else if (!user) {
       setTasks([]);
+      localStorage.removeItem('misu-offline-tasks');
       setLoading(false);
     }
-  }, [user]);
+  }, [user, isOffline]); // trigger mount fetch when user or online status resolves
 
-  // Sync to Supabase on change
+  // Sync to local and Supabase on change
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
       return;
     }
+    
+    // Always backup to localStorage immediately (offline-first)
+    localStorage.setItem('misu-offline-tasks', JSON.stringify(tasks));
+
     if (!loading && user?.id) {
+      if (isOffline) {
+        setNeedsSync(true); // Flag that we have unsynced cloud items
+        return;
+      }
+
       const sync = async () => {
         const { error } = await supabase
           .from('user_data')
           .upsert({ user_id: user.id, payload: { tasks } }, { onConflict: 'user_id' });
         
-        if (error) console.error("Supabase sync error:", error);
+        if (error) {
+          console.error("Supabase sync error:", error);
+          setNeedsSync(true);
+        } else {
+          setNeedsSync(false);
+        }
       };
       sync();
     }
-  }, [tasks, loading, user]);
+  }, [tasks, loading, user, isOffline]);
+
+  // Try syncing if returning online with dirty data
+  useEffect(() => {
+    if (!isOffline && needsSync && user?.id) {
+       const pushLocal = async () => {
+         const { error } = await supabase
+           .from('user_data')
+           .upsert({ user_id: user.id, payload: { tasks } }, { onConflict: 'user_id' });
+         if (!error) setNeedsSync(false);
+       };
+       pushLocal();
+    }
+  }, [isOffline, needsSync, tasks, user]);
 
   const addTask = useCallback((taskData) => {
     const newTask = {

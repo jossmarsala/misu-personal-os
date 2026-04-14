@@ -1,11 +1,12 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Minus, Maximize2 } from 'lucide-react';
+import { motion, useDragControls, useMotionValue } from 'framer-motion';
 import './DraggableWidget.css';
 
 const STORAGE_PREFIX = 'misu-widget-pos-';
 
 export default function DraggableWidget({ id, title, icon, children, defaultPosition = { x: 20, y: 80 } }) {
-  const [position, setPosition] = useState(() => {
+  const getInitialPosition = () => {
     try {
       const saved = localStorage.getItem(STORAGE_PREFIX + id);
       if (saved) {
@@ -19,62 +20,63 @@ export default function DraggableWidget({ id, title, icon, children, defaultPosi
       }
       return defaultPosition;
     } catch { return defaultPosition; }
-  });
+  };
+
   const [collapsed, setCollapsed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [zIndex, setZIndex] = useState(10);
-  const dragRef = useRef(null);
-  const offsetRef = useRef({ x: 0, y: 0 });
+  const [windowSize, setWindowSize] = useState({ 
+    width: typeof window !== 'undefined' ? window.innerWidth : 1000, 
+    height: typeof window !== 'undefined' ? window.innerHeight : 800 
+  });
 
-  // Save position to localStorage
+  const dragControls = useDragControls();
+  const initPos = getInitialPosition();
+  const x = useMotionValue(initPos.x);
+  const y = useMotionValue(initPos.y);
+  
+  const containerRef = useRef(null);
+
   useEffect(() => {
-    if (!isDragging) {
-      localStorage.setItem(STORAGE_PREFIX + id, JSON.stringify(position));
-    }
-  }, [position, isDragging, id]);
+    const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  const handlePointerDown = useCallback((e) => {
-    if (e.target.closest('button') || e.target.closest('input') || e.target.closest('select')) return;
-    
-    const rect = dragRef.current.getBoundingClientRect();
-    offsetRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  const startDrag = (event) => {
+    if (event.target.closest('button') || event.target.closest('input') || event.target.closest('select')) return;
+    setZIndex(Date.now() % 10000 + 100);
     setIsDragging(true);
-    setZIndex(Date.now() % 10000 + 100); // Bring to front
-    e.preventDefault();
-  }, []);
+    dragControls.start(event);
+  };
 
-  const handlePointerMove = useCallback((e) => {
-    if (!isDragging) return;
-    const newX = Math.max(0, Math.min(window.innerWidth - 100, e.clientX - offsetRef.current.x));
-    const newY = Math.max(0, Math.min(window.innerHeight - 50, e.clientY - offsetRef.current.y));
-    setPosition({ x: newX, y: newY });
-  }, [isDragging]);
-
-  const handlePointerUp = useCallback(() => {
+  const handleDragEnd = () => {
     setIsDragging(false);
-  }, []);
+    localStorage.setItem(STORAGE_PREFIX + id, JSON.stringify({ x: x.get(), y: y.get() }));
+  };
 
-  useEffect(() => {
-    if (isDragging) {
-      window.addEventListener('pointermove', handlePointerMove);
-      window.addEventListener('pointerup', handlePointerUp);
-      return () => {
-        window.removeEventListener('pointermove', handlePointerMove);
-        window.removeEventListener('pointerup', handlePointerUp);
-      };
-    }
-  }, [isDragging, handlePointerMove, handlePointerUp]);
+  const maxX = Math.max(0, windowSize.width - 250);
+  const maxY = Math.max(0, windowSize.height - 100);
 
   return (
-    <div
-      ref={dragRef}
-      className={`draggable-widget ${isDragging ? 'dragging' : ''} ${collapsed ? 'collapsed' : ''}`}
-      style={{
-        transform: `translate(${position.x}px, ${position.y}px)`,
-        zIndex,
-      }}
+    <motion.div
+      ref={containerRef}
+      className={`draggable-widget ${collapsed ? 'collapsed' : ''} ${isDragging ? 'dragging' : ''}`}
+      style={{ x, y, zIndex }}
+      drag
+      dragControls={dragControls}
+      dragListener={false}
+      dragMomentum={false}
+      dragElastic={0.2}
+      dragConstraints={{ left: 0, top: 0, right: maxX, bottom: maxY }}
+      onDragEnd={handleDragEnd}
+      whileDrag={{ scale: 1.02 }}
     >
-      <div className="draggable-widget__header" onPointerDown={handlePointerDown}>
+      <div 
+        className="draggable-widget__header" 
+        onPointerDown={startDrag}
+        style={{ touchAction: 'none' }}
+      >
         <div className="draggable-widget__title">
           {icon}
           <span>{title}</span>
@@ -92,6 +94,6 @@ export default function DraggableWidget({ id, title, icon, children, defaultPosi
           {children}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
