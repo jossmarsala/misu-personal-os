@@ -24,7 +24,7 @@ export const translations = {
     hero: {
       title: "Manage your tasks with",
       energySuffix: "energy",
-      subtitle: "Misu adapts to your energy level for smarter productivity.",
+      subtitle: "Harmonize your productivity by syncing your tasks with your current cognitive flow.",
     },
     stats: {
       hoursToGo: "Hours to go",
@@ -109,7 +109,7 @@ export const translations = {
     hero: {
       title: "Gestiona tus tareas con energía",
       energySuffix: "",
-      subtitle: "Misu se adapta a tu nivel de energía para una productividad más inteligente.",
+      subtitle: "Armonizá tu productividad sincronizando tus tareas con tu flujo cognitivo actual.",
     },
     stats: {
       hoursToGo: "Horas restantes",
@@ -194,7 +194,7 @@ export const translations = {
     hero: {
       title: "Gestisci i tuoi compiti con energia",
       energySuffix: "",
-      subtitle: "Misu si adatta al tuo livello di energia per una produttività più intelligente.",
+      subtitle: "Armonizza la tua produttività sincronizzando i tuoi compiti con il tuo flusso cognitivo attuale.",
     },
     stats: {
       hoursToGo: "Ore rimanenti",

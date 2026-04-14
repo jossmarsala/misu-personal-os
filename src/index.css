@@ -90,30 +90,30 @@ body::before {
   --energy-gradient-card: linear-gradient(160deg, #b5bdef 0%, #f8daf0 100%);
 }
 
-/* Energy 4: Pulse — Dusty Rose → Mauve */
+/* Energy 4: Pulse — Melon → Peach */
 :root[data-energy="4"] {
-  --energy-color-a: #c9ada7;
-  --energy-color-b: #9a8c98;
-  --energy-primary: #a78b91;
-  --energy-accent: #d6c1c5;
-  --energy-glow: rgba(201, 173, 167, 0.25);
-  --energy-surface: rgba(201, 173, 167, 0.10);
-  --energy-gradient: linear-gradient(135deg, #c9ada7, #9a8c98);
-  --energy-gradient-soft: linear-gradient(135deg, rgba(201,173,167,0.3), rgba(154,140,152,0.3));
-  --energy-gradient-card: linear-gradient(160deg, #e5d5d1 0%, #dcd3d9 100%);
+  --energy-color-a: #F8AD9D;
+  --energy-color-b: #FFDAB9;
+  --energy-primary: #E09181;
+  --energy-accent: #F9C5B2;
+  --energy-glow: rgba(248, 173, 157, 0.25);
+  --energy-surface: rgba(248, 173, 157, 0.10);
+  --energy-gradient: linear-gradient(135deg, #F8AD9D, #FFDAB9);
+  --energy-gradient-soft: linear-gradient(135deg, rgba(248,173,157,0.3), rgba(255,218,185,0.3));
+  --energy-gradient-card: linear-gradient(160deg, #fbc6bc 0%, #fee6d1 100%);
 }
 
-/* Energy 5: Peak — Steel → Dark Blue */
+/* Energy 5: Peak — Violet → Rose */
 :root[data-energy="5"] {
-  --energy-color-a: #8d99ae;
-  --energy-color-b: #2b2d42;
-  --energy-primary: #7a8599;
-  --energy-accent: #4a5d7a;
-  --energy-glow: rgba(141, 153, 174, 0.25);
-  --energy-surface: rgba(141, 153, 174, 0.10);
-  --energy-gradient: linear-gradient(135deg, #8d99ae, #2b2d42);
-  --energy-gradient-soft: linear-gradient(135deg, rgba(141,153,174,0.3), rgba(43,45,66,0.3));
-  --energy-gradient-card: linear-gradient(160deg, #c2c9d6 0%, #9ca4b8 100%);
+  --energy-color-a: #9796F0;
+  --energy-color-b: #FBC7D4;
+  --energy-primary: #7E7DCF;
+  --energy-accent: #D9B1E6;
+  --energy-glow: rgba(151, 150, 240, 0.25);
+  --energy-surface: rgba(151, 150, 240, 0.10);
+  --energy-gradient: linear-gradient(135deg, #9796F0, #FBC7D4);
+  --energy-gradient-soft: linear-gradient(135deg, rgba(151,150,240,0.3), rgba(251,199,212,0.3));
+  --energy-gradient-card: linear-gradient(160deg, #b8b7f5 0%, #fbd9e2 100%);
 }
 
 /* ═══════════════════════════════════════════════════════════
