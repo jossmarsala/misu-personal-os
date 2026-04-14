@@ -103,17 +103,17 @@ body::before {
   --energy-gradient-card: linear-gradient(160deg, #fbc6bc 0%, #fee6d1 100%);
 }
 
-/* Energy 5: Peak — Violet → Rose */
+/* Energy 5: Peak — Indigo → Purple */
 :root[data-energy="5"] {
-  --energy-color-a: #9796F0;
-  --energy-color-b: #FBC7D4;
-  --energy-primary: #7E7DCF;
-  --energy-accent: #D9B1E6;
-  --energy-glow: rgba(151, 150, 240, 0.25);
-  --energy-surface: rgba(151, 150, 240, 0.10);
-  --energy-gradient: linear-gradient(135deg, #9796F0, #FBC7D4);
-  --energy-gradient-soft: linear-gradient(135deg, rgba(151,150,240,0.3), rgba(251,199,212,0.3));
-  --energy-gradient-card: linear-gradient(160deg, #b8b7f5 0%, #fbd9e2 100%);
+  --energy-color-a: #667eea;
+  --energy-color-b: #764ba2;
+  --energy-primary: #6a79d9;
+  --energy-accent: #8e74cc;
+  --energy-glow: rgba(102, 126, 234, 0.25);
+  --energy-surface: rgba(102, 126, 234, 0.10);
+  --energy-gradient: linear-gradient(135deg, #667eea, #764ba2);
+  --energy-gradient-soft: linear-gradient(135deg, rgba(102,126,234,0.3), rgba(118,75,162,0.3));
+  --energy-gradient-card: linear-gradient(160deg, #99acef 0%, #a289bd 100%);
 }
 
 /* ═══════════════════════════════════════════════════════════
