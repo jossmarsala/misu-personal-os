@@ -17,9 +17,7 @@ function AuthGate() {
   
   return (
     <TaskProvider>
-      <EnergyProvider>
-        <ThemedApp />
-      </EnergyProvider>
+      <ThemedApp />
     </TaskProvider>
   );
 }
@@ -38,7 +36,9 @@ createRoot(document.getElementById('root')).render(
     <ErrorBoundary>
       <LanguageProvider>
         <AuthProvider>
-          <AuthGate />
+          <EnergyProvider>
+            <AuthGate />
+          </EnergyProvider>
         </AuthProvider>
       </LanguageProvider>
     </ErrorBoundary>
