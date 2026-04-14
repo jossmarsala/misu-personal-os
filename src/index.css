@@ -90,30 +90,30 @@ body::before {
   --energy-gradient-card: linear-gradient(160deg, #b5bdef 0%, #f8daf0 100%);
 }
 
-/* Energy 4: Creative Spark — Coral → Teal (桃桃摇摇冰 Peach Shake) */
+/* Energy 4: Pulse — Dusty Rose → Mauve */
 :root[data-energy="4"] {
-  --energy-color-a: #FC6591;
-  --energy-color-b: #ABE0DC;
-  --energy-primary: #E8507A;
-  --energy-accent: #8DD0CC;
-  --energy-glow: rgba(252, 101, 145, 0.25);
-  --energy-surface: rgba(252, 101, 145, 0.10);
-  --energy-gradient: linear-gradient(135deg, #FC6591, #ABE0DC);
-  --energy-gradient-soft: linear-gradient(135deg, rgba(252,101,145,0.3), rgba(171,224,220,0.3));
-  --energy-gradient-card: linear-gradient(160deg, #fda5be 0%, #c8ecea 100%);
+  --energy-color-a: #c9ada7;
+  --energy-color-b: #9a8c98;
+  --energy-primary: #a78b91;
+  --energy-accent: #d6c1c5;
+  --energy-glow: rgba(201, 173, 167, 0.25);
+  --energy-surface: rgba(201, 173, 167, 0.10);
+  --energy-gradient: linear-gradient(135deg, #c9ada7, #9a8c98);
+  --energy-gradient-soft: linear-gradient(135deg, rgba(201,173,167,0.3), rgba(154,140,152,0.3));
+  --energy-gradient-card: linear-gradient(160deg, #e5d5d1 0%, #dcd3d9 100%);
 }
 
-/* Energy 5: Wild Rhythm — Pink → Amber (芋泥猫猫头 Taro Cat) */
+/* Energy 5: Peak — Steel → Dark Blue */
 :root[data-energy="5"] {
-  --energy-color-a: #EF8EC5;
-  --energy-color-b: #FFAE65;
-  --energy-primary: #D672A8;
-  --energy-accent: #F09545;
-  --energy-glow: rgba(239, 142, 197, 0.25);
-  --energy-surface: rgba(239, 142, 197, 0.10);
-  --energy-gradient: linear-gradient(135deg, #EF8EC5, #FFAE65);
-  --energy-gradient-soft: linear-gradient(135deg, rgba(239,142,197,0.3), rgba(255,174,101,0.3));
-  --energy-gradient-card: linear-gradient(160deg, #f5b8da 0%, #ffd0a0 100%);
+  --energy-color-a: #8d99ae;
+  --energy-color-b: #2b2d42;
+  --energy-primary: #7a8599;
+  --energy-accent: #4a5d7a;
+  --energy-glow: rgba(141, 153, 174, 0.25);
+  --energy-surface: rgba(141, 153, 174, 0.10);
+  --energy-gradient: linear-gradient(135deg, #8d99ae, #2b2d42);
+  --energy-gradient-soft: linear-gradient(135deg, rgba(141,153,174,0.3), rgba(43,45,66,0.3));
+  --energy-gradient-card: linear-gradient(160deg, #c2c9d6 0%, #9ca4b8 100%);
 }
 
 /* ═══════════════════════════════════════════════════════════
