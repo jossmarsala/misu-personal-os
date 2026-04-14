@@ -5,9 +5,14 @@ import { ENERGY_LEVELS } from '../utils/energy';
 import { useLanguage } from '../context/LanguageContext';
 import './TaskForm.css';
 
+import { useEnergy } from '../context/EnergyContext';
+import { playUISound } from '../services/AudioService';
+import './TaskForm.css';
+
 export default function TaskForm() {
   const { addTask } = useTasks();
   const { t } = useLanguage();
+  const { currentEnergy } = useEnergy();
   const [isOpen, setIsOpen] = useState(false);
   const [form, setForm] = useState({
     title: '',
@@ -21,6 +26,7 @@ export default function TaskForm() {
     e.preventDefault();
     if (!form.title.trim()) return;
 
+    playUISound('click', currentEnergy);
     addTask({
       ...form,
       estimatedHours: parseFloat(form.estimatedHours) || 1,
@@ -39,7 +45,10 @@ export default function TaskForm() {
       <div className="task-form">
         <button
           className="task-form__toggle"
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            playUISound('switch', currentEnergy);
+            setIsOpen(true);
+          }}
           id="add-task-btn"
         >
           <Plus size={18} />

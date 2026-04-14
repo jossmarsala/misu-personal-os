@@ -5,13 +5,22 @@ const EnergyContext = createContext();
 
 export function EnergyProvider({ children }) {
   const [currentEnergy, setCurrentEnergy] = useState(() => loadEnergy());
+  const [dndActive, setDndActive] = useState(false);
+  const [breathingActive, setBreathingActive] = useState(false);
 
   useEffect(() => {
     saveEnergy(currentEnergy);
   }, [currentEnergy]);
 
   return (
-    <EnergyContext.Provider value={{ currentEnergy, setCurrentEnergy }}>
+    <EnergyContext.Provider value={{ 
+      currentEnergy, 
+      setCurrentEnergy,
+      dndActive,
+      setDndActive,
+      breathingActive,
+      setBreathingActive
+    }}>
       {children}
     </EnergyContext.Provider>
   );

@@ -31,6 +31,7 @@ uniform vec2  uOffset;
 uniform sampler2D uGradient;
 uniform float uNoiseAmount;
 uniform int   uRayCount;
+uniform float uBreathing;
 
 float hash21(vec2 p){
     p = floor(p);
@@ -172,6 +173,9 @@ void main(){
     col *= edgeFade(frag, uResolution, uOffset);
     col *= uIntensity;
 
+    // Breathing modulation
+    col *= (0.85 + 0.3 * uBreathing);
+
     fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
 }`;
 
@@ -210,7 +214,8 @@ const PrismaticBurst = ({
   offset = { x: 0, y: 0 },
   hoverDampness = 0,
   rayCount,
-  mixBlendMode = 'lighten'
+  mixBlendMode = 'lighten',
+  breathing = false
 }) => {
   const containerRef = useRef(null);
   const programRef = useRef(null);
@@ -282,7 +287,8 @@ const PrismaticBurst = ({
         uOffset: { value: [0, 0] },
         uGradient: { value: gradientTex },
         uNoiseAmount: { value: 0.8 },
-        uRayCount: { value: 0 }
+        uRayCount: { value: 0 },
+        uBreathing: { value: 0 }
       }
     });
 
@@ -357,6 +363,25 @@ const PrismaticBurst = ({
 
       program.uniforms.uMouse.value = sm;
       program.uniforms.uTime.value = accumTime;
+
+      // Handle physiological breathing 4-7-8 rhythm (19s cycle)
+      if (breathing) {
+        const cycleTime = accumTime % 19.0;
+        let bVal = 0;
+        if (cycleTime < 4.0) {
+            // Inhale (4s)
+            bVal = cycleTime / 4.0;
+        } else if (cycleTime < 11.0) {
+            // Hold (7s)
+            bVal = 1.0;
+        } else {
+            // Exhale (8s)
+            bVal = 1.0 - ((cycleTime - 11.0) / 8.0);
+        }
+        program.uniforms.uBreathing.value = bVal;
+      } else {
+        program.uniforms.uBreathing.value = 0.5; // Neutral
+      }
 
       renderer.render({ scene: meshRef.current });
       raf = requestAnimationFrame(update);

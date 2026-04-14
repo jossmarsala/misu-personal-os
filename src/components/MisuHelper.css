@@ -1,0 +1,111 @@
+.misu-helper {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+  width: 280px;
+  z-index: 1000;
+  border-radius: 20px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.misu-helper__glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, var(--energy-glow), transparent 70%);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.misu-helper__content {
+  padding: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.misu-helper__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.misu-helper__icon-container {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--energy-surface);
+  color: var(--energy-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px var(--energy-glow);
+}
+
+.misu-helper__close {
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.misu-helper__close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.misu-helper__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.misu-helper__desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* Mindfulness specific styles */
+.misu-helper--mindfulness .misu-helper__visualizer {
+  margin-top: 16px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.misu-helper__circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--energy-primary);
+  box-shadow: 0 0 20px var(--energy-glow);
+  animation: helper-breathe 19s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes helper-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.3; }   /* Start */
+  21% { transform: scale(3.5); opacity: 1; }     /* Inhale 4s (4/19 = 21%) */
+  58% { transform: scale(3.5); opacity: 0.8; }     /* Hold 7s (11/19 = 58%) */
+  100% { transform: scale(1); opacity: 0.3; }     /* Exhale 8s */
+}
+
+@media (max-width: 768px) {
+  .misu-helper {
+    right: 16px;
+    left: 16px;
+    width: auto;
+    bottom: 80px;
+  }
+}

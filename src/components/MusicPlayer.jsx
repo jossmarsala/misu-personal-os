@@ -9,7 +9,7 @@ import './MusicPlayer.css';
 const moodTracksImport = import.meta.glob('/public/audio/moods/**/*.mp3', { query: '?url', import: 'default', eager: true });
 
 export default function MusicPlayer({ visible }) {
-  const { currentEnergy } = useEnergy();
+  const { currentEnergy, dndActive } = useEnergy();
   const energyDef = getEnergyDef(currentEnergy);
   
   const [isPlaying, setIsPlaying] = useState(false);
@@ -87,9 +87,9 @@ export default function MusicPlayer({ visible }) {
 
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = isMuted ? 0 : volume;
+      audioRef.current.volume = (isMuted || dndActive) ? 0 : volume;
     }
-  }, [volume, isMuted]);
+  }, [volume, isMuted, dndActive]);
 
   if (!visible) return null;
 

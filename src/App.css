@@ -1,6 +1,7 @@
 .app {
   min-height: 100vh;
   padding-bottom: var(--space-8);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .app__main {
@@ -284,4 +285,37 @@
     width: 38px;
     height: 38px;
   }
+}
+/* ─── DND MODE OVERRIDES ─── */
+.app--dnd-active .bento-grid__reco {
+  display: none !important;
+}
+
+.app--dnd-active .bento-grid {
+  grid-template-columns: 1fr 1fr; /* Fill space left by recommendations */
+}
+
+@media (min-width: 1025px) {
+  .app--dnd-active .bento-grid__hero { grid-column: 1 / 3; }
+  .app--dnd-active .bento-grid__tasks { grid-column: 1 / 3; }
+}
+
+.app--dnd-active .bento-card:not(.hero-card):not(.bento-grid__tasks) {
+  opacity: 0.4;
+  filter: grayscale(0.5) blur(2px);
+  pointer-events: none;
+}
+
+.app--dnd-active .hero-card {
+  box-shadow: 0 0 50px var(--energy-glow);
+}
+
+.app--dnd-active .hero-card__subtitle,
+.app--dnd-active .hero-card__music-desc {
+  opacity: 0.5;
+}
+
+.app--dnd-active .prismatic-burst-container {
+  opacity: 0.4 !important;
+  filter: saturate(0.5);
 }

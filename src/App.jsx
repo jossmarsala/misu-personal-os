@@ -14,7 +14,10 @@ import CommandPalette from './components/CommandPalette';
 import PomodoroWidget from './components/PomodoroWidget';
 import MusicPlayer from './components/MusicPlayer';
 import GlassIcons from './components/GlassIcons';
-import { Clock, CheckCircle2, Timer, Music } from 'lucide-react';
+import DNDWidget from './components/DNDWidget';
+import MisuHelper from './components/MisuHelper';
+import { useMindfulness } from './hooks/useMindfulness';
+import { Clock, CheckCircle2, Timer, Music, Wind } from 'lucide-react';
 import { useLanguage } from './context/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import './App.css';
@@ -25,10 +28,12 @@ function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [showPomodoro, setShowPomodoro] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
-  const { currentEnergy } = useEnergy();
+  const { currentEnergy, dndActive, breathingActive, setBreathingActive } = useEnergy();
   const { tasks } = useTasks();
   const { t } = useLanguage();
   const energyDef = getEnergyDef(currentEnergy);
+
+  const { advice, helperVisible, helperType, setHelperVisible } = useMindfulness();
 
   useEffect(() => {
     const settings = loadSettings();
@@ -45,7 +50,7 @@ function App() {
   }, [tasks]);
 
   return (
-    <div className="app">
+    <div className={`app ${dndActive ? 'app--dnd-active' : ''}`}>
       <Header onOpenSettings={() => setSettingsOpen(true)} />
       <CommandPalette />
 
@@ -64,6 +69,12 @@ function App() {
               color: showMusic ? energyDef.colorA : 'gray', 
               label: 'Audio', 
               onClick: () => setShowMusic(!showMusic) 
+            },
+            { 
+              icon: <Wind size={20} />, 
+              color: breathingActive ? energyDef.colorA : 'gray', 
+              label: 'Breathe', 
+              onClick: () => setBreathingActive(!breathingActive) 
             }
           ]} 
           colorful={true}
@@ -88,6 +99,7 @@ function App() {
                   rayCount={0}
                   mixBlendMode="lighten"
                   colors={[energyDef.colorA, energyDef.colorB, '#ffffff']}
+                  breathing={breathingActive}
                 />
               </div>
               <div className="hero-card__content">
@@ -154,6 +166,14 @@ function App() {
       {/* Draggable Widgets */}
       <PomodoroWidget visible={showPomodoro} onClose={() => setShowPomodoro(false)} />
       <MusicPlayer visible={showMusic} />
+      <DNDWidget />
+      
+      <MisuHelper 
+        visible={helperVisible} 
+        advice={t(advice)} 
+        type={helperType}
+        onClose={() => setHelperVisible(false)}
+      />
     </div>
   );
 }

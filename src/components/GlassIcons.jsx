@@ -1,3 +1,5 @@
+import { useEnergy } from '../context/EnergyContext';
+import { playUISound } from '../services/AudioService';
 import './GlassIcons.css';
 
 const gradientMapping = {
@@ -10,6 +12,8 @@ const gradientMapping = {
 };
 
 const GlassIcons = ({ items, className, colorful = true }) => {
+  const { currentEnergy } = useEnergy();
+  
   const getBackgroundStyle = color => {
     if (!colorful) return { background: 'var(--energy-surface)' };
     if (gradientMapping[color]) {
@@ -26,7 +30,10 @@ const GlassIcons = ({ items, className, colorful = true }) => {
           className={`icon-btn ${item.customClass || ''}`} 
           aria-label={item.label} 
           type="button"
-          onClick={item.onClick}
+          onClick={(e) => {
+            playUISound('click', currentEnergy);
+            item.onClick?.(e);
+          }}
         >
           <span className="icon-btn__back" style={getBackgroundStyle(item.color)}></span>
           <span className="icon-btn__front">

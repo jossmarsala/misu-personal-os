@@ -82,6 +82,10 @@ export const translations = {
       3: { label: "Rhythm", desc: "Steady rhythm for fluid productivity", musicDesc: "Lo-fi beats", msg: "Good rhythm going. Try these...", empty: "All clear — you're ahead of schedule!" },
       4: { label: "Pulse", desc: "High creative spark and mental drive", musicDesc: "Animated beats", msg: "Feeling inspired! Take on something creative...", empty: "No big tasks left — channel that spark elsewhere!" },
       5: { label: "Peak", desc: "Full power for your biggest challenges", musicDesc: "Old Jazz classics", msg: "You're in the zone! Tackle the big ones...", empty: "Everything's done — you're unstoppable!" }
+    },
+    mindfulness: {
+      breathing: "Inhale (4s), Hold (7s), Exhale (8s). Repeat 4 times to recalibrate your nervous system.",
+      idleAdvice: "You've been at peak energy for a while without moving tasks. Maybe a 2-minute breathing break would help you break the friction?"
     }
   },
   es: {
@@ -167,6 +171,10 @@ export const translations = {
       3: { label: "Ritmo", desc: "Ritmo constante para avanzar con fluidez", musicDesc: "Lo-fi", msg: "Buen ritmo. Probá estas...", empty: "¡Todo despejado! Vas antes de lo previsto." },
       4: { label: "Impulso", desc: "Alta creatividad y energía mental", musicDesc: "Beats animados", msg: "¡Estás inspirado! Animate a algo creativo...", empty: "No quedan tareas grandes — ¡canalizá esa chispa!" },
       5: { label: "Pulso", desc: "Máxima potencia para tus desafíos más grandes", musicDesc: "Jazz viejo", msg: "¡Estás en la zona! Enfrentate a los grandes...", empty: "Todo terminado — ¡nada puede detenerte!" }
+    },
+    mindfulness: {
+      breathing: "Inhala (4s), Mantén (7s), Exhala (8s). Repetir 4 veces para recalibrar tu sistema nervioso.",
+      idleAdvice: "Llevás un tiempo en máxima energía sin mover tareas. ¿Quizás 2 minutos de respiración te ayuden a romper la inercia?"
     }
   },
   it: {
@@ -252,6 +260,10 @@ export const translations = {
       3: { label: "Ritmo", desc: "Ritmo costante per avanzare con fluidità", musicDesc: "Lo-fi", msg: "Buon ritmo. Prova questi...", empty: "Tutto libero — sei in anticipo!" },
       4: { label: "Impulso", desc: "Alta creatività ed energia mentale", musicDesc: "Beats vivaci", msg: "Sei ispirato! Affronta qualcosa di creativo...", empty: "Nessun compito grande rimasto — canalizza quella scintilla!" },
       5: { label: "Battito", desc: "Massima potenza per le tue sfide più grandi", musicDesc: "Jazz d'epoca", msg: "Sei nella zona! Affronta i più grandi...", empty: "Tutto finito — sei inarrestabile!" }
+    },
+    mindfulness: {
+      breathing: "Inspira (4s), Trattieni (7s), Espira (8s). Ripeti 4 volte per ricalibrare il sistema nervoso.",
+      idleAdvice: "Sei al massimo dell'energia da un po' senza aggiornare compiti. Forse 2 minuti di respirazione ti aiuteranno a ritrovare il flusso?"
     }
   }
 };

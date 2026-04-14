@@ -1,0 +1,120 @@
+.dnd-widget {
+  padding: 8px 4px;
+}
+
+.dnd-master-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.dnd-master-toggle:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-1px);
+}
+
+.dnd-master-toggle.active {
+  background: var(--energy-gradient-soft);
+  color: var(--energy-primary);
+  border-color: var(--energy-primary);
+  box-shadow: 0 0 20px var(--energy-glow);
+}
+
+.dnd-control-group {
+  margin-bottom: 16px;
+}
+
+.dnd-label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+  padding-left: 2px;
+}
+
+.dnd-btn-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+
+.dnd-btn {
+  padding: 6px;
+  border-radius: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dnd-btn.active {
+  background: var(--energy-primary);
+  color: white;
+  border-color: transparent;
+}
+
+.dnd-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  background: var(--bg-overlay);
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+.noise-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.noise-toggle-btn.playing {
+  color: var(--energy-primary);
+}
+
+.dnd-volume-slider {
+  flex: 1;
+  height: 4px;
+}
+
+.dnd-status-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.dnd-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--energy-primary);
+  background: var(--energy-surface);
+  padding: 4px 8px;
+  border-radius: 99px;
+  font-weight: 500;
+}

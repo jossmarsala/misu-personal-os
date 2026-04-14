@@ -4,12 +4,14 @@ import { Check, Pencil, Trash2, X, Save, ChevronDown, ChevronUp, Play } from 'lu
 import { getEnergyDef } from '../utils/energy';
 import { formatDeadline, getDeadlineStatus } from '../utils/dateUtils';
 import { useLanguage } from '../context/LanguageContext';
-import { playPop } from '../utils/audio';
+import { useEnergy } from '../context/EnergyContext';
+import { playUISound } from '../services/AudioService';
 import './TaskCard.css';
 
 export default function TaskCard({ task }) {
   const { toggleComplete, updateTask, deleteTask, setFocusedTaskId } = useTasks();
   const { t } = useLanguage();
+  const { currentEnergy } = useEnergy();
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
   const [expanded, setExpanded] = useState(false);
@@ -71,7 +73,7 @@ export default function TaskCard({ task }) {
         className={`task-card__checkbox ${task.completed ? 'checked' : ''}`}
         onClick={() => {
           toggleComplete(task.id);
-          playPop();
+          playUISound('complete', currentEnergy);
         }}
         aria-label={task.completed ? t('common.active') : t('common.completed')}
       >
