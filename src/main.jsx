@@ -8,6 +8,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import AuthPage from './components/AuthPage';
 import App from './App';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import './index.css';
 
 function AuthGate() {
@@ -34,10 +35,12 @@ function ThemedApp() {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <LanguageProvider>
-      <AuthProvider>
-        <AuthGate />
-      </AuthProvider>
-    </LanguageProvider>
+    <ErrorBoundary>
+      <LanguageProvider>
+        <AuthProvider>
+          <AuthGate />
+        </AuthProvider>
+      </LanguageProvider>
+    </ErrorBoundary>
   </StrictMode>
 );
