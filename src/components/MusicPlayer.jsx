@@ -3,6 +3,7 @@ import { useEnergy } from '../context/EnergyContext';
 import { getEnergyDef } from '../utils/energy';
 import { Music, Play, Pause, Volume2, VolumeX, SkipForward } from 'lucide-react';
 import DraggableWidget from './DraggableWidget';
+import { useLanguage } from '../context/LanguageContext';
 import './MusicPlayer.css';
 
 // Discover all mp3 files at compile time.
@@ -10,6 +11,7 @@ const moodTracksImport = import.meta.glob('/public/audio/moods/**/*.mp3', { quer
 
 export default function MusicPlayer({ visible }) {
   const { currentEnergy, dndActive } = useEnergy();
+  const { t } = useLanguage();
   const energyDef = getEnergyDef(currentEnergy);
   
   const [isPlaying, setIsPlaying] = useState(false);

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTasks } from '../context/TaskContext';
 import { Timer, Play, Pause, SkipForward, RotateCcw, ChevronDown } from 'lucide-react';
 import { playChime, playPop } from '../utils/audio';
+import { useLanguage } from '../context/LanguageContext';
 import DraggableWidget from './DraggableWidget';
 import './PomodoroWidget.css';
 
@@ -13,6 +14,7 @@ const MODES = {
 
 export default function PomodoroWidget({ visible, onClose }) {
   const { tasks, toggleComplete } = useTasks();
+  const { t } = useLanguage();
   const activeTasks = tasks.filter(t => !t.completed);
 
   const [mode, setMode] = useState('focus');
