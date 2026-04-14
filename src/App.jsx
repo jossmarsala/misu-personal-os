@@ -97,7 +97,10 @@ function App() {
                   {t('hero.energySuffix')}
                 </h2>
                 <p className="hero-card__subtitle">
-                  {t(`energy.${currentEnergy}.desc`)}. {t('hero.subtitle')}
+                  {t(`energy.${currentEnergy}.desc`)}
+                </p>
+                <p className="hero-card__music-desc">
+                  {t(`energy.${currentEnergy}.musicDesc`)}
                 </p>
               </div>
               <div className="hero-card__energy">

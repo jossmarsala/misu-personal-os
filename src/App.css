@@ -88,13 +88,29 @@
 }
 
 .hero-card__subtitle {
-  font-size: 0.95rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  max-width: 480px;
+  line-height: 1.4;
+  color: var(--text-primary);
+  opacity: 0.95;
+  margin-bottom: 4px;
+}
+
+.hero-card__music-desc {
+  font-size: 0.8rem;
+  font-weight: 600;
   color: var(--text-secondary);
-  line-height: 1.5;
-  max-width: 380px;
+  opacity: 0.7;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 :root[data-theme="dark"] .bento-card--accent .hero-card__subtitle {
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .bento-card--accent .hero-card__music-desc {
   color: var(--text-secondary);
 }
 
