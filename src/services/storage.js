@@ -52,9 +52,9 @@ export function saveEnergy(level) {
 // ─── Theme ───
 export function loadTheme() {
   try {
-    return localStorage.getItem(THEME_KEY) || 'dark';
+    return localStorage.getItem(THEME_KEY) || 'light';
   } catch {
-    return 'dark';
+    return 'light';
   }
 }
 
