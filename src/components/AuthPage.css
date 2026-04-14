@@ -25,8 +25,10 @@
 }
 
 .auth-header h2 {
-  font-size: 1.8rem;
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 2.2rem;
   margin-bottom: var(--space-2);
+  font-style: italic;
 }
 
 .auth-header p {
@@ -85,6 +87,42 @@
   margin-bottom: var(--space-4);
   text-align: center;
   border: 1px solid var(--danger);
+}
+
+.auth-hint {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+  margin-top: var(--space-1);
+}
+
+/* Success state */
+.auth-success {
+  text-align: center;
+  padding: var(--space-4) 0;
+}
+
+.auth-success-icon {
+  color: var(--success, #059669);
+  margin-bottom: var(--space-4);
+  animation: successPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.auth-success h2 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 1.6rem;
+  margin-bottom: var(--space-3);
+}
+
+.auth-success p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+@keyframes successPop {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .spin {

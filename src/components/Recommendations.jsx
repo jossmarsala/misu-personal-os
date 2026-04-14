@@ -67,7 +67,7 @@ export default function Recommendations() {
       ) : (
         <div className="recommendations__empty">
           <span className="recommendations__empty-icon">
-            {currentEnergy <= 2 ? '🌙' : '🏛️'}
+            {currentEnergy <= 2 ? '🎮' : '🎧'}
           </span>
           {t(`energy.${currentEnergy}.empty`)}
         </div>

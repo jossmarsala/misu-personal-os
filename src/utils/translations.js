@@ -18,8 +18,8 @@ export const translations = {
       dueSoon: "Due soon",
     },
     header: {
-      currentEnergy: "Current Energy",
-      tagline: "Your energy-aware task companion",
+      currentEnergy: "Current Mood",
+      tagline: "Your mood-aware task companion",
     },
     hero: {
       title: "Manage your tasks with",
@@ -43,14 +43,14 @@ export const translations = {
       fieldEnergy: "Energy Required",
       fieldDescription: "Description (optional)",
       create: "Create Task",
-      emptyState: "No tasks here. Add one above to begin your odyssey.",
+      emptyState: "No tasks here. Add one above to start your session.",
     },
     planner: {
       title: "Weekly Plan",
       subtitle: "AI-powered schedule based on your tasks",
       generate: "Generate Weekly Plan",
       restDay: "Rest day",
-      loading: "Consulting the Muses...",
+      loading: "Tuning the playlist...",
       error: "The AI encountered an issue. Please try again.",
     },
     settings: {
@@ -63,12 +63,23 @@ export const translations = {
       clearAll: "Clear All Tasks",
       confirmClear: "Click again to confirm",
     },
+    auth: {
+      welcomeBack: "Welcome back 🎵",
+      initSpace: "Create your space 🎧",
+      loginBtn: "Sign In",
+      signupBtn: "Create Account",
+      switchToSignup: "New here? Create your space.",
+      switchToLogin: "Already have an account? Sign in.",
+      successTitle: "Check your inbox 📧",
+      successMsg: "We sent a confirmation link to your email. Click it to activate your account, then come back here to sign in.",
+      passwordHint: "Minimum 6 characters",
+    },
     energy: {
-      1: { label: "Very Low", desc: "Rest mode — slow, gentle tasks only", msg: "Take it easy. Here's something gentle for you...", empty: "Nothing light enough — maybe rest a little?" },
-      2: { label: "Low", desc: "Calm energy — simple, reflective work", msg: "Ease into something manageable...", empty: "No matching tasks — enjoy the calm." },
-      3: { label: "Medium", desc: "Steady flow — balanced productivity", msg: "You're in a good rhythm. Try these...", empty: "All clear — you're ahead of schedule!" },
-      4: { label: "High", desc: "Radiant energy — tackle demanding work", msg: "You're shining! Take on something ambitious...", empty: "No big tasks left — channel that energy elsewhere!" },
-      5: { label: "Very High", desc: "Peak power — conquer anything", msg: "You're on fire! Tackle the hardest tasks...", empty: "Everything's done — you're unstoppable!" }
+      1: { label: "Gentle Hum", desc: "Soft & slow — comforting tasks only", msg: "Take it easy. Something gentle for you...", empty: "Nothing light enough — maybe just rest a little?" },
+      2: { label: "Quiet Drift", desc: "Gentle pace — low-pressure tasks", msg: "Ease into something manageable...", empty: "No matching tasks — enjoy the calm." },
+      3: { label: "Focus Flow", desc: "Steady mode — distraction-free productivity", msg: "Good rhythm going. Try these...", empty: "All clear — you're ahead of schedule!" },
+      4: { label: "Creative Spark", desc: "Exploration mode — ideas and creative work", msg: "Feeling inspired! Take on something creative...", empty: "No big tasks left — channel that spark elsewhere!" },
+      5: { label: "Wild Rhythm", desc: "High energy — fast-paced, high-output work", msg: "You're in the zone! Tackle the big ones...", empty: "Everything's done — you're unstoppable!" }
     }
   },
   es: {
@@ -90,8 +101,8 @@ export const translations = {
       dueSoon: "Pronto",
     },
     header: {
-      currentEnergy: "Energía Actual",
-      tagline: "Tu compañero de tareas consciente de tu energía",
+      currentEnergy: "Modo Actual",
+      tagline: "Tu compañero de tareas consciente de tu ánimo",
     },
     hero: {
       title: "Gestiona tus tareas con energía",
@@ -115,14 +126,14 @@ export const translations = {
       fieldEnergy: "Energía requerida",
       fieldDescription: "Descripción (opcional)",
       create: "Crear Tarea",
-      emptyState: "No hay tareas. Añade una arriba para comenzar tu odisea.",
+      emptyState: "No hay tareas. Añade una arriba para comenzar tu sesión.",
     },
     planner: {
       title: "Plan Semanal",
       subtitle: "Horario impulsado por IA basado en tus tareas",
       generate: "Generar Plan Semanal",
       restDay: "Día de descanso",
-      loading: "Consultando a las Musas...",
+      loading: "Preparando la playlist...",
       error: "La IA encontró un problema. Por favor intenta de nuevo.",
     },
     settings: {
@@ -135,12 +146,23 @@ export const translations = {
       clearAll: "Borrar Todas las Tareas",
       confirmClear: "Haz clic de nuevo para confirmar",
     },
+    auth: {
+      welcomeBack: "Bienvenido de vuelta 🎵",
+      initSpace: "Creá tu espacio 🎧",
+      loginBtn: "Iniciar Sesión",
+      signupBtn: "Crear Cuenta",
+      switchToSignup: "¿Sos nuevo? Creá tu espacio.",
+      switchToLogin: "¿Ya tenés cuenta? Iniciá sesión.",
+      successTitle: "Revisá tu bandeja 📧",
+      successMsg: "Te enviamos un link de confirmación a tu correo. Hacé clic para activar tu cuenta y volvé acá para iniciar sesión.",
+      passwordHint: "Mínimo 6 caracteres",
+    },
     energy: {
-      1: { label: "Muy Baja", desc: "Modo reposo — solo tareas lentas y suaves", msg: "Tómalo con calma. Aquí hay algo suave para ti...", empty: "¿Nada ligero? Quizás descansa un poco." },
-      2: { label: "Baja", desc: "Energía tranquila — trabajo simple y reflexivo", msg: "Empieza con algo manejable...", empty: "No hay tareas coincidentes — disfruta la calma." },
-      3: { label: "Media", desc: "Flujo constante — productividad equilibrada", msg: "Estás en un buen ritmo. Prueba estas...", empty: "¡Todo despejado! Vas antes de lo previsto." },
-      4: { label: "Alta", desc: "Energía radiante — enfréntate al trabajo exigente", msg: "¡Estás brillando! Acepta algo ambicioso...", empty: "No quedan tareas grandes — ¡canaliza esa energía en otra parte!" },
-      5: { label: "Muy Alta", desc: "Potencia máxima — conquista cualquier cosa", msg: "¡Estás imparable! Enfréntate a las tareas más difíciles...", empty: "Todo terminado — ¡nada puede detenerte!" }
+      1: { label: "Gentle Hum", desc: "Suave y lento — solo tareas reconfortantes", msg: "Tomate un momento. Algo suave para vos...", empty: "¿Nada ligero? Quizás descansá un poco." },
+      2: { label: "Quiet Drift", desc: "Ritmo calmo — tareas de baja presión", msg: "Empezá con algo manejable...", empty: "No hay tareas coincidentes — disfrutá la calma." },
+      3: { label: "Focus Flow", desc: "Modo enfocado — productividad sin distracciones", msg: "Buen ritmo. Probá estas...", empty: "¡Todo despejado! Vas antes de lo previsto." },
+      4: { label: "Creative Spark", desc: "Modo exploración — ideas y trabajo creativo", msg: "¡Estás inspirado! Animate a algo creativo...", empty: "No quedan tareas grandes — ¡canalizá esa chispa!" },
+      5: { label: "Wild Rhythm", desc: "Energía alta — trabajo rápido e intenso", msg: "¡Estás en la zona! Enfrentate a los grandes...", empty: "Todo terminado — ¡nada puede detenerte!" }
     }
   },
   it: {
@@ -162,8 +184,8 @@ export const translations = {
       dueSoon: "In scadenza",
     },
     header: {
-      currentEnergy: "Energia Attuale",
-      tagline: "Il tuo compagno di attività consapevole dell'energia",
+      currentEnergy: "Stato Attuale",
+      tagline: "Il tuo compagno di attività consapevole del tuo umore",
     },
     hero: {
       title: "Gestisci i tuoi compiti con energia",
@@ -187,14 +209,14 @@ export const translations = {
       fieldEnergy: "Energia richiesta",
       fieldDescription: "Descrizione (opzionale)",
       create: "Crea Attività",
-      emptyState: "Nessuna attività qui. Aggiungine una sopra per iniziare la tua odissea.",
+      emptyState: "Nessuna attività qui. Aggiungine una sopra per iniziare la tua sessione.",
     },
     planner: {
       title: "Piano Settimanale",
       subtitle: "Programma basato sull'IA in base alle tue attività",
       generate: "Genera Piano Settimanale",
       restDay: "Giorno di riposo",
-      loading: "Consultando le Muse...",
+      loading: "Preparando la playlist...",
       error: "L'IA ha riscontrato un problema. Riprova.",
     },
     settings: {
@@ -207,12 +229,23 @@ export const translations = {
       clearAll: "Cancella Tutte le Attività",
       confirmClear: "Clicca di nuovo per confermare",
     },
+    auth: {
+      welcomeBack: "Bentornato 🎵",
+      initSpace: "Crea il tuo spazio 🎧",
+      loginBtn: "Accedi",
+      signupBtn: "Crea Account",
+      switchToSignup: "Nuovo qui? Crea il tuo spazio.",
+      switchToLogin: "Hai già un account? Accedi.",
+      successTitle: "Controlla la tua casella 📧",
+      successMsg: "Ti abbiamo inviato un link di conferma. Cliccalo per attivare il tuo account, poi torna qui per accedere.",
+      passwordHint: "Minimo 6 caratteri",
+    },
     energy: {
-      1: { label: "Molto Bassa", desc: "Modalità riposo — solo compiti lenti e leggeri", msg: "Prenditela con calma. Ecco qualcosa di leggero per te...", empty: "Niente di abbastanza leggero — forse riposa un po'?" },
-      2: { label: "Bassa", desc: "Energia calma — lavoro semplice e riflessivo", msg: "Inizia con qualcosa di gestibile...", empty: "Nessun compito corrispondente — goditi la calma." },
-      3: { label: "Media", desc: "Flusso costante — produttività equilibrata", msg: "Sei in un buon ritmo. Prova questi...", empty: "Tutto libero — sei in anticipo sulla tabella di marcia!" },
-      4: { label: "Alta", desc: "Energia radiosa — affronta il lavoro impegnativo", msg: "Stai brillando! Affronta qualcosa di ambizioso...", empty: "Nessun compito impegnativo rimasto — canalizza l'energia altrove!" },
-      5: { label: "Molto Alta", desc: "Massima potenza — conquista qualsiasi cosa", msg: "Sei inarrestabile! Affronta i compiti più difficili...", empty: "Tutto finito — sei inarrestabile!" }
+      1: { label: "Gentle Hum", desc: "Morbido e lento — solo compiti confortanti", msg: "Prenditela con calma. Qualcosa di leggero per te...", empty: "Niente di abbastanza leggero — forse riposa un po'?" },
+      2: { label: "Quiet Drift", desc: "Ritmo calmo — compiti a bassa pressione", msg: "Inizia con qualcosa di gestibile...", empty: "Nessun compito corrispondente — goditi la calma." },
+      3: { label: "Focus Flow", desc: "Modalità concentrazione — produttività senza distrazioni", msg: "Buon ritmo. Prova questi...", empty: "Tutto libero — sei in anticipo!" },
+      4: { label: "Creative Spark", desc: "Modalità esplorazione — idee e lavoro creativo", msg: "Sei ispirato! Affronta qualcosa di creativo...", empty: "Nessun compito grande rimasto — canalizza quella scintilla!" },
+      5: { label: "Wild Rhythm", desc: "Alta energia — lavoro veloce e intenso", msg: "Sei nella zona! Affronta i più grandi...", empty: "Tutto finito — sei inarrestabile!" }
     }
   }
 };

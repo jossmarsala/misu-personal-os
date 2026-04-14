@@ -11,8 +11,9 @@ import SettingsModal from './components/SettingsModal';
 import EnergySelector from './components/EnergySelector';
 import PrismaticBurst from './components/PrismaticBurst';
 import CommandPalette from './components/CommandPalette';
-import { Clock, CheckCircle2 } from 'lucide-react';
-import FocusMode from './components/FocusMode';
+import PomodoroWidget from './components/PomodoroWidget';
+import MusicPlayer from './components/MusicPlayer';
+import { Clock, CheckCircle2, Timer, Music } from 'lucide-react';
 import { useLanguage } from './context/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import './App.css';
@@ -21,6 +22,8 @@ const DEFAULT_API_KEY = 'AIzaSyD3FlFwMgIYzfPsqbdEUXp7Dkzw-tiG3RY';
 
 function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [showPomodoro, setShowPomodoro] = useState(false);
+  const [showMusic, setShowMusic] = useState(false);
   const { currentEnergy } = useEnergy();
   const { tasks } = useTasks();
   const { t } = useLanguage();
@@ -44,6 +47,24 @@ function App() {
     <div className="app">
       <Header onOpenSettings={() => setSettingsOpen(true)} />
       <CommandPalette />
+
+      {/* Widget toggle buttons */}
+      <div className="widget-toggles">
+        <button
+          className={`widget-toggle-btn ${showPomodoro ? 'active' : ''}`}
+          onClick={() => setShowPomodoro(!showPomodoro)}
+          title="Pomodoro Timer"
+        >
+          <Timer size={16} />
+        </button>
+        <button
+          className={`widget-toggle-btn ${showMusic ? 'active' : ''}`}
+          onClick={() => setShowMusic(!showMusic)}
+          title="Music Player"
+        >
+          <Music size={16} />
+        </button>
+      </div>
 
       <main className="app__main">
         <div className="container">
@@ -122,7 +143,9 @@ function App() {
         <SettingsModal onClose={() => setSettingsOpen(false)} />
       )}
       
-      <FocusMode />
+      {/* Draggable Widgets */}
+      <PomodoroWidget visible={showPomodoro} onClose={() => setShowPomodoro(false)} />
+      <MusicPlayer visible={showMusic} />
     </div>
   );
 }
