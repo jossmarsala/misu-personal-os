@@ -49,8 +49,8 @@ function App() {
       <Header onOpenSettings={() => setSettingsOpen(true)} />
       <CommandPalette />
 
-      {/* Widget toggle buttons via GlassIcons */}
-      <div className="widget-toggles" style={{ display: 'flex', gap: '16px', fontSize: '10px' }}>
+      {/* Widget toggle buttons via GlassIcons centered */}
+      <div className="widget-toggles" style={{ display: 'flex', gap: '16px', fontSize: '10px', justifyContent: 'center', width: '100%', marginBottom: 'var(--space-2)' }}>
         <GlassIcons 
           items={[
             { 

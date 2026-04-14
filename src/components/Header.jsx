@@ -38,9 +38,7 @@ export default function Header({ onOpenSettings }) {
       <div className="container">
         <div className="header__inner">
           <div className="header__brand" style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-            <span className="header__logo">
-              <BlurText text="Misu" animateBy="letters" delay={150} direction="top" className="inline-block" />
-            </span>
+            <span className="header__logo">Misu</span>
             <Clock />
           </div>
 
