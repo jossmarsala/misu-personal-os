@@ -1,5 +1,7 @@
 .draggable-widget {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 280px;
   border-radius: 20px;
   background: var(--bg-card);
@@ -11,6 +13,7 @@
   overflow: hidden;
   touch-action: none;
   user-select: none;
+  z-index: 100;
 }
 
 .draggable-widget.dragging {

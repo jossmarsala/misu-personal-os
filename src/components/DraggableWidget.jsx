@@ -8,7 +8,16 @@ export default function DraggableWidget({ id, title, icon, children, defaultPosi
   const [position, setPosition] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_PREFIX + id);
-      return saved ? JSON.parse(saved) : defaultPosition;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (typeof window !== 'undefined') {
+           const safeX = Math.max(0, Math.min(window.innerWidth - 100, parsed.x || 0));
+           const safeY = Math.max(0, Math.min(window.innerHeight - 50, parsed.y || 0));
+           return { x: safeX, y: safeY };
+        }
+        return parsed;
+      }
+      return defaultPosition;
     } catch { return defaultPosition; }
   });
   const [collapsed, setCollapsed] = useState(false);
