@@ -1,46 +1,61 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser, signupUser, fetchRemoteData } from '../services/api';
+import { supabase } from '../services/supabaseClient';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('misu_token') || null);
+  const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (token) {
-      // In a broader app, we'd verify the token on mount.
-      // For now, assume validity or handle 401 on data fetch.
-      setUser({ token });
-    }
-    setLoading(false);
-  }, [token]);
+    // Check active sessions and subscribe to auth changes
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const login = async (email, password) => {
-    const data = await loginUser(email, password);
-    setToken(data.token);
-    setUser(data.user);
-    localStorage.setItem('misu_token', data.token);
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
     return data;
   };
 
   const signup = async (email, password) => {
-    const data = await signupUser(email, password);
-    setToken(data.token);
-    setUser(data.user);
-    localStorage.setItem('misu_token', data.token);
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    if (error) throw error;
     return data;
   };
 
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('misu_token');
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, signup, logout, loading }}>
+    <AuthContext.Provider value={{ 
+      user: session?.user || null, 
+      session, 
+      login, 
+      signup, 
+      logout, 
+      loading 
+    }}>
       {!loading && children}
     </AuthContext.Provider>
   );

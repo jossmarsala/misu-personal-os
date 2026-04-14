@@ -1,44 +1,61 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { fetchRemoteData, saveRemoteData } from '../services/api';
+import { supabase } from '../services/supabaseClient';
 import { useAuth } from './AuthContext';
 
 const TaskContext = createContext();
 
 export function TaskProvider({ children }) {
-  const { token, logout } = useAuth();
+  const { user, logout } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const isInitialMount = useRef(true);
 
-  // Fetch from remote backend on mount
+  // Fetch from Supabase on mount/user change
   useEffect(() => {
     const init = async () => {
       try {
-        const data = await fetchRemoteData(token);
-        if (data && data.tasks) {
-          setTasks(data.tasks);
+        const { data, error } = await supabase
+          .from('user_data')
+          .select('payload')
+          .eq('user_id', user.id)
+          .single();
+
+        if (error && error.code !== 'PGRST116') { // PGRST116 is 'no rows'
+          console.error("Supabase fetch error:", error);
+        } else if (data?.payload?.tasks) {
+          setTasks(data.payload.tasks);
         }
       } catch (err) {
-        console.error("Failed to load generic tasks:", err);
-        if (err.message === 'Invalid token') logout();
+        console.error("Failed to load tasks from Supabase:", err);
       } finally {
         setLoading(false);
       }
     };
-    if (token) init();
-  }, [token, logout]);
+    if (user?.id) init();
+    else if (!user) {
+      setTasks([]);
+      setLoading(false);
+    }
+  }, [user]);
 
-  // Save to remote backend dynamically on change
+  // Sync to Supabase on change
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
       return;
     }
-    if (!loading && token) {
-      saveRemoteData(token, { tasks }).catch(console.error);
+    if (!loading && user?.id) {
+      const sync = async () => {
+        const { error } = await supabase
+          .from('user_data')
+          .upsert({ user_id: user.id, payload: { tasks } }, { onConflict: 'user_id' });
+        
+        if (error) console.error("Supabase sync error:", error);
+      };
+      sync();
     }
-  }, [tasks, loading, token]);
+  }, [tasks, loading, user]);
 
   const addTask = useCallback((taskData) => {
     const newTask = {
