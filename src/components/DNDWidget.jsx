@@ -20,55 +20,55 @@ export default function DNDWidget({ visible }) {
     if (!audioCtxRef.current) {
       audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
       gainNodeRef.current = audioCtxRef.current.createGain();
-      gainNodeRef.current.gain.setValueAtTime(volume, audioCtxRef.current.currentTime);
+      gainNodeRef.current.gain.value = volume;
       gainNodeRef.current.connect(audioCtxRef.current.destination);
-    }
-    if (audioCtxRef.current.state === 'suspended') {
-      audioCtxRef.current.resume();
     }
   };
 
   const createNoise = (type) => {
     initAudio();
-    if (!audioCtxRef.current) return;
+    const ctx = audioCtxRef.current;
+    if (!ctx) return;
     
+    // Stop and cleanup previous node
     if (noiseNodeRef.current) {
       try {
         noiseNodeRef.current.stop();
+        noiseNodeRef.current.disconnect();
       } catch (e) {}
-      noiseNodeRef.current.disconnect();
     }
 
-    const bufferSize = 2 * audioCtxRef.current.sampleRate;
-    const noiseBuffer = audioCtxRef.current.createBuffer(1, bufferSize, audioCtxRef.current.sampleRate);
+    const bufferSize = ctx.sampleRate * 2;
+    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const output = noiseBuffer.getChannelData(0);
 
-    let lastOut = 0.0; // For brown/pink filters
-
+    let lastOut = 0.0;
     for (let i = 0; i < bufferSize; i++) {
-        const white = Math.random() * 2 - 1;
-        
-        if (type === 'white') {
-            output[i] = white;
-        } else if (type === 'brown') {
-            // Brown noise: integrate white noise (low pass filter)
-            output[i] = (lastOut + (0.02 * white)) / 1.02;
-            lastOut = output[i];
-            output[i] *= 3.5; // Gain compensation
-        } else {
-            // Simple Pink-ish approximation
-            output[i] = (lastOut + (0.1 * white)) / 1.1;
-            lastOut = output[i];
-            output[i] *= 2.5;
-        }
+      const white = Math.random() * 2 - 1;
+      if (type === 'white') {
+        output[i] = white;
+      } else if (type === 'brown') {
+        output[i] = (lastOut + (0.02 * white)) / 1.02;
+        lastOut = output[i];
+        output[i] *= 3.5;
+      } else { // pink
+        output[i] = (lastOut + (0.1 * white)) / 1.1;
+        lastOut = output[i];
+        output[i] *= 2.5;
+      }
     }
 
-    const source = audioCtxRef.current.createBufferSource();
+    const source = ctx.createBufferSource();
     source.buffer = noiseBuffer;
     source.loop = true;
     source.connect(gainNodeRef.current);
     noiseNodeRef.current = source;
-    source.start();
+
+    if (ctx.state === 'suspended') {
+      ctx.resume().then(() => source.start());
+    } else {
+      source.start();
+    }
   };
 
   const startNoise = (type = noiseType) => {
