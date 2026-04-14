@@ -10,7 +10,8 @@ Instead of forcing you to push through exhaustion, Misu asks for your current en
 * **dynamic 3d backgrounds.** a subtle, WebGL-powered background (`PrismaticBurst`) that flows and changes colors according to your current energy state.
 * **gentle recommendations.** a quiet algorithm that suggests an appropriate task based on your energy constraints and impending deadlines, rather than overwhelming you with a massive backlog.
 * **ai weekly planner.** integration with Google's Gemini AI to automatically organize and chunk your active tasks across a balanced, seven-day schedule. 
-* **private by design.** everything is kept locally in your browser's storage. You can export and import your `.json` data whenever you need it.
+* **cloud-sync ready.** now integrated with Supabase for persistent, cross-device authentication and data storage. [Last Update: 2026-04-13]
+* **private by design.** everything is kept securely in your own Supabase instance or local storage fallback.
 
 ## tech stack
 
