@@ -135,7 +135,7 @@ export default function AuthPage() {
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
-              <label>Email</label>
+              <label>{t('auth.email')}</label>
               <div className="input-wrapper">
                 <Mail size={16} />
                 <input 
@@ -150,7 +150,7 @@ export default function AuthPage() {
             </div>
 
             <div className="form-group">
-              <label>Password</label>
+              <label>{t('auth.password')}</label>
               <div className="input-wrapper">
                 <Lock size={16} />
                 <input 
@@ -171,9 +171,9 @@ export default function AuthPage() {
             {isLogin && (
               <div className="auth-options">
                 <label>
-                  <input type="checkbox" style={{ accentColor: 'var(--energy-primary)' }} /> Remember me
+                  <input type="checkbox" style={{ accentColor: 'var(--energy-primary)' }} /> {t('auth.rememberMe')}
                 </label>
-                <a href="#" style={{ color: 'var(--text-tertiary)', textDecoration: 'none' }}>Forgot password?</a>
+                <a href="#" style={{ color: 'var(--text-tertiary)', textDecoration: 'none' }}>{t('auth.forgotPassword')}</a>
               </div>
             )}
 
@@ -193,9 +193,9 @@ export default function AuthPage() {
           </form>
 
           <div className="auth-switch">
-             <span>{isLogin ? "Don't have an account?" : "Already have an account?"}</span>
+             <span>{isLogin ? t('auth.noAccount') : t('auth.alreadyHaveAccount')}</span>
             <button className="btn btn-ghost btn-sm" onClick={() => { setIsLogin(!isLogin); setError(''); }} type="button">
-              {isLogin ? "Sign Up" : "Log In"}
+              {isLogin ? t('auth.signupLink') : t('auth.loginLink')}
             </button>
           </div>
         </div>

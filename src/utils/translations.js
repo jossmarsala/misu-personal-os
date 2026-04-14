@@ -16,6 +16,10 @@ export const translations = {
       tomorrow: "Tomorrow",
       overdue: "Overdue",
       dueSoon: "Due soon",
+      account: "Account",
+      logout: "Disconnect Account",
+      success: "success!",
+      error: "Error:",
     },
     header: {
       currentEnergy: "Current Mood",
@@ -52,6 +56,7 @@ export const translations = {
       restDay: "Rest day",
       loading: "Tuning the playlist...",
       error: "The AI encountered an issue. Please try again.",
+      apiError: "Please add your Gemini API key in Settings first.",
     },
     settings: {
       apiKey: "Gemini API Key",
@@ -63,6 +68,7 @@ export const translations = {
       shield: "Focus Shield",
       clearAll: "Clear All Tasks",
       confirmClear: "Click again to confirm",
+      signedInAs: "Currently signed in as:",
     },
     auth: {
       loginTitle: "Welcome Back",
@@ -76,6 +82,14 @@ export const translations = {
       successTitle: "Check your inbox 📧",
       successMsg: "We sent a confirmation link to your email. Click it to activate your account, then come back here to sign in.",
       passwordHint: "Minimum 6 characters",
+      email: "Email",
+      password: "Password",
+      rememberMe: "Remember me",
+      forgotPassword: "Forgot password?",
+      noAccount: "Don't have an account?",
+      alreadyHaveAccount: "Already have an account?",
+      signupLink: "Sign Up",
+      loginLink: "Log In",
     },
     energy: {
       1: { label: "Whisper", desc: "A moment for deep rest and recovery", musicDesc: "Ambient sounds • No music", msg: "Take it easy. Something gentle for you...", empty: "Nothing light enough — maybe just rest a little?" },
@@ -89,6 +103,39 @@ export const translations = {
       idleAdvice: "You've been at peak energy for a while without moving tasks. Maybe a 2-minute breathing break would help you break the friction?",
       dndIntro: "Focus Shield Active",
       dndHelp: "White: improves concentration and blocks distractions. Pink: balances and calms the mind. Brown: induces deep relaxation and supports sleep."
+    },
+    dnd: {
+      shieldActive: "Shield Active",
+      enableShield: "Enable Shield",
+      backgroundNoise: "Background Noise",
+      white: "White",
+      pink: "Pink",
+      brown: "Brown",
+      muteNoise: "Mute Noise",
+      startNoise: "Start Noise",
+      musicMuted: "Music Muted",
+      distractionsHidden: "Distractions Hidden"
+    },
+    pomodoro: {
+      title: "Pomodoro",
+      focus: "Focus",
+      break: "Break",
+      longBreak: "Long Break",
+      reset: "Reset",
+      skip: "Skip",
+      selectTask: "Select a task...",
+      noTasks: "No active tasks",
+      markDone: "Mark as done"
+    },
+    music: {
+      title: "Music",
+      next: "Next Track",
+      noTracks: "No tracks",
+      noTracksFolder: "No tracks in folder"
+    },
+    widgets: {
+      audio: "Audio",
+      focus: "Focus"
     }
   },
   es: {
@@ -108,6 +155,10 @@ export const translations = {
       tomorrow: "Mañana",
       overdue: "Atrasado",
       dueSoon: "Pronto",
+      account: "Cuenta",
+      logout: "Cerrar Sesión",
+      success: "¡éxito!",
+      error: "Error:",
     },
     header: {
       currentEnergy: "Modo Actual",
@@ -144,6 +195,7 @@ export const translations = {
       restDay: "Día de descanso",
       loading: "Preparando la playlist...",
       error: "La IA encontró un problema. Por favor intenta de nuevo.",
+      apiError: "Por favor, añade tu clave API de Gemini en Ajustes primero.",
     },
     settings: {
       apiKey: "Clave API de Gemini",
@@ -155,6 +207,7 @@ export const translations = {
       shield: "Escudo de Enfoque",
       clearAll: "Borrar Todas las Tareas",
       confirmClear: "Haz clic de nuevo para confirmar",
+      signedInAs: "Sesión iniciada como:",
     },
     auth: {
       loginTitle: "¡Hola de nuevo!",
@@ -168,6 +221,14 @@ export const translations = {
       successTitle: "Revisa tu bandeja 📧",
       successMsg: "Te enviamos un enlace de confirmación a tu correo. Haz clic para activar tu cuenta y vuelve aquí para iniciar sesión.",
       passwordHint: "Mínimo 6 caracteres",
+      email: "Correo electrónico",
+      password: "Contraseña",
+      rememberMe: "Recordarme",
+      forgotPassword: "¿Olvidaste tu contraseña?",
+      noAccount: "¿No tienes cuenta?",
+      alreadyHaveAccount: "¿Ya tienes cuenta?",
+      signupLink: "Regístrate",
+      loginLink: "Inicia sesión",
     },
     energy: {
       1: { label: "Susurro", desc: "Momento de calma profunda y descanso", musicDesc: "Ambiente • Sin música", msg: "Tómate un momento. Algo suave para ti...", empty: "¿Nada ligero? Quizás descansa un poco." },
@@ -181,6 +242,39 @@ export const translations = {
       idleAdvice: "Llevas un tiempo en máxima energía sin mover tareas. ¿Quizás 2 minutos de respiración te ayuden a romper la inercia?",
       dndIntro: "Escudo de Enfoque Activo",
       dndHelp: "Blanco: mejora la concentración y bloquea distracciones. Rosa: equilibra y calma la mente. Marrón: induce relajación profunda y favorece el sueño."
+    },
+    dnd: {
+      shieldActive: "Escudo Activo",
+      enableShield: "Activar Escudo",
+      backgroundNoise: "Ruido de fondo",
+      white: "Blanco",
+      pink: "Rosa",
+      brown: "Marrón",
+      muteNoise: "Silenciar Ruido",
+      startNoise: "Comenzar Ruido",
+      musicMuted: "Música Silenciada",
+      distractionsHidden: "Distraciones Ocultas"
+    },
+    pomodoro: {
+      title: "Pomodoro",
+      focus: "Enfoque",
+      break: "Descanso",
+      longBreak: "Descanso Largo",
+      reset: "Reiniciar",
+      skip: "Saltar",
+      selectTask: "Selecciona una tarea...",
+      noTasks: "Sin tareas activas",
+      markDone: "Marcar como terminada"
+    },
+    music: {
+      title: "Música",
+      next: "Siguiente pista",
+      noTracks: "Sin pistas",
+      noTracksFolder: "No hay pistas en la carpeta"
+    },
+    widgets: {
+      audio: "Audio",
+      focus: "Enfoque"
     }
   },
   it: {
@@ -200,6 +294,10 @@ export const translations = {
       tomorrow: "Domani",
       overdue: "In ritardo",
       dueSoon: "In scadenza",
+      account: "Account",
+      logout: "Disconnetti Account",
+      success: "successo!",
+      error: "Errore:",
     },
     header: {
       currentEnergy: "Stato Attuale",
@@ -236,6 +334,7 @@ export const translations = {
       restDay: "Giorno di riposo",
       loading: "Preparando la playlist...",
       error: "L'IA ha riscontrato un problema. Riprova.",
+      apiError: "Per favore, aggiungi prima la tua chiave API Gemini nelle Impostazioni.",
     },
     settings: {
       apiKey: "Chiave API Gemini",
@@ -247,6 +346,7 @@ export const translations = {
       shield: "Scudo Focus",
       clearAll: "Cancella Tutte le Attività",
       confirmClear: "Clicca di nuovo per confermare",
+      signedInAs: "Accesso effettuato come:",
     },
     auth: {
       loginTitle: "Bentornato!",
@@ -260,6 +360,14 @@ export const translations = {
       successTitle: "Controlla la tua casella 📧",
       successMsg: "Ti abbiamo inviato un link di conferma. Cliccalo per attivare il tuo account, poi torna qui per accedere.",
       passwordHint: "Minimo 6 caratteri",
+      email: "Email",
+      password: "Password",
+      rememberMe: "Ricordami",
+      forgotPassword: "Password dimenticata?",
+      noAccount: "Non hai un account?",
+      alreadyHaveAccount: "Hai già un account?",
+      signupLink: "Registrati",
+      loginLink: "Accedi",
     },
     energy: {
       1: { label: "Sussurro", desc: "Momento di calma e riposo profondo", musicDesc: "Suoni d'ambiente • Senza musica", msg: "Prenditela con calma. Qualcosa di leggero per te...", empty: "Niente di abbastanza leggero — forse riposa un po'?" },
@@ -273,6 +381,39 @@ export const translations = {
       idleAdvice: "Sei al massimo dell'energia da un po' senza aggiornare compiti. Forse 2 minuti di respirazione ti aiuteranno a ritrovare il flusso?",
       dndIntro: "Scudo Focus Attivo",
       dndHelp: "Bianco: migliora la concentrazione e blocca le distrazioni. Rosa: equilibra e calma la mente. Marrone: induce un rilassamento profondo e favorisce il sonno."
+    },
+    dnd: {
+      shieldActive: "Scudo Attivo",
+      enableShield: "Attiva Scudo",
+      backgroundNoise: "Rumore di sottofondo",
+      white: "Bianco",
+      pink: "Rosa",
+      brown: "Marrone",
+      muteNoise: "Silenzia Rumore",
+      startNoise: "Inizia Rumore",
+      musicMuted: "Musica Silenziata",
+      distrazioniHidden: "Distrazioni Nascoste"
+    },
+    pomodoro: {
+      title: "Pomodoro",
+      focus: "Focus",
+      break: "Pausa",
+      longBreak: "Pausa Lunga",
+      reset: "Reset",
+      skip: "Salta",
+      selectTask: "Seleziona un'attività...",
+      noTasks: "Nessuna attività attiva",
+      markDone: "Segna come completata"
+    },
+    music: {
+      title: "Musica",
+      next: "Traccia successiva",
+      noTracks: "Nessuna traccia",
+      noTracksFolder: "Nessuna traccia nella cartella"
+    },
+    widgets: {
+      audio: "Audio",
+      focus: "Focus"
     }
   }
 };

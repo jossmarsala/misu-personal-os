@@ -96,7 +96,7 @@ export default function PomodoroWidget({ visible, onClose }) {
   return (
     <DraggableWidget 
       id="pomodoro" 
-      title="Pomodoro" 
+      title={t('pomodoro.title')} 
       icon={<Timer size={14} />}
       defaultPosition={{ x: window.innerWidth - 310, y: 100 }}
     >
@@ -109,7 +109,7 @@ export default function PomodoroWidget({ visible, onClose }) {
               className={`pomodoro__mode-btn ${mode === key ? 'active' : ''}`}
               onClick={() => { setMode(key); setTimeLeft(m.duration); setIsActive(false); }}
             >
-              {m.label}
+              {t(`pomodoro.${key}`)}
             </button>
           ))}
         </div>
@@ -135,13 +135,13 @@ export default function PomodoroWidget({ visible, onClose }) {
 
         {/* Controls */}
         <div className="pomodoro__controls">
-          <button className="pomodoro__btn pomodoro__btn--sm" onClick={reset} title="Reset">
+          <button className="pomodoro__btn pomodoro__btn--sm" onClick={reset} title={t('pomodoro.reset')}>
             <RotateCcw size={16} />
           </button>
           <button className={`pomodoro__btn pomodoro__btn--main ${isActive ? 'active' : ''}`} onClick={toggle}>
             {isActive ? <Pause size={20} /> : <Play size={20} />}
           </button>
-          <button className="pomodoro__btn pomodoro__btn--sm" onClick={skip} title="Skip">
+          <button className="pomodoro__btn pomodoro__btn--sm" onClick={skip} title={t('pomodoro.skip')}>
             <SkipForward size={16} />
           </button>
         </div>
@@ -159,7 +159,7 @@ export default function PomodoroWidget({ visible, onClose }) {
             className="pomodoro__task-picker" 
             onClick={() => setShowTaskPicker(!showTaskPicker)}
           >
-            <span>{boundTask ? boundTask.title : 'Select a task...'}</span>
+            <span>{boundTask ? boundTask.title : t('pomodoro.selectTask')}</span>
             <ChevronDown size={14} />
           </button>
           {showTaskPicker && (
@@ -174,7 +174,7 @@ export default function PomodoroWidget({ visible, onClose }) {
                 </button>
               ))}
               {activeTasks.length === 0 && (
-                <div className="pomodoro__task-option" style={{ opacity: 0.5 }}>No active tasks</div>
+                <div className="pomodoro__task-option" style={{ opacity: 0.5 }}>{t('pomodoro.noTasks')}</div>
               )}
             </div>
           )}
@@ -182,7 +182,7 @@ export default function PomodoroWidget({ visible, onClose }) {
 
         {boundTask && (
           <button className="pomodoro__done-btn" onClick={completeTask}>
-            ✓ Mark as done
+            ✓ {t('pomodoro.markDone')}
           </button>
         )}
       </div>

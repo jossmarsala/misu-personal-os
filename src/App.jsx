@@ -62,13 +62,13 @@ function App() {
             { 
               icon: <Timer size={20} />, 
               color: showPomodoro ? energyDef.colorA : 'gray', 
-              label: 'Focus', 
+              label: t('widgets.focus'), 
               onClick: () => setShowPomodoro(!showPomodoro) 
             },
             { 
               icon: <Music size={20} />, 
               color: showMusic ? energyDef.colorA : 'gray', 
-              label: 'Audio', 
+              label: t('widgets.audio'), 
               onClick: () => setShowMusic(!showMusic) 
             },
             { 

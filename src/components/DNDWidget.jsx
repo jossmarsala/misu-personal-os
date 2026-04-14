@@ -100,7 +100,7 @@ export default function DNDWidget({ visible }) {
   return (
     <DraggableWidget 
       id="dnd" 
-      title="Focus Shield" 
+      title={t('settings.shield')} 
       icon={<Shield size={14} />}
       defaultPosition={{ x: 20, y: 480 }}
     >
@@ -111,33 +111,33 @@ export default function DNDWidget({ visible }) {
             onClick={() => setDndActive(!dndActive)}
           >
             <Shield size={20} />
-            <span>{dndActive ? 'Shield Active' : 'Enable Shield'}</span>
+            <span>{dndActive ? t('dnd.shieldActive') : t('dnd.enableShield')}</span>
           </button>
         </div>
 
         <div className="dnd-widget__controls">
           <div className="dnd-control-group">
-            <span className="dnd-label">Background Noise</span>
+            <span className="dnd-label">{t('dnd.backgroundNoise')}</span>
             <div className="dnd-btn-row">
               <button 
                 className={`dnd-btn ${isPlaying && noiseType === 'white' ? 'active' : ''}`}
                 onClick={() => { setNoiseType('white'); if(!isPlaying) toggleNoise(); }}
-              >White</button>
+              >{t('dnd.white')}</button>
               <button 
                 className={`dnd-btn ${isPlaying && noiseType === 'pink' ? 'active' : ''}`}
                 onClick={() => { setNoiseType('pink'); if(!isPlaying) toggleNoise(); }}
-              >Pink</button>
+              >{t('dnd.pink')}</button>
               <button 
                 className={`dnd-btn ${isPlaying && noiseType === 'brown' ? 'active' : ''}`}
                 onClick={() => { setNoiseType('brown'); if(!isPlaying) toggleNoise(); }}
-              >Brown</button>
+              >{t('dnd.brown')}</button>
             </div>
           </div>
 
           <div className="dnd-actions">
             <button className={`noise-toggle-btn ${isPlaying ? 'playing' : ''}`} onClick={toggleNoise}>
               {isPlaying ? <Volume2 size={16} /> : <VolumeX size={16} />}
-              {isPlaying ? 'Mute Noise' : 'Start Noise'}
+              {isPlaying ? t('dnd.muteNoise') : t('dnd.startNoise')}
             </button>
             
             <input 
@@ -152,8 +152,8 @@ export default function DNDWidget({ visible }) {
 
         {dndActive && (
           <div className="dnd-status-badges">
-            <span className="dnd-badge"><VolumeX size={10} /> Music Muted</span>
-            <span className="dnd-badge"><Moon size={10} /> Distractions Hidden</span>
+            <span className="dnd-badge"><VolumeX size={10} /> {t('dnd.musicMuted')}</span>
+            <span className="dnd-badge"><Moon size={10} /> {t('dnd.distractionsHidden')}</span>
           </div>
         )}
       </div>

@@ -28,7 +28,7 @@ export default function WeeklyPlanner() {
     const apiKey = settings.geminiApiKey;
 
     if (!apiKey) {
-      setError('Please add your Gemini API key in Settings first.');
+      setError(t('planner.apiError'));
       return;
     }
 

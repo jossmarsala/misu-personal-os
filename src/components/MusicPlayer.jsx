@@ -18,7 +18,7 @@ export default function MusicPlayer({ visible }) {
   
   const [playlist, setPlaylist] = useState([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-  const [currentTrackName, setCurrentTrackName] = useState('No tracks');
+  const [currentTrackName, setCurrentTrackName] = useState(t('music.noTracks'));
   
   const audioRef = useRef(null);
 
@@ -52,10 +52,10 @@ export default function MusicPlayer({ visible }) {
         }, 50);
       }
     } else {
-      setCurrentTrackName('No tracks in folder /' + currentEnergy);
+      setCurrentTrackName(t('music.noTracksFolder') + ' /' + currentEnergy);
       setIsPlaying(false);
     }
-  }, [currentEnergy, isPlaying]);
+  }, [currentEnergy, isPlaying, t]);
 
   const togglePlay = () => {
     if (playlist.length === 0) return;
@@ -96,7 +96,7 @@ export default function MusicPlayer({ visible }) {
   return (
     <DraggableWidget 
       id="music" 
-      title="Music" 
+      title={t('music.title')} 
       icon={<Music size={14} />}
       defaultPosition={{ x: window.innerWidth - 310, y: 480 }}
     >
@@ -152,7 +152,7 @@ export default function MusicPlayer({ visible }) {
               alignItems: 'center',
               justifyContent: 'center'
             }}
-            title="Next Track"
+            title={t('music.next')}
           >
             <SkipForward size={14} />
           </button>

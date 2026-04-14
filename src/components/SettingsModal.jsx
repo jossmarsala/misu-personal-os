@@ -39,10 +39,10 @@ export default function SettingsModal({ onClose }) {
     try {
       const imported = await importFromJSON(file);
       importTasksFromJSON(imported);
-      setImportStatus(`${t('settings.import')} success!`);
+      setImportStatus(`${t('settings.import')} ${t('common.success')}`);
       setTimeout(() => setImportStatus(null), 3000);
     } catch (err) {
-      setImportStatus(`Error: ${err.message}`);
+      setImportStatus(`${t('common.error')} ${err.message}`);
       setTimeout(() => setImportStatus(null), 4000);
     }
     
@@ -107,10 +107,10 @@ export default function SettingsModal({ onClose }) {
         <div className="settings-modal__section">
           <h3 className="settings-modal__section-title">{t('settings.dataManagement')}</h3>
           <div className="settings-section">
-            <h3 className="settings-subtitle">Account</h3>
-            <p className="settings-desc">Currently signed in as: <strong>{user?.email}</strong></p>
+            <h3 className="settings-subtitle">{t('common.account')}</h3>
+            <p className="settings-desc">{t('settings.signedInAs')} <strong>{user?.email}</strong></p>
             <button className="btn btn-ghost" onClick={logout} style={{ width: '100%', marginTop: 'var(--space-2)' }}>
-              <LogOut size={16} /> Disconnect Account
+              <LogOut size={16} /> {t('common.logout')}
             </button>
           </div>
           
