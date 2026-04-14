@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useEnergy } from '../context/EnergyContext';
 import { useTasks } from '../context/TaskContext';
 
-export function useMindfulness() {
-  const { currentEnergy, breathingActive } = useEnergy();
+export function useMindfulness(dndVisible) {
+  const { currentEnergy, breathingActive, setBreathingActive } = useEnergy();
   const { tasks } = useTasks();
   
   const [advice, setAdvice] = useState(null);
@@ -15,14 +15,13 @@ export function useMindfulness() {
 
   // Track activity (task additions or completions)
   useEffect(() => {
-    const activeTasks = tasks.filter(t => !t.completed).length;
     if (tasks.length !== tasksCountRef.current) {
       lastActivityRef.current = Date.now();
       tasksCountRef.current = tasks.length;
     }
   }, [tasks]);
 
-  // Logic to detect "Flow Inconsistency"
+  // Logic to detect "Flow Inconsistency" and trigger advice
   useEffect(() => {
     const interval = setInterval(() => {
       const activeTasksCount = tasks.filter(t => !t.completed).length;
@@ -30,7 +29,7 @@ export function useMindfulness() {
 
       // If high energy (4-5) but no activity for > 20 mins and has pending tasks
       if (currentEnergy >= 4 && activeTasksCount > 0 && timeSinceActivity > 20 && !helperVisible && !breathingActive) {
-        setHelperType('advice');
+        setHelperType('mindfulness'); // Change to mindfulness type to show the circle
         setAdvice('mindfulness.idleAdvice');
         setHelperVisible(true);
       }
@@ -45,10 +44,23 @@ export function useMindfulness() {
       setHelperType('mindfulness');
       setAdvice('mindfulness.breathing');
       setHelperVisible(true);
-    } else {
+    } else if (helperType !== 'advice') { // Don't hide if it's just general advice
       setHelperVisible(false);
     }
   }, [breathingActive]);
+
+  // Handle Focus Shield Onboarding
+  useEffect(() => {
+    if (dndVisible) {
+      const hasSeenHelp = localStorage.getItem('misu_seen_dnd_help');
+      if (!hasSeenHelp) {
+        setHelperType('info');
+        setAdvice('mindfulness.dndHelp');
+        setHelperVisible(true);
+        localStorage.setItem('misu_seen_dnd_help', 'true');
+      }
+    }
+  }, [dndVisible]);
 
   return {
     advice,

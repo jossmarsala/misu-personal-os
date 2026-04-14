@@ -42,7 +42,7 @@ export default function MusicPlayer({ visible }) {
       let filename = Object.keys(moodTracksImport)
         .find(path => moodTracksImport[path] === (moodTracksImport[Object.keys(moodTracksImport)[0]])) || '';
       
-      filename = tracks[0].split('/').pop().replace('.mp3', '').replaceAll('_', ' ').replaceAll('-', ' ');
+      filename = (tracks[0] || '').split('/').pop()?.replace('.mp3', '').replaceAll('_', ' ').replaceAll('-', ' ') || '';
       setCurrentTrackName(decodeURIComponent(filename));
       
       // Auto-restart if we were already playing
@@ -74,8 +74,8 @@ export default function MusicPlayer({ visible }) {
     const nextIdx = (currentTrackIndex + 1) % playlist.length;
     setCurrentTrackIndex(nextIdx);
     
-    const urlStr = playlist[nextIdx];
-    const filename = urlStr.split('/').pop().replace('.mp3', '').replaceAll('_', ' ').replaceAll('-', ' ');
+    const urlStr = playlist[nextIdx] || '';
+    const filename = urlStr.split('/').pop()?.replace('.mp3', '').replaceAll('_', ' ').replaceAll('-', ' ') || '';
     setCurrentTrackName(decodeURIComponent(filename));
     
     if (isPlaying) {

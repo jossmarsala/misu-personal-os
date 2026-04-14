@@ -95,10 +95,21 @@
 }
 
 @keyframes helper-breathe {
-  0%, 100% { transform: scale(1); opacity: 0.3; }   /* Start */
-  21% { transform: scale(3.5); opacity: 1; }     /* Inhale 4s (4/19 = 21%) */
-  58% { transform: scale(3.5); opacity: 0.8; }     /* Hold 7s (11/19 = 58%) */
-  100% { transform: scale(1); opacity: 0.3; }     /* Exhale 8s */
+  0%, 100% { 
+    transform: scale(0.85); 
+    opacity: 0.25; 
+    box-shadow: 0 0 10px var(--energy-glow);
+  }
+  21% { 
+    transform: scale(3.8); 
+    opacity: 1; 
+    box-shadow: 0 0 40px var(--energy-glow);
+  }
+  58% { 
+    transform: scale(3.8); 
+    opacity: 0.9; 
+    box-shadow: 0 0 30px var(--energy-glow);
+  }
 }
 
 @media (max-width: 768px) {

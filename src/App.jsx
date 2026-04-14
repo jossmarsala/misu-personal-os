@@ -17,7 +17,7 @@ import GlassIcons from './components/GlassIcons';
 import DNDWidget from './components/DNDWidget';
 import MisuHelper from './components/MisuHelper';
 import { useMindfulness } from './hooks/useMindfulness';
-import { Clock, CheckCircle2, Timer, Music, Wind } from 'lucide-react';
+import { Clock, CheckCircle2, Timer, Music, Wind, Shield } from 'lucide-react';
 import { useLanguage } from './context/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import './App.css';
@@ -28,12 +28,13 @@ function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [showPomodoro, setShowPomodoro] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
+  const [showDND, setShowDND] = useState(false);
   const { currentEnergy, dndActive, breathingActive, setBreathingActive } = useEnergy();
   const { tasks } = useTasks();
   const { t } = useLanguage();
   const energyDef = getEnergyDef(currentEnergy);
 
-  const { advice, helperVisible, helperType, setHelperVisible } = useMindfulness();
+  const { advice, helperVisible, helperType, setHelperVisible } = useMindfulness(showDND);
 
   useEffect(() => {
     const settings = loadSettings();
@@ -71,10 +72,10 @@ function App() {
               onClick: () => setShowMusic(!showMusic) 
             },
             { 
-              icon: <Wind size={20} />, 
-              color: breathingActive ? energyDef.colorA : 'gray', 
-              label: 'Breathe', 
-              onClick: () => setBreathingActive(!breathingActive) 
+              icon: <Shield size={20} />, 
+              color: showDND ? energyDef.colorA : 'gray', 
+              label: t('settings.shield'), 
+              onClick: () => setShowDND(!showDND) 
             }
           ]} 
           colorful={true}
@@ -166,11 +167,11 @@ function App() {
       {/* Draggable Widgets */}
       <PomodoroWidget visible={showPomodoro} onClose={() => setShowPomodoro(false)} />
       <MusicPlayer visible={showMusic} />
-      <DNDWidget />
+      <DNDWidget visible={showDND} />
       
       <MisuHelper 
         visible={helperVisible} 
-        advice={t(advice)} 
+        advice={t(advice) || ''} 
         type={helperType}
         onClose={() => setHelperVisible(false)}
       />

@@ -3,9 +3,11 @@ import { Shield, Volume2, VolumeX, Moon, Zap } from 'lucide-react';
 import { useEnergy } from '../context/EnergyContext';
 import DraggableWidget from './DraggableWidget';
 import './DNDWidget.css';
+import { useLanguage } from '../context/LanguageContext';
 
-export default function DNDWidget() {
+export default function DNDWidget({ visible }) {
   const { dndActive, setDndActive } = useEnergy();
+  const { t } = useLanguage();
   const [noiseType, setNoiseType] = useState('white'); // white, pink, brown
   const [volume, setVolume] = useState(0.4);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -92,6 +94,8 @@ export default function DNDWidget() {
         // We could play a transition sound here if we wanted
     }
   }, [dndActive]);
+
+  if (!visible) return null;
 
   return (
     <DraggableWidget 

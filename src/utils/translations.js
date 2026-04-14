@@ -60,6 +60,7 @@ export const translations = {
       export: "Export Tasks",
       import: "Import Tasks",
       dangerZone: "Danger Zone",
+      shield: "Focus Shield",
       clearAll: "Clear All Tasks",
       confirmClear: "Click again to confirm",
     },
@@ -85,7 +86,9 @@ export const translations = {
     },
     mindfulness: {
       breathing: "Inhale (4s), Hold (7s), Exhale (8s). Repeat 4 times to recalibrate your nervous system.",
-      idleAdvice: "You've been at peak energy for a while without moving tasks. Maybe a 2-minute breathing break would help you break the friction?"
+      idleAdvice: "You've been at peak energy for a while without moving tasks. Maybe a 2-minute breathing break would help you break the friction?",
+      dndIntro: "Focus Shield Active",
+      dndHelp: "White masks noise, Pink balances frequencies (rain), Brown is deep & rumbling (immersion)."
     }
   },
   es: {
@@ -149,6 +152,7 @@ export const translations = {
       export: "Exportar Tareas",
       import: "Importar Tareas",
       dangerZone: "Zona de Peligro",
+      shield: "Escudo de Enfoque",
       clearAll: "Borrar Todas las Tareas",
       confirmClear: "Haz clic de nuevo para confirmar",
     },
@@ -174,7 +178,9 @@ export const translations = {
     },
     mindfulness: {
       breathing: "Inhala (4s), Mantén (7s), Exhala (8s). Repetir 4 veces para recalibrar tu sistema nervioso.",
-      idleAdvice: "Llevás un tiempo en máxima energía sin mover tareas. ¿Quizás 2 minutos de respiración te ayuden a romper la inercia?"
+      idleAdvice: "Llevás un tiempo en máxima energía sin mover tareas. ¿Quizás 2 minutos de respiración te ayuden a romper la inercia?",
+      dndIntro: "Escudo de Enfoque Activo",
+      dndHelp: "Blanco enmascara ruidos, Rosa equilibra frecuencias (lluvia), Marrón es profundo y envolvente (inmersión)."
     }
   },
   it: {
@@ -238,6 +244,7 @@ export const translations = {
       export: "Esporta Attività",
       import: "Importa Attività",
       dangerZone: "Zona di Pericolo",
+      shield: "Scudo Focus",
       clearAll: "Cancella Tutte le Attività",
       confirmClear: "Clicca di nuovo per confermare",
     },
@@ -263,7 +270,9 @@ export const translations = {
     },
     mindfulness: {
       breathing: "Inspira (4s), Trattieni (7s), Espira (8s). Ripeti 4 volte per ricalibrare il sistema nervoso.",
-      idleAdvice: "Sei al massimo dell'energia da un po' senza aggiornare compiti. Forse 2 minuti di respirazione ti aiuteranno a ritrovare il flusso?"
+      idleAdvice: "Sei al massimo dell'energia da un po' senza aggiornare compiti. Forse 2 minuti di respirazione ti aiuteranno a ritrovare il flusso?",
+      dndIntro: "Scudo Focus Attivo",
+      dndHelp: "Bianco maschera rumori, Rosa equilibra frequenze (pioggia), Marrone è profondo e avvolgente (immersione)."
     }
   }
 };

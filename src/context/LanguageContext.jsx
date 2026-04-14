@@ -14,6 +14,7 @@ export function LanguageProvider({ children }) {
   }, [language]);
 
   const t = (path) => {
+    if (typeof path !== 'string') return path;
     const keys = path.split('.');
     let result = translations[language];
     for (const key of keys) {
