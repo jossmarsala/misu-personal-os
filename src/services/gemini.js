@@ -3,7 +3,6 @@
    ═══════════════════════════════════════ */
 
 import { GoogleGenAI } from '@google/genai';
-import { getStartOfWeek } from '../utils/dateUtils';
 
 /**
  * Generate a weekly plan using Gemini AI
@@ -20,22 +19,39 @@ export async function generateWeeklyPlan(tasks, apiKey, language = 'en') {
 
   const ai = new GoogleGenAI({ apiKey });
 
-  const monday = getStartOfWeek();
-  const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const weekDates = weekDays.map((name, i) => {
-    const d = new Date(monday);
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+  const todayStr = todayDate.toISOString().split('T')[0];
+
+  const rollingDays = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(todayDate);
     d.setDate(d.getDate() + i);
-    return `${name} (${d.toISOString().split('T')[0]})`;
+    return {
+      dateStr: d.toISOString().split('T')[0],
+      dayName: d.toLocaleDateString('en-US', { weekday: 'long' })
+    };
   });
 
-  const taskList = activeTasks.map(t => ({
-    id: t.id,
-    title: t.title,
-    deadline: t.deadline || 'No deadline',
-    estimatedHours: t.estimatedHours || 1,
-    energyRequired: t.energyRequired || 3,
-    description: t.description || '',
-  }));
+  const weekDatesStr = rollingDays.map(d => `${d.dayName} (${d.dateStr})`).join(', ');
+
+  const taskList = activeTasks.map(t => {
+    let isOverdue = false;
+    if (t.deadline) {
+      const dl = new Date(t.deadline);
+      dl.setHours(0, 0, 0, 0);
+      if (dl < todayDate) isOverdue = true;
+    }
+
+    return {
+      id: t.id,
+      title: t.title,
+      deadline: t.deadline || 'No deadline',
+      isOverdue,
+      estimatedHours: t.estimatedHours || 1,
+      energyRequired: t.energyRequired || 3,
+      description: t.description || '',
+    };
+  });
 
   const langMap = {
     en: 'English',
@@ -44,34 +60,29 @@ export async function generateWeeklyPlan(tasks, apiKey, language = 'en') {
   };
   const langName = langMap[language] || 'English';
 
-  const prompt = `You are an intelligent weekly task planner. Given the following tasks, create an optimal weekly schedule.
+  const prompt = `You are an intelligent weekly task planner. Given the following tasks, create an optimal schedule for the next 7 days.
   
   LANGUAGE: Use ${langName} for any generated content.
+  TODAY'S DATE: ${todayStr}
 
 TASKS:
 ${JSON.stringify(taskList, null, 2)}
 
-WEEK: ${weekDates.join(', ')}
+NEXT 7 DAYS:
+${weekDatesStr}
 
 RULES:
-1. Respect deadlines — tasks must be scheduled before or on their deadline
-2. Tasks longer than 3 hours should be split into 1-3 hour chunks
-3. Balance workload across the week (avoid overloading any single day)
-4. Consider energy levels — schedule high-energy tasks earlier in the week when motivation is typically higher
-5. Aim for 4-6 productive hours per weekday, 2-3 hours on weekends
-6. Leave buffer time between tasks
-7. If a task has no deadline, schedule it in available gaps
-8. Output any generated text (like "Part 1 of 2") in ${langName}.
+1. ALL TASKS MUST BE SCHEDULED. Do not omit any task.
+2. OVERDUE TASKS (isOverdue: true) MUST be scheduled on TODAY or TOMORROW. Disregard their original deadline for placement purposes.
+3. For normal tasks, respect deadlines — tasks must be scheduled on or before their deadline.
+4. Tasks longer than 3 hours should be split into 1-3 hour chunks.
+5. Aim for 4-6 hours per day, but if total task hours force you to exceed this to fit all tasks, that is okay. Balance the load as evenly as possible.
+6. Consider energy levels — schedule high-energy tasks earlier in the 7-day period.
+7. Output any generated text (like "Part 1 of 2") in ${langName}.
 
-RESPOND WITH ONLY valid JSON in this exact format (no markdown, no backticks, no explanation):
+RESPOND WITH ONLY valid JSON in this exact format, using the exact YYYY-MM-DD date strings as keys (no markdown, no backticks, no explanation):
 {
-  "monday": [{"taskId": "...", "title": "...", "hours": 2, "isChunk": false, "chunkLabel": ""}],
-  "tuesday": [],
-  "wednesday": [],
-  "thursday": [],
-  "friday": [],
-  "saturday": [],
-  "sunday": []
+${rollingDays.map(d => `  "${d.dateStr}": ${d.dateStr === todayStr ? '[{"taskId": "...", "title": "...", "hours": 2, "isChunk": false, "chunkLabel": ""}]' : '[]'}`).join(',\n')}
 }
 
 For chunked tasks, set "isChunk": true and "chunkLabel" to something like "Parte 1 di 2" if Italian, "Parte 1 de 2" if Spanish, etc.
@@ -95,9 +106,9 @@ If a day has no tasks, use an empty array.`;
 
     const plan = JSON.parse(jsonStr);
 
-    // Validate structure
-    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    for (const day of days) {
+    // Validate structure dynamically based on the 7 rolling days
+    const daysKeys = rollingDays.map(d => d.dateStr);
+    for (const day of daysKeys) {
       if (!Array.isArray(plan[day])) {
         plan[day] = [];
       }

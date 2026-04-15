@@ -11,7 +11,7 @@ import { sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 import DroppableColumn from './DroppableColumn';
 import './WeeklyPlanner.css';
 
-const DAYS_KEY = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+// We no longer use static day strings. Days are dynamically generated as YYYY-MM-DD strings.
 
 export default function WeeklyPlanner() {
   const { tasks } = useTasks();
@@ -21,6 +21,7 @@ export default function WeeklyPlanner() {
   const [error, setError] = useState(null);
 
   const weekDays = getWeekDays();
+  const dayKeys = weekDays.map(d => toInputDate(d));
   const today = toInputDate(new Date());
 
   const handleGenerate = async () => {
@@ -78,7 +79,7 @@ export default function WeeklyPlanner() {
         if (newPlan[day].some(t => t.dndId === overId)) targetDay = day;
       }
       
-      if (!targetDay && DAYS_KEY.includes(overId)) targetDay = overId;
+      if (!targetDay && dayKeys.includes(overId)) targetDay = overId;
       if (!sourceDay || !targetDay) return prev;
 
       if (sourceDay === targetDay) {
@@ -93,7 +94,7 @@ export default function WeeklyPlanner() {
         const activeItemIndex = sourceList.findIndex(t => t.dndId === activeId);
         const [movedTask] = sourceList.splice(activeItemIndex, 1);
         
-        if (DAYS_KEY.includes(overId)) {
+        if (dayKeys.includes(overId)) {
           targetList.push(movedTask);
         } else {
           const overIndex = targetList.findIndex(t => t.dndId === overId);
@@ -166,7 +167,7 @@ export default function WeeklyPlanner() {
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <div className="planner__week animate-fade-in">
             {weekDays.map((date, i) => {
-              const dayKey = DAYS_KEY[i];
+              const dayKey = dayKeys[i];
               const dayTasks = plan[dayKey] || [];
               const isToday = toInputDate(date) === today;
 
