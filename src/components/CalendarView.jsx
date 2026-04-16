@@ -14,7 +14,7 @@ export default function CalendarView({ visible, onClose }) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // Resizing state (specific to Calendar for now as requested)
-  const [size, setSize] = useState({ width: 420, height: 420 });
+  const [size, setSize] = useState({ width: 300, height: 320 });
 
   const tasksWithDeadlines = useMemo(() => {
     return tasks.filter(t => t.deadline);
@@ -114,7 +114,6 @@ export default function CalendarView({ visible, onClose }) {
                     <div 
                       key={idx} 
                       className="calendar-task-dot"
-                      style={{ backgroundColor: getEnergyColor(task.energyRequired || 3) }}
                     >
                       <div className="calendar-task-hover-tag">
                         {task.title}
