@@ -46,76 +46,84 @@
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: 1fr;
   flex: 1;
-  padding: 8px;
-  gap: 4px;
+  padding: 12px;
+  gap: 2px;
   overflow-y: auto;
 }
 
 .calendar-grid__weekday {
   text-align: center;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--text-tertiary);
-  padding: 4px;
+  padding: 8px 0;
 }
 
 .calendar-day {
-  aspect-ratio: 1;
-  border-radius: 12px;
-  padding: 6px;
-  background: rgba(255, 255, 255, 0.02);
+  min-height: 48px;
+  border-radius: 8px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid transparent;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  transition: border-color 0.2s, background 0.2s;
-  min-height: 50px;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  transition: all 0.2s ease;
 }
 
-.calendar-day:hover {
-  background: rgba(255, 255, 255, 0.05);
+.calendar-day:hover:not(.outside) {
+  background: rgba(255, 255, 255, 0.08);
   border-color: var(--border-primary);
+  transform: translateY(-1px);
 }
 
 .calendar-day.outside {
-  opacity: 0.3;
+  opacity: 0.2;
+  cursor: default;
 }
 
 .calendar-day.today {
-  background: rgba(var(--energy-primary-rgb), 0.1);
-  border-color: var(--energy-primary);
+  background: var(--energy-surface);
+  border: 1.5px solid var(--energy-primary);
 }
 
 .day-number {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-secondary);
-  margin-bottom: 2px;
+}
+
+.calendar-day.today .day-number {
+  color: var(--energy-primary);
 }
 
 .day-tasks {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 3px;
-  overflow-y: auto;
-  max-height: 100%;
+  width: 100%;
 }
 
 .calendar-task-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   cursor: pointer;
   position: relative;
   transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .calendar-task-dot:hover {
-  transform: scale(1.3);
+  transform: scale(1.4);
   z-index: 100;
-  box-shadow: 0 0 10px var(--energy-primary);
 }
 
 .calendar-task-hover-tag {

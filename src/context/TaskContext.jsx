@@ -141,18 +141,51 @@ export function TaskProvider({ children }) {
   }, [isOffline, needsSync, tasks, user]);
 
   const addTask = useCallback((taskData) => {
-    const newTask = {
-      id: uuidv4(),
-      title: taskData.title,
-      description: taskData.description || '',
-      deadline: taskData.deadline || null,
-      estimatedHours: taskData.estimatedHours || 1,
-      energyRequired: taskData.energyRequired || 3,
-      completed: false,
-      createdAt: new Date().toISOString(),
-    };
-    setTasks(prev => [newTask, ...prev]);
-    return newTask;
+    const splitCount = parseInt(taskData.splitCount) || 1;
+    const totalHours = parseFloat(taskData.estimatedHours) || 1;
+    
+    if (splitCount > 1) {
+      const parentId = uuidv4();
+      const blockSize = Math.round((totalHours / splitCount) * 100) / 100;
+      const newTasks = [];
+      
+      for (let i = 0; i < splitCount; i++) {
+        const isLast = i === splitCount - 1;
+        // Last block absorbs any rounding differences
+        const currentBlockSize = isLast 
+          ? Math.round((totalHours - (blockSize * (splitCount - 1))) * 100) / 100 
+          : blockSize;
+        
+        newTasks.push({
+          id: uuidv4(),
+          parentTaskId: parentId,
+          title: `${taskData.title} (${i + 1}/${splitCount})`,
+          description: taskData.description || '',
+          deadline: taskData.deadline || null,
+          estimatedHours: currentBlockSize,
+          energyRequired: taskData.energyRequired || 3,
+          completed: false,
+          createdAt: new Date().toISOString(),
+          isChunk: true,
+          chunkLabel: `${i + 1}/${splitCount}`
+        });
+      }
+      setTasks(prev => [...newTasks, ...prev]);
+      return newTasks[0];
+    } else {
+      const newTask = {
+        id: uuidv4(),
+        title: taskData.title,
+        description: taskData.description || '',
+        deadline: taskData.deadline || null,
+        estimatedHours: totalHours,
+        energyRequired: taskData.energyRequired || 3,
+        completed: false,
+        createdAt: new Date().toISOString(),
+      };
+      setTasks(prev => [newTask, ...prev]);
+      return newTask;
+    }
   }, []);
 
   const updateTask = useCallback((id, updates) => {

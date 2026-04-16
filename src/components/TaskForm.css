@@ -85,6 +85,66 @@
   justify-content: flex-end;
 }
 
+.split-controls {
+  background: var(--bg-secondary);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  margin-top: 4px;
+}
+
+.split-toggle-row {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-container input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--energy-primary);
+}
+
+.checkbox-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.split-fields {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-primary);
+}
+
+.split-input-group {
+  width: 140px;
+}
+
+.input.sm {
+  padding: 8px 12px;
+}
+
+.split-info {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  padding-bottom: 8px;
+}
+
+.split-info strong {
+  color: var(--energy-primary);
+}
+
 @media (max-width: 768px) {
   .task-form__grid {
     grid-template-columns: 1fr;

@@ -84,9 +84,9 @@ export default function CalendarView({ visible, onClose }) {
     >
       <div className="calendar-widget" style={{ width: size.width, height: size.height }}>
         <div className="calendar-widget__nav">
-          <button onClick={prevMonth} className="calendar-nav-btn"><ChevronLeft size={18} /></button>
+          <button onClick={prevMonth} className="calendar-nav-btn"><ChevronLeft size={16} /></button>
           <span className="calendar-month-title">{monthName}</span>
-          <button onClick={nextMonth} className="calendar-nav-btn"><ChevronRight size={18} /></button>
+          <button onClick={nextMonth} className="calendar-nav-btn"><ChevronRight size={16} /></button>
         </div>
 
         <div className="calendar-grid">

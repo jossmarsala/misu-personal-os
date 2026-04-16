@@ -48,6 +48,10 @@ export const translations = {
       fieldDescription: "Description (optional)",
       create: "Create Task",
       emptyState: "No tasks here. Add one above to start your session.",
+      splitToggle: "Split into blocks",
+      splitCount: "Number of blocks",
+      totalHours: "Total Hours",
+      blockSize: "Block size",
     },
     planner: {
       title: "Weekly Plan",
@@ -188,6 +192,10 @@ export const translations = {
       fieldDescription: "Descripción (opcional)",
       create: "Crear Tarea",
       emptyState: "No hay tareas. Añade una arriba para comenzar tu sesión.",
+      splitToggle: "Dividir en bloques",
+      splitCount: "Número de bloques",
+      totalHours: "Horas totales",
+      blockSize: "Tamaño del bloque",
     },
     planner: {
       title: "Plan Semanal",
@@ -328,6 +336,10 @@ export const translations = {
       fieldDescription: "Descrizione (opzionale)",
       create: "Crea Attività",
       emptyState: "Nessuna attività qui. Aggiungine una sopra per iniziare la tua sessione.",
+      splitToggle: "Dividi in blocchi",
+      splitCount: "Numero di blocchi",
+      totalHours: "Ore totali",
+      blockSize: "Dimensione blocco",
     },
     planner: {
       title: "Piano Settimanale",

@@ -55,8 +55,9 @@ export default function DraggableWidget({ id, title, icon, children, defaultPosi
     localStorage.setItem(STORAGE_PREFIX + id, JSON.stringify({ x: x.get(), y: y.get() }));
   };
 
-  const maxX = Math.max(0, windowSize.width - 250);
-  const maxY = Math.max(0, windowSize.height - 100);
+  const widgetWidth = customWidth || 280;
+  const maxX = Math.max(0, windowSize.width - widgetWidth);
+  const maxY = Math.max(0, windowSize.height - 40); // Allow header to be visible at bottom
 
   return (
     <motion.div

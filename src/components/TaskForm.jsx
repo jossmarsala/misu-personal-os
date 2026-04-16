@@ -21,6 +21,8 @@ export default function TaskForm() {
     estimatedHours: '',
     energyRequired: 3,
   });
+  const [isSplit, setIsSplit] = useState(false);
+  const [splitCount, setSplitCount] = useState(2);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -30,9 +32,12 @@ export default function TaskForm() {
     addTask({
       ...form,
       estimatedHours: parseFloat(form.estimatedHours) || 1,
+      splitCount: isSplit ? splitCount : 1
     });
 
     setForm({ title: '', description: '', deadline: '', estimatedHours: '', energyRequired: 3 });
+    setIsSplit(false);
+    setSplitCount(2);
     setIsOpen(false);
   };
 
@@ -100,6 +105,39 @@ export default function TaskForm() {
               onChange={e => handleChange('estimatedHours', e.target.value)}
               id="task-hours-input"
             />
+          </div>
+
+          <div className="task-form__group split-controls full-width">
+            <div className="split-toggle-row">
+              <label className="checkbox-container">
+                <input 
+                  type="checkbox" 
+                  checked={isSplit} 
+                  onChange={(e) => setIsSplit(e.target.checked)} 
+                />
+                <span className="checkbox-label">{t('tasks.splitToggle')}</span>
+              </label>
+            </div>
+
+            {isSplit && (
+              <div className="split-fields animate-slide-up">
+                <div className="split-input-group">
+                  <label className="input-label">{t('tasks.splitCount')}</label>
+                  <input 
+                    type="number" 
+                    className="input sm" 
+                    min="2" max="20"
+                    value={splitCount}
+                    onChange={(e) => setSplitCount(Math.max(2, parseInt(e.target.value) || 2))}
+                  />
+                </div>
+                {form.estimatedHours && (
+                  <div className="split-info">
+                    <span>{t('tasks.blockSize')}: <strong>{(parseFloat(form.estimatedHours) / splitCount).toFixed(2)}h</strong></span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="task-form__group full-width">
