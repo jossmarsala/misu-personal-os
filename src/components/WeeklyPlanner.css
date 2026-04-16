@@ -67,12 +67,9 @@
 }
 
 .planner__day-today {
-  background: var(--energy-gradient-card);
-}
-
-:root[data-theme="dark"] .planner__day-today {
-  background: var(--card-bg);
-  border: 1.5px solid var(--energy-color-a);
+  background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+              var(--energy-gradient) border-box;
+  border: 1.5px solid transparent;
 }
 
 .planner__day-today .planner__day-name {

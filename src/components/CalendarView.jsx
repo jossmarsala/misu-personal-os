@@ -3,6 +3,7 @@ import { useTasks } from '../context/TaskContext';
 import { useLanguage } from '../context/LanguageContext';
 import { formatDayShort, toInputDate } from '../utils/dateUtils';
 import DraggableWidget from './DraggableWidget';
+import { getEnergyColor } from '../utils/energy';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './CalendarView.css';
@@ -14,7 +15,7 @@ export default function CalendarView({ visible, onClose }) {
   const [selectedTask, setSelectedTask] = useState(null);
 
   // Resizing state (specific to Calendar for now as requested)
-  const [size, setSize] = useState({ width: 600, height: 500 });
+  const [size, setSize] = useState({ width: 420, height: 420 });
 
   const tasksWithDeadlines = useMemo(() => {
     return tasks.filter(t => t.deadline);
@@ -25,11 +26,18 @@ export default function CalendarView({ visible, onClose }) {
     const all = [];
     Object.keys(weeklyPlan).forEach(day => {
       weeklyPlan[day].forEach(task => {
-        all.push({ ...task, scheduledDate: day });
+        // Look up original task to get energy level and detailed description
+        const original = tasks.find(t => t.id === task.taskId);
+        all.push({ 
+          ...task, 
+          scheduledDate: day,
+          energyRequired: original?.energyRequired || task.energyRequired || 3,
+          description: original?.description || task.description || ''
+        });
       });
     });
     return all;
-  }, [weeklyPlan]);
+  }, [weeklyPlan, tasks]);
 
   const daysInMonth = useMemo(() => {
     const year = currentMonth.getFullYear();
@@ -106,11 +114,13 @@ export default function CalendarView({ visible, onClose }) {
                   {dailyTasks.map((task, idx) => (
                     <div 
                       key={idx} 
-                      className="calendar-task-tag"
-                      title={task.title}
+                      className="calendar-task-dot"
+                      style={{ backgroundColor: getEnergyColor(task.energyRequired || 3) }}
                       onClick={() => setSelectedTask(task)}
                     >
-                      {task.title}
+                      <div className="calendar-task-hover-tag">
+                        {task.title}
+                      </div>
                     </div>
                   ))}
                 </div>

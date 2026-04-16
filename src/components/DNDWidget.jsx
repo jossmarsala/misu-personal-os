@@ -9,7 +9,7 @@ export default function DNDWidget({ visible }) {
   const { dndActive, setDndActive } = useEnergy();
   const { t } = useLanguage();
   const [noiseType, setNoiseType] = useState('white'); // white, pink, brown
-  const [volume, setVolume] = useState(0.4);
+  const [volume, setVolume] = useState(0.15);
   const [isPlaying, setIsPlaying] = useState(false);
   
   const audioCtxRef = useRef(null);
@@ -44,17 +44,17 @@ export default function DNDWidget({ visible }) {
 
     let lastOut = 0.0;
     for (let i = 0; i < bufferSize; i++) {
-      const white = Math.random() * 2 - 1;
+      const white = (Math.random() * 2 - 1) * 0.4; // Soften raw white input
       if (type === 'white') {
         output[i] = white;
       } else if (type === 'brown') {
         output[i] = (lastOut + (0.02 * white)) / 1.02;
         lastOut = output[i];
-        output[i] *= 3.5;
+        output[i] *= 1.5; // Reduced from 3.5
       } else { // pink
         output[i] = (lastOut + (0.1 * white)) / 1.1;
         lastOut = output[i];
-        output[i] *= 2.5;
+        output[i] *= 1.2; // Reduced from 2.5
       }
     }
 
