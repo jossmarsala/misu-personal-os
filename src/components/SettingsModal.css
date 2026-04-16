@@ -32,7 +32,8 @@
 }
 
 .settings-modal__title {
-  font-family: 'Instrument Serif', Georgia, serif;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
   font-size: 1.4rem;
 }
 

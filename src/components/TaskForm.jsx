@@ -3,10 +3,9 @@ import { useTasks } from '../context/TaskContext';
 import { Plus, X } from 'lucide-react';
 import { ENERGY_LEVELS } from '../utils/energy';
 import { useLanguage } from '../context/LanguageContext';
-import './TaskForm.css';
-
 import { useEnergy } from '../context/EnergyContext';
 import { playUISound } from '../services/AudioService';
+import GradientOrb from './GradientOrb';
 import './TaskForm.css';
 
 export default function TaskForm() {
@@ -150,8 +149,12 @@ export default function TaskForm() {
                   className={`task-form__energy-btn ${form.energyRequired === e.level ? 'selected' : ''}`}
                   onClick={() => handleChange('energyRequired', e.level)}
                   title={t(`energy.${e.level}.label`)}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                 >
-                  {e.emoji} {t(`energy.${e.level}.label`)}
+                  <div style={{ width: '14px', height: '14px' }}>
+                    <GradientOrb color={e.vividColorA} size="100%" />
+                  </div>
+                  {t(`energy.${e.level}.label`)}
                 </button>
               ))}
             </div>

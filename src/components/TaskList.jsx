@@ -4,11 +4,16 @@ import TaskCard from './TaskCard';
 import TaskForm from './TaskForm';
 import { getDaysUntil } from '../utils/dateUtils';
 import { useLanguage } from '../context/LanguageContext';
+import { useEnergy } from '../context/EnergyContext';
+import { getEnergyDef } from '../utils/energy';
+import GradientOrb from './GradientOrb';
 import './TaskList.css';
 
 export default function TaskList() {
   const { tasks } = useTasks();
   const { t } = useLanguage();
+  const { currentEnergy } = useEnergy();
+  const energyDef = getEnergyDef(currentEnergy);
   const [filter, setFilter] = useState('active');
   const [sort, setSort] = useState('deadline');
 
@@ -85,8 +90,8 @@ export default function TaskList() {
         </div>
       ) : (
         <div className="task-list__empty">
-          <div className="task-list__empty-icon">
-            {filter === 'completed' ? '🏛️' : '🏺'}
+          <div style={{ width: '80px', height: '80px', marginBottom: 'var(--space-4)', opacity: 0.4 }}>
+            <GradientOrb color={energyDef.vividColorA} size="100%" />
           </div>
           <p className="task-list__empty-text">
             {filter === 'completed'

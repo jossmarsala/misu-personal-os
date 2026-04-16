@@ -9,7 +9,7 @@ import Recommendations from './components/Recommendations';
 import WeeklyPlanner from './components/WeeklyPlanner';
 import SettingsModal from './components/SettingsModal';
 import EnergySelector from './components/EnergySelector';
-import PrismaticBurst from './components/PrismaticBurst';
+import GradientBlinds from './components/GradientBlinds';
 import CommandPalette from './components/CommandPalette';
 import PomodoroWidget from './components/PomodoroWidget';
 import MusicPlayer from './components/MusicPlayer';
@@ -92,31 +92,52 @@ function App() {
       </div>
 
       <main className="app__main">
-        <div className="container">
-          <div className="bento-grid">
+        <div className="container" style={{ paddingBottom: 'var(--space-9)' }}>
+          <motion.div 
+            className="bento-grid"
+            initial="hidden"
+            animate="show"
+            variants={{
+              show: {
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+          >
             {/* Hero card */}
-            <div className="bento-grid__hero bento-card bento-card--accent hero-card">
-              <div style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.85, mixBlendMode: 'overlay', pointerEvents: 'none' }}>
-                <PrismaticBurst
-                  animationType="rotate3d"
-                  intensity={2.5}
-                  speed={0.5}
-                  distort={0}
-                  paused={false}
-                  offset={{ x: 0, y: 0 }}
-                  hoverDampness={0.25}
-                  rayCount={0}
+            <motion.div 
+              className="bento-grid__hero bento-card bento-card--accent hero-card"
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 }
+              }}
+            >
+              <div style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 1.0, mixBlendMode: 'normal', pointerEvents: 'none' }}>
+                <GradientBlinds
+                  gradientColors={[energyDef.vividColorA, energyDef.vividColorB]}
+                  angle={0}
+                  noise={0.05}
+                  blindCount={12}
+                  blindMinWidth={50}
+                  spotlightRadius={0.5}
+                  spotlightSoftness={1}
+                  spotlightOpacity={1}
+                  mouseDampening={0.15}
+                  distortAmount={0}
+                  shineDirection="left"
                   mixBlendMode="lighten"
-                  colors={[energyDef.colorA, energyDef.colorB, '#ffffff']}
-                  breathing={breathingActive}
                 />
               </div>
               <div className="hero-card__content">
-                <h2 className="hero-card__title">
+                <motion.h2 
+                  className="hero-card__title"
+                  layoutId="hero-title"
+                >
                   {t('hero.title')}{' '}
                   <span style={{ fontStyle: 'italic' }}>{t(`energy.${currentEnergy}.label`)}</span>{' '}
                   {t('hero.energySuffix')}
-                </h2>
+                </motion.h2>
                 <p className="hero-card__subtitle">
                   {t(`energy.${currentEnergy}.desc`)}
                 </p>
@@ -127,10 +148,16 @@ function App() {
               <div className="hero-card__energy">
                 <EnergySelector />
               </div>
-            </div>
+            </motion.div>
 
             {/* Stats row */}
-            <div className="stats-row">
+            <motion.div 
+              className="stats-row"
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 }
+              }}
+            >
               <div className="stat-card bento-card">
                 <span className="stat-card__label">
                   <Clock size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />
@@ -147,24 +174,42 @@ function App() {
                 <span className="stat-card__value">{stats.completed}</span>
                 <span className="stat-card__hint" style={{ opacity: 0.6 }}>{t('stats.tasksFinished')}</span>
               </div>
-            </div>
+            </motion.div>
 
             {/* Recommendations sidebar */}
-            <div className="bento-grid__reco bento-card reco-card">
+            <motion.div 
+              className="bento-grid__reco bento-card reco-card"
+              variants={{
+                hidden: { opacity: 0, x: 20 },
+                show: { opacity: 1, x: 0 }
+              }}
+            >
               <Recommendations />
-            </div>
+            </motion.div>
 
             {/* Tasks */}
-            <div className="bento-grid__tasks bento-card">
+            <motion.div 
+              className="bento-grid__tasks bento-card"
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 }
+              }}
+            >
               <h2 className="section-title" style={{ marginBottom: 'var(--space-4)' }}>{t('tasks.title')}</h2>
               <TaskList />
-            </div>
+            </motion.div>
 
             {/* Weekly Planner */}
-            <div className="bento-grid__planner bento-card">
+            <motion.div 
+              className="bento-grid__planner bento-card"
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 }
+              }}
+            >
               <WeeklyPlanner />
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </main>
 
@@ -184,6 +229,31 @@ function App() {
         type={helperType}
         onClose={() => setHelperVisible(false)}
       />
+
+      {/* Global SVG Filters for Gradient Orbs */}
+      <svg style={{ position: 'absolute', width: 0, height: 0, opacity: 0, pointerEvents: 'none' }}>
+        <defs>
+          <filter id="distort">
+            <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" />
+          </filter>
+          <filter id="pixelate">
+            <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="3" result="noise" />
+            <feColorMatrix type="saturate" values="0" />
+            <feBlend in="SourceGraphic" in2="noise" mode="soft-light" />
+            
+            {/* Color Quantization for Pixelated Look */}
+            <feComponentTransfer>
+              <feFuncR type="discrete" tableValues="0 0.15 0.3 0.45 0.6 0.75 0.9 1" />
+              <feFuncG type="discrete" tableValues="0 0.15 0.3 0.45 0.6 0.75 0.9 1" />
+              <feFuncB type="discrete" tableValues="0 0.15 0.3 0.45 0.6 0.75 0.9 1" />
+            </feComponentTransfer>
+            
+            {/* Mosaic Effect (Chunky Pixels) */}
+            <feMorphology operator="dilate" radius="1.5" />
+          </filter>
+        </defs>
+      </svg>
     </div>
   );
 }

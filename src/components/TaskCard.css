@@ -1,20 +1,35 @@
 .task-card {
   position: relative;
-  padding: var(--space-5) var(--space-6);
-  border-radius: 20px;
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--card-radius);
   background: var(--card-bg);
-  border: 1px solid var(--border-primary);
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   gap: var(--space-5);
   align-items: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0,0,0,0.02);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.task-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--glass-noise);
+  opacity: 0.03;
+  pointer-events: none;
+  mix-blend-mode: overlay;
 }
 
 .task-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.01);
   border-color: var(--energy-color-a, var(--border-focus));
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05), 0 4px 8px rgba(0,0,0,0.03);
+  box-shadow: 
+    0 20px 48px rgba(0, 0, 0, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 .task-card.completed {
@@ -31,33 +46,30 @@
 /* Checkbox */
 .task-card__checkbox {
   position: relative;
-  width: 24px;
-  height: 24px;
-  min-width: 24px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--btn-glass-border);
-  background: var(--btn-glass-bg);
-  box-shadow: var(--btn-glass-shadow);
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-primary);
+  background: transparent;
   cursor: pointer;
-  transition: all var(--transition-base), transform var(--transition-spring);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 0;
+  overflow: hidden;
 }
 
 .task-card__checkbox:hover {
   border-color: var(--energy-primary);
-  transform: scale(1.05);
+  background: var(--energy-surface);
+  transform: scale(1.1);
 }
 
 .task-card__checkbox.checked {
   background: var(--energy-gradient);
   border-color: transparent;
-}
-
-.task-card__checkbox.checked svg {
-  animation: checkmark 0.3s ease forwards;
+  box-shadow: 0 0 15px var(--energy-glow);
 }
 
 /* Content */

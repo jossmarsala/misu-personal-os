@@ -10,27 +10,45 @@
   gap: var(--space-2);
   padding: var(--space-4);
   border-radius: var(--radius-lg);
-  border: 2px dashed var(--border-primary);
-  background: transparent;
+  border: 1px dashed var(--border-primary);
+  background: var(--card-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   color: var(--text-secondary);
   cursor: pointer;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 0.85rem;
-  transition: all var(--transition-base);
+  font-weight: 500;
+  transition: all 0.3s;
 }
 
 .task-form__toggle:hover {
-  border-color: var(--energy-color-a);
+  border-color: var(--energy-primary);
   color: var(--energy-primary);
-  background: var(--energy-surface);
+  background: var(--bg-card-hover);
+  transform: scale(1.01);
 }
 
 .task-form__body {
-  padding: var(--space-5);
+  padding: var(--space-6);
   border-radius: var(--radius-lg);
-  background: var(--bg-input);
-  border: 1px solid var(--border-primary);
-  animation: scaleIn 0.25s ease forwards;
+  background: var(--card-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--card-shadow);
+  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.task-form__body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--glass-noise);
+  opacity: 0.02;
+  pointer-events: none;
 }
 
 .task-form__grid {

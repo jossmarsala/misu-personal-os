@@ -6,7 +6,10 @@ import { formatDeadline, getDeadlineStatus } from '../utils/dateUtils';
 import { useLanguage } from '../context/LanguageContext';
 import { useEnergy } from '../context/EnergyContext';
 import { playUISound } from '../services/AudioService';
+import GradientOrb from './GradientOrb';
 import './TaskCard.css';
+
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TaskCard({ task }) {
   const { toggleComplete, updateTask, deleteTask, setFocusedTaskId } = useTasks();
@@ -64,12 +67,18 @@ export default function TaskCard({ task }) {
   }[deadlineStatus] || '';
 
   return (
-    <div
-      className={`task-card glass-subtle ${task.completed ? 'completed' : ''}`}
+    <motion.div
+      layout
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      whileHover={{ y: -2 }}
+      className={`task-card ${task.completed ? 'completed' : ''}`}
       data-task-energy={task.energyRequired}
       id={`task-${task.id}`}
     >
-      <button
+      <motion.button
+        whileTap={{ scale: 0.9 }}
         className={`task-card__checkbox ${task.completed ? 'checked' : ''}`}
         onClick={() => {
           toggleComplete(task.id);
@@ -77,8 +86,19 @@ export default function TaskCard({ task }) {
         }}
         aria-label={task.completed ? t('common.active') : t('common.completed')}
       >
-        {task.completed && <Check size={14} color="white" strokeWidth={3} />}
-      </button>
+        <AnimatePresence mode="wait">
+          {task.completed && (
+            <motion.div
+              initial={{ scale: 0, rotate: -45 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={{ scale: 0, rotate: 45 }}
+              key="check"
+            >
+              <Check size={14} color="white" strokeWidth={3} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.button>
 
       <div className="task-card__content">
         {isEditing ? (
@@ -111,9 +131,19 @@ export default function TaskCard({ task }) {
                 </span>
               )}
             </div>
-            {expanded && task.description && (
-              <p className="task-card__desc animate-fade-in">{task.description}</p>
-            )}
+            
+            <AnimatePresence>
+              {expanded && task.description && (
+                <motion.p 
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 0.7 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="task-card__desc"
+                >
+                  {task.description}
+                </motion.p>
+              )}
+            </AnimatePresence>
           </>
         )}
 
@@ -121,39 +151,50 @@ export default function TaskCard({ task }) {
           {deadlineText && (
             <span className={deadlineBadgeClass}>{deadlineText}</span>
           )}
-          <span className="badge badge-energy">{energy.emoji} {energy.name}</span>
+          <span className="badge badge-energy" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ width: '12px', height: '12px' }}>
+              <GradientOrb color={energy.vividColorA} size="100%" />
+            </div>
+            {energy.name}
+          </span>
           {task.estimatedHours && (
             <span className="task-card__duration">{task.estimatedHours}{t('common.hours').substring(0,1)}</span>
           )}
         </div>
       </div>
 
-      <div className="task-card__actions">
+      <div className="task-card__actions" style={{ flexShrink: 0 }}>
         {!task.completed && (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             className="btn btn-ghost btn-icon btn-sm"
             onClick={() => setFocusedTaskId(task.id)}
             aria-label="Zen Focus"
             title="Zen Focus"
           >
             <Play size={14} />
-          </button>
+          </motion.button>
         )}
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           className="btn btn-ghost btn-icon btn-sm"
           onClick={() => { setIsEditing(true); setEditTitle(task.title); }}
           aria-label={t('common.edit')}
         >
           <Pencil size={14} />
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           className={`btn ${confirmDelete ? 'btn-danger' : 'btn-ghost'} btn-icon btn-sm`}
           onClick={handleDelete}
           aria-label={confirmDelete ? t('common.delete') : t('common.delete')}
         >
           <Trash2 size={14} />
-        </button>
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 }

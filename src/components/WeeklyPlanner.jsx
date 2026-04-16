@@ -9,13 +9,16 @@ import { Calendar, Sparkles, RefreshCw } from 'lucide-react';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, KeyboardSensor } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 import DroppableColumn from './DroppableColumn';
+import { useEnergy } from '../context/EnergyContext';
+import { getEnergyDef } from '../utils/energy';
+import GradientOrb from './GradientOrb';
 import './WeeklyPlanner.css';
-
-// We no longer use static day strings. Days are dynamically generated as YYYY-MM-DD strings.
 
 export default function WeeklyPlanner() {
   const { tasks, weeklyPlan: plan, setWeeklyPlan: setPlan } = useTasks();
   const { t, language } = useLanguage();
+  const { currentEnergy } = useEnergy();
+  const energyDef = getEnergyDef(currentEnergy);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -38,7 +41,6 @@ export default function WeeklyPlanner() {
     try {
       const result = await generateWeeklyPlan(tasks, apiKey, language);
       
-      // Inject unique drag identifiers
       for (const day of Object.keys(result)) {
         if (Array.isArray(result[day])) {
           result[day] = result[day].map((t, idx) => ({ ...t, dndId: `${day}-${t.taskId}-${idx}-${Date.now()}` }));
@@ -106,7 +108,7 @@ export default function WeeklyPlanner() {
       playPop();
       return newPlan;
     });
-  }, []);
+  }, [dayKeys]);
 
   return (
     <div className="planner" id="weekly-planner">
@@ -154,7 +156,9 @@ export default function WeeklyPlanner() {
 
       {!loading && !plan && !error && (
         <div className="planner__empty">
-          <span className="planner__empty-icon">📅</span>
+          <div style={{ width: '80px', height: '80px', marginBottom: 'var(--space-4)', opacity: 0.4 }}>
+            <GradientOrb color={energyDef.vividColorA} size="100%" />
+          </div>
           <p>{t('planner.generate')}</p>
           <p className="section-subtitle" style={{ marginTop: '8px' }}>
             {tasks.filter(t => !t.completed).length} {t('stats.activeTasks')}

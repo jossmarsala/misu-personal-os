@@ -5,7 +5,7 @@ import { useEnergy } from '../context/EnergyContext';
 import { getEnergyDef } from '../utils/energy';
 import { Headphones, Mail, Lock, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import BlurText from './BlurText';
-import PrismaticBurst from './PrismaticBurst';
+import GradientBlinds from './GradientBlinds';
 import './AuthPage.css';
 
 const ERROR_MAP = {
@@ -101,17 +101,19 @@ export default function AuthPage() {
         
         {/* Visual Left Pane */}
         <div className="auth-card__left">
-           <PrismaticBurst
-            animationType="rotate3d"
-            intensity={2}
-            speed={0.4}
-            distort={0}
-            paused={false}
-            offset={{ x: 0, y: 0 }}
-            hoverDampness={0.25}
-            rayCount={0}
+           <GradientBlinds
+            gradientColors={['#FF5F6D', '#FFC371', '#00C9FF', '#92FE9D', '#FF9A9E', '#FFFFFF']}
+            angle={45}
+            noise={0.05}
+            blindCount={14}
+            blindMinWidth={40}
+            spotlightRadius={0.6}
+            spotlightSoftness={0.8}
+            spotlightOpacity={1}
+            mouseDampening={0.2}
+            distortAmount={0}
+            shineDirection="right"
             mixBlendMode="lighten"
-            colors={['#FF5F6D', '#FFC371', '#00C9FF', '#92FE9D', '#FF9A9E', '#FFFFFF']}
           />
         </div>
 

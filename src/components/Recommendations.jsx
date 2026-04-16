@@ -2,11 +2,12 @@ import { useMemo } from 'react';
 import { useTasks } from '../context/TaskContext';
 import { useEnergy } from '../context/EnergyContext';
 import { getRecommendations } from '../utils/recommendations';
-import { getEnergyDef, getEnergyColor } from '../utils/energy';
+import { getEnergyDef } from '../utils/energy';
 import { formatDeadline, getDeadlineStatus } from '../utils/dateUtils';
 import { useLanguage } from '../context/LanguageContext';
-import { Compass, Gamepad2, Headphones } from 'lucide-react';
-import GlassIcons from './GlassIcons';
+import { Compass } from 'lucide-react';
+import GradientOrb from './GradientOrb';
+import { motion, AnimatePresence } from 'framer-motion';
 import './Recommendations.css';
 
 export default function Recommendations() {
@@ -41,38 +42,77 @@ export default function Recommendations() {
   return (
     <div className="recommendations" id="recommendations">
       <div className="recommendations__header">
-        <div className="recommendations__title">
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="recommendations__title"
+        >
           <Compass size={18} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--energy-primary)' }} />
           {t('recommendations.title')}
-        </div>
-        <div className="recommendations__message">{t(`energy.${currentEnergy}.msg`)}</div>
+        </motion.div>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.6 }}
+          className="recommendations__message"
+        >
+          {t(`energy.${currentEnergy}.msg`)}
+        </motion.div>
       </div>
 
-      {recommended.length > 0 ? (
-        <div className="recommendations__list stagger-children">
-          {recommended.map((task, i) => (
-            <div key={task.id} className="recommendations__item">
-              <span className="recommendations__item-rank">#{i + 1}</span>
-              <span className="recommendations__item-title">{task.title}</span>
-              <div className="recommendations__item-meta">
-                {task.deadline && (
-                  <span className={deadlineBadgeClass(task.deadline)}>
-                    {getDeadlineText(task.deadline)}
-                  </span>
-                )}
-                <span className="task-card__duration">{task.estimatedHours}{t('common.hours').substring(0, 1)}</span>
-              </div>
+      <AnimatePresence mode="wait">
+        {recommended.length > 0 ? (
+          <motion.div 
+            key="list"
+            className="recommendations__list"
+            initial="hidden"
+            animate="show"
+            variants={{
+              show: {
+                transition: {
+                  staggerChildren: 0.08
+                }
+              }
+            }}
+          >
+            {recommended.map((task, i) => (
+              <motion.div 
+                key={task.id} 
+                className="recommendations__item"
+                variants={{
+                  hidden: { opacity: 0, x: 20 },
+                  show: { opacity: 1, x: 0 }
+                }}
+                whileHover={{ x: -4, scale: 1.02 }}
+              >
+                <div style={{ width: '16px', height: '16px', marginRight: '8px' }}>
+                  <GradientOrb color={energyDef.vividColorA} size="100%" />
+                </div>
+                <span className="recommendations__item-title">{task.title}</span>
+                <div className="recommendations__item-meta">
+                  {task.deadline && (
+                    <span className={deadlineBadgeClass(task.deadline)}>
+                      {getDeadlineText(task.deadline)}
+                    </span>
+                  )}
+                  <span className="task-card__duration">{task.estimatedHours}{t('common.hours').substring(0, 1)}</span>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
+          <motion.div 
+            key="empty"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="recommendations__empty"
+          >
+            <div style={{ width: '64px', height: '64px', marginBottom: '16px', opacity: 0.5 }}>
+              <GradientOrb color={energyDef.vividColorA} size="100%" />
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="recommendations__empty">
-          <span className="recommendations__empty-icon">
-            {currentEnergy <= 2 ? '🎮' : '🎧'}
-          </span>
-          {t(`energy.${currentEnergy}.empty`)}
-        </div>
-      )}
+            {t(`energy.${currentEnergy}.empty`)}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -8,11 +8,7 @@ export default function DroppableColumn({ id, dayTasks, t, dayName, dayDate, isT
   return (
     <div
       ref={setNodeRef}
-      className={`planner__day glass-subtle ${isToday ? 'planner__day-today' : ''} ${isOver ? 'highlighted-drop' : ''}`}
-      style={{
-         transition: 'background 0.2s',
-         backgroundColor: isOver ? 'var(--energy-surface)' : undefined
-      }}
+      className={`planner__day ${isToday ? 'planner__day-today' : ''} ${isOver ? 'highlighted-drop' : ''}`}
     >
       <div className="planner__day-header">
         <span className="planner__day-name">{dayName}</span>

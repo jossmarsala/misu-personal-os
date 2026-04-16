@@ -1,8 +1,8 @@
 .music-player {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 14px;
+  gap: 16px;
+  padding: 4px;
 }
 
 .music-player__now-playing {
@@ -13,10 +13,12 @@
 }
 
 .music-player__mode-name {
-  font-family: 'Instrument Serif', Georgia, serif;
-  font-size: 1.1rem;
-  font-style: italic;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--energy-primary);
+  line-height: 1;
 }
 
 .music-player__mode-emoji {
@@ -26,33 +28,44 @@
 /* Equalizer bars */
 .music-player__eq {
   display: flex;
-  align-items: flex-end;
-  gap: 3px;
-  height: 28px;
-  padding: 0 10px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 48px;
+  width: 100%;
+  padding: 0 8px;
+  background: var(--energy-surface);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.music-player__eq::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--energy-surface), transparent, var(--energy-surface));
+  z-index: 2;
+  pointer-events: none;
 }
 
 .music-player__bar {
-  width: 4px;
-  height: 4px;
-  border-radius: 2px;
+  width: 6px;
+  height: 8px;
+  border-radius: 4px;
   background: var(--energy-primary);
-  transition: height 0.1s;
+  opacity: 0.3;
+  transition: height 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
 }
 
 .music-player__eq.playing .music-player__bar {
-  animation: eqBounce 0.6s ease-in-out infinite alternate;
+  opacity: 0.8;
+  animation: eqBounce 1s ease-in-out infinite alternate;
 }
 
-.music-player__eq.playing .music-player__bar:nth-child(1) { animation-duration: 0.5s; }
-.music-player__eq.playing .music-player__bar:nth-child(2) { animation-duration: 0.7s; }
-.music-player__eq.playing .music-player__bar:nth-child(3) { animation-duration: 0.4s; }
-.music-player__eq.playing .music-player__bar:nth-child(4) { animation-duration: 0.65s; }
-.music-player__eq.playing .music-player__bar:nth-child(5) { animation-duration: 0.55s; }
-
 @keyframes eqBounce {
-  from { height: 4px; opacity: 0.4; }
-  to { height: 24px; opacity: 1; }
+  from { height: 8px; transform: scaleY(1); }
+  to { height: 32px; transform: scaleY(1.2); }
 }
 
 /* Controls */

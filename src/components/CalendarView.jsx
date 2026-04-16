@@ -13,8 +13,6 @@ export default function CalendarView({ visible, onClose }) {
   const { t, language } = useLanguage();
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  // Resizing state (specific to Calendar for now as requested)
-  const [size, setSize] = useState({ width: 300, height: 320 });
 
   const tasksWithDeadlines = useMemo(() => {
     return tasks.filter(t => t.deadline);
@@ -79,9 +77,9 @@ export default function CalendarView({ visible, onClose }) {
       title={t('widgets.calendar')} 
       icon={<CalendarIcon size={14} />}
       defaultPosition={{ x: 100, y: 100 }}
-      customWidth={size.width}
+      customWidth={320}
     >
-      <div className="calendar-widget" style={{ width: size.width, height: size.height }}>
+      <div className="calendar-widget">
         <div className="calendar-widget__nav">
           <button onClick={prevMonth} className="calendar-nav-btn"><ChevronLeft size={16} /></button>
           <span className="calendar-month-title">{monthName}</span>
@@ -126,33 +124,6 @@ export default function CalendarView({ visible, onClose }) {
           })}
         </div>
 
-        {/* Resize Handle */}
-        <div 
-          className="calendar-resize-handle"
-          onMouseDown={(e) => {
-            const startX = e.clientX;
-            const startY = e.clientY;
-            const startW = size.width;
-            const startH = size.height;
-
-            const onMouseMove = (moveEvent) => {
-              setSize({
-                width: Math.max(300, startW + (moveEvent.clientX - startX)),
-                height: Math.max(300, startH + (moveEvent.clientY - startY))
-              });
-            };
-
-            const onMouseUp = () => {
-              window.removeEventListener('mousemove', onMouseMove);
-              window.removeEventListener('mouseup', onMouseUp);
-            };
-
-            window.addEventListener('mousemove', onMouseMove);
-            window.addEventListener('mouseup', onMouseUp);
-          }}
-        >
-          <div className="resize-handle-icon" />
-        </div>
 
       </div>
     </DraggableWidget>

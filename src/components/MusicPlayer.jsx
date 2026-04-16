@@ -9,6 +9,10 @@ import './MusicPlayer.css';
 // Discover all mp3 files at compile time.
 const moodTracksImport = import.meta.glob('/public/audio/moods/**/*.mp3', { query: '?url', import: 'default', eager: true });
 
+import { motion, AnimatePresence } from 'framer-motion';
+
+import GradientOrb from './GradientOrb';
+
 export default function MusicPlayer({ visible }) {
   const { currentEnergy, dndActive } = useEnergy();
   const { t } = useLanguage();
@@ -24,15 +28,12 @@ export default function MusicPlayer({ visible }) {
   
   const audioRef = useRef(null);
 
-  // Build playlist and extract name
   useEffect(() => {
     const levelParam = String(currentEnergy);
-    // filter keys based on directory matching e.g. /public/audio/moods/3/
     const tracks = Object.keys(moodTracksImport).filter(path => {
       return path.includes(`/audio/moods/${levelParam}/`);
     }).map(path => {
       const url = moodTracksImport[path];
-      // Cleanup typical url prefix if imported statically
       return url.startsWith('/public/') ? url.replace('/public', '') : url;
     });
     
@@ -40,14 +41,10 @@ export default function MusicPlayer({ visible }) {
     setCurrentTrackIndex(0);
     
     if (tracks.length > 0) {
-      // Decode the raw path name to show as a readable track name
-      let filename = Object.keys(moodTracksImport)
-        .find(path => moodTracksImport[path] === (moodTracksImport[Object.keys(moodTracksImport)[0]])) || '';
-      
-      filename = (tracks[0] || '').split('/').pop()?.replace('.mp3', '').replaceAll('_', ' ').replaceAll('-', ' ') || '';
+      const firstPath = tracks[0] || '';
+      const filename = firstPath.split('/').pop()?.replace('.mp3', '').replaceAll('_', ' ').replaceAll('-', ' ') || '';
       setCurrentTrackName(decodeURIComponent(filename));
       
-      // Auto-restart if we were already playing
       if (isPlaying && audioRef.current) {
         setTimeout(() => {
           audioRef.current.play().catch(e => console.error(e));
@@ -57,7 +54,7 @@ export default function MusicPlayer({ visible }) {
       setCurrentTrackName(t('music.noTracksFolder') + ' /' + currentEnergy);
       setIsPlaying(false);
     }
-  }, [currentEnergy, isPlaying, t]);
+  }, [currentEnergy, t]); // Removed isPlaying from deps to avoid loop
 
   const togglePlay = () => {
     if (playlist.length === 0) return;
@@ -100,17 +97,38 @@ export default function MusicPlayer({ visible }) {
       id="music" 
       title={t('music.title')} 
       icon={<Music size={14} />}
-      defaultPosition={{ x: window.innerWidth - 310, y: 480 }}
+      defaultPosition={{ x: window.innerWidth - 320, y: 120 }}
     >
       <div className="music-player">
-        <div className="music-player__now-playing" style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-start' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+        <div className="music-player__header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <div className="music-player__now-playing">
             <span className="music-player__mode-name">{energyDef.name}</span>
-            <span className="music-player__mode-emoji">{energyDef.emoji}</span>
+            <AnimatePresence mode="wait">
+              <motion.span 
+                key={currentTrackName}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 0.6, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                style={{ 
+                  fontSize: '11px', 
+                  display: 'block',
+                  color: 'var(--text-secondary)', 
+                  maxWidth: '160px', 
+                  textOverflow: 'ellipsis', 
+                  overflow: 'hidden', 
+                  whiteSpace: 'nowrap',
+                  fontWeight: 500,
+                  marginTop: '2px'
+                }} 
+                title={currentTrackName}
+              >
+                {currentTrackName}
+              </motion.span>
+            </AnimatePresence>
           </div>
-          <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', maxWidth: '140px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} title={currentTrackName}>
-            {currentTrackName}
-          </span>
+          <div className="music-player__orb-container" style={{ width: '48px', height: '48px' }}>
+            <GradientOrb color={energyDef.vividColorA} size="100%" />
+          </div>
         </div>
 
         {playlist.length > 0 && (
@@ -124,54 +142,55 @@ export default function MusicPlayer({ visible }) {
         )}
 
         <div className={`music-player__eq ${isPlaying ? 'playing' : ''}`}>
-          <div className="music-player__bar" style={{ animationDelay: '0s' }} />
-          <div className="music-player__bar" style={{ animationDelay: '0.15s' }} />
-          <div className="music-player__bar" style={{ animationDelay: '0.3s' }} />
-          <div className="music-player__bar" style={{ animationDelay: '0.1s' }} />
-          <div className="music-player__bar" style={{ animationDelay: '0.25s' }} />
+          {[...Array(10)].map((_, i) => (
+            <div 
+              key={i} 
+              className="music-player__bar" 
+              style={{ 
+                animationDelay: `${i * 0.1}s`,
+                height: isPlaying ? undefined : `${4 + Math.random() * 8}px`
+              }} 
+            />
+          ))}
         </div>
 
-        <div className="music-player__controls" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <button 
+        <div className="music-player__controls" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             className={`music-player__play-btn ${isPlaying ? 'active' : ''}`} 
             onClick={togglePlay}
             disabled={playlist.length === 0}
-            style={{ opacity: playlist.length === 0 ? 0.3 : 1 }}
           >
-            {isPlaying ? <Pause size={18} /> : <Play size={18} />}
-          </button>
+            {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" style={{ marginLeft: '2px' }} />}
+          </motion.button>
           
-          <button 
-            onClick={nextTrack}
-            disabled={playlist.length <= 1}
-            style={{ 
-              opacity: playlist.length <= 1 ? 0.3 : 1, 
-              background: 'transparent',
-              color: 'var(--text-secondary)',
-              border: 'none',
-              cursor: playlist.length <= 1 ? 'default' : 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-            title={t('music.next')}
-          >
-            <SkipForward size={14} />
-          </button>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <button 
+                className="btn-ghost btn-icon btn-sm"
+                onClick={nextTrack}
+                disabled={playlist.length <= 1}
+                title={t('music.next')}
+              >
+                <SkipForward size={14} />
+              </button>
 
-          <button className="music-player__mute-btn" onClick={() => setIsMuted(!isMuted)}>
-            {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-          </button>
+              <button className="btn-ghost btn-icon btn-sm" onClick={() => setIsMuted(!isMuted)}>
+                {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+              </button>
 
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.05"
-            value={isMuted ? 0 : volume}
-            onChange={(e) => { setVolume(parseFloat(e.target.value)); setIsMuted(false); }}
-            className="music-player__volume"
-          />
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={isMuted ? 0 : volume}
+                onChange={(e) => { setVolume(parseFloat(e.target.value)); setIsMuted(false); }}
+                className="music-player__volume"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </DraggableWidget>

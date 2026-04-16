@@ -5,6 +5,8 @@ import { useEnergy } from '../context/EnergyContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import { Sparkles, Sun, Moon, Plus, CheckCircle, Search, Earth } from 'lucide-react';
+import { getEnergyDef } from '../utils/energy';
+import GradientOrb from './GradientOrb';
 import './CommandPalette.css';
 
 export default function CommandPalette() {
@@ -15,6 +17,10 @@ export default function CommandPalette() {
   const { setCurrentEnergy } = useEnergy();
   const { t, setLanguage } = useLanguage();
   const { mode, toggleMode } = useTheme();
+
+  const e1 = getEnergyDef(1);
+  const e3 = getEnergyDef(3);
+  const e5 = getEnergyDef(5);
 
   // Toggle the menu when ⌘K is pressed
   useEffect(() => {
@@ -70,14 +76,23 @@ export default function CommandPalette() {
         )}
 
         <Command.Group heading="Energy Level">
-          <Command.Item onSelect={() => { setCurrentEnergy(1); setOpen(false); }}>
-            <span className="cmdk-emoji">🌿</span> {t('energy.1.label')}
+          <Command.Item onSelect={() => { setCurrentEnergy(1); setOpen(false); }} className="cmdk-item">
+            <div style={{ width: '14px', height: '14px', marginRight: '8px', display: 'flex', alignItems: 'center' }}>
+              <GradientOrb color={e1.vividColorA} size="100%" />
+            </div>
+            {t('energy.1.label')}
           </Command.Item>
-          <Command.Item onSelect={() => { setCurrentEnergy(3); setOpen(false); }}>
-            <span className="cmdk-emoji">🍰</span> {t('energy.3.label')}
+          <Command.Item onSelect={() => { setCurrentEnergy(3); setOpen(false); }} className="cmdk-item">
+            <div style={{ width: '14px', height: '14px', marginRight: '8px', display: 'flex', alignItems: 'center' }}>
+              <GradientOrb color={e3.vividColorA} size="100%" />
+            </div>
+            {t('energy.3.label')}
           </Command.Item>
-          <Command.Item onSelect={() => { setCurrentEnergy(5); setOpen(false); }}>
-            <span className="cmdk-emoji">🎬</span> {t('energy.5.label')} (Focus)
+          <Command.Item onSelect={() => { setCurrentEnergy(5); setOpen(false); }} className="cmdk-item">
+            <div style={{ width: '14px', height: '14px', marginRight: '8px', display: 'flex', alignItems: 'center' }}>
+              <GradientOrb color={e5.vividColorA} size="100%" />
+            </div>
+            {t('energy.5.label')} (Focus)
           </Command.Item>
         </Command.Group>
 
