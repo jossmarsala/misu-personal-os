@@ -14,9 +14,8 @@ import './WeeklyPlanner.css';
 // We no longer use static day strings. Days are dynamically generated as YYYY-MM-DD strings.
 
 export default function WeeklyPlanner() {
-  const { tasks } = useTasks();
+  const { tasks, weeklyPlan: plan, setWeeklyPlan: setPlan } = useTasks();
   const { t, language } = useLanguage();
-  const [plan, setPlan] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 

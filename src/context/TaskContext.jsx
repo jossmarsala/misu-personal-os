@@ -15,6 +15,14 @@ export function TaskProvider({ children }) {
     } catch {}
     return [];
   });
+
+  const [weeklyPlan, setWeeklyPlan] = useState(() => {
+    try {
+      const cached = localStorage.getItem('misu-offline-plan');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return null;
+  });
   
   const [loading, setLoading] = useState(true);
   const [isOffline, setIsOffline] = useState(typeof window !== 'undefined' ? !navigator.onLine : false);
@@ -48,10 +56,16 @@ export function TaskProvider({ children }) {
 
         if (error && error.code !== 'PGRST116') { 
           console.error("Supabase fetch error:", error);
-        } else if (data?.payload?.tasks) {
+        } else if (data?.payload) {
           // Sync UI & LocalStorage with fresh cloud data
-          setTasks(data.payload.tasks);
-          localStorage.setItem('misu-offline-tasks', JSON.stringify(data.payload.tasks));
+          if (data.payload.tasks) {
+            setTasks(data.payload.tasks);
+            localStorage.setItem('misu-offline-tasks', JSON.stringify(data.payload.tasks));
+          }
+          if (data.payload.weeklyPlan) {
+            setWeeklyPlan(data.payload.weeklyPlan);
+            localStorage.setItem('misu-offline-plan', JSON.stringify(data.payload.weeklyPlan));
+          }
         }
       } catch (err) {
         console.error("Failed to load tasks from Supabase:", err);
@@ -76,6 +90,7 @@ export function TaskProvider({ children }) {
     
     // Always backup to localStorage immediately (offline-first)
     localStorage.setItem('misu-offline-tasks', JSON.stringify(tasks));
+    localStorage.setItem('misu-offline-plan', JSON.stringify(weeklyPlan));
 
     if (!loading && user?.id) {
       if (isOffline) {
@@ -86,7 +101,7 @@ export function TaskProvider({ children }) {
       const sync = async () => {
         const { error } = await supabase
           .from('user_data')
-          .upsert({ user_id: user.id, payload: { tasks } }, { onConflict: 'user_id' });
+          .upsert({ user_id: user.id, payload: { tasks, weeklyPlan } }, { onConflict: 'user_id' });
         
         if (error) {
           console.error("Supabase sync error:", error);
@@ -98,6 +113,19 @@ export function TaskProvider({ children }) {
       sync();
     }
   }, [tasks, loading, user, isOffline]);
+
+  // Sync to cloud if weeklyPlan changes independently
+  useEffect(() => {
+    if (!loading && user?.id && !isOffline) {
+      const sync = async () => {
+        await supabase
+          .from('user_data')
+          .upsert({ user_id: user.id, payload: { tasks, weeklyPlan } }, { onConflict: 'user_id' });
+      };
+      sync();
+    }
+    localStorage.setItem('misu-offline-plan', JSON.stringify(weeklyPlan));
+  }, [weeklyPlan]);
 
   // Try syncing if returning online with dirty data
   useEffect(() => {
@@ -180,6 +208,8 @@ export function TaskProvider({ children }) {
       reorderTasks,
       focusedTaskId,
       setFocusedTaskId,
+      weeklyPlan,
+      setWeeklyPlan,
     }}>
       {children}
     </TaskContext.Provider>

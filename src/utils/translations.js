@@ -135,7 +135,8 @@ export const translations = {
     },
     widgets: {
       audio: "Audio",
-      focus: "Focus"
+      focus: "Focus",
+      calendar: "Calendar"
     }
   },
   es: {
@@ -274,7 +275,8 @@ export const translations = {
     },
     widgets: {
       audio: "Audio",
-      focus: "Enfoque"
+      focus: "Enfoque",
+      calendar: "Calendario"
     }
   },
   it: {
@@ -413,7 +415,8 @@ export const translations = {
     },
     widgets: {
       audio: "Audio",
-      focus: "Focus"
+      focus: "Focus",
+      calendar: "Calendario"
     }
   }
 };

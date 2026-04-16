@@ -15,9 +15,10 @@ import PomodoroWidget from './components/PomodoroWidget';
 import MusicPlayer from './components/MusicPlayer';
 import GlassIcons from './components/GlassIcons';
 import DNDWidget from './components/DNDWidget';
+import CalendarView from './components/CalendarView';
 import MisuHelper from './components/MisuHelper';
 import { useMindfulness } from './hooks/useMindfulness';
-import { Clock, CheckCircle2, Timer, Music, Wind, Shield } from 'lucide-react';
+import { Clock, CheckCircle2, Timer, Music, Wind, Shield, Calendar } from 'lucide-react';
 import { useLanguage } from './context/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import './App.css';
@@ -29,6 +30,7 @@ function App() {
   const [showPomodoro, setShowPomodoro] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
   const [showDND, setShowDND] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
   const { currentEnergy, dndActive, breathingActive, setBreathingActive } = useEnergy();
   const { tasks } = useTasks();
   const { t } = useLanguage();
@@ -76,6 +78,12 @@ function App() {
               color: showDND ? energyDef.colorA : 'gray', 
               label: t('settings.shield'), 
               onClick: () => setShowDND(!showDND) 
+            },
+            { 
+              icon: <Calendar size={20} />, 
+              color: showCalendar ? energyDef.colorA : 'gray', 
+              label: t('widgets.calendar'), 
+              onClick: () => setShowCalendar(!showCalendar) 
             }
           ]} 
           colorful={true}
@@ -168,6 +176,7 @@ function App() {
       <PomodoroWidget visible={showPomodoro} onClose={() => setShowPomodoro(false)} />
       <MusicPlayer visible={showMusic} />
       <DNDWidget visible={showDND} />
+      <CalendarView visible={showCalendar} onClose={() => setShowCalendar(false)} />
       
       <MisuHelper 
         visible={helperVisible} 

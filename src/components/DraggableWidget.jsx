@@ -5,7 +5,7 @@ import './DraggableWidget.css';
 
 const STORAGE_PREFIX = 'misu-widget-pos-';
 
-export default function DraggableWidget({ id, title, icon, children, defaultPosition = { x: 20, y: 80 } }) {
+export default function DraggableWidget({ id, title, icon, children, defaultPosition = { x: 20, y: 80 }, customWidth }) {
   const getInitialPosition = () => {
     try {
       const saved = localStorage.getItem(STORAGE_PREFIX + id);
@@ -62,7 +62,7 @@ export default function DraggableWidget({ id, title, icon, children, defaultPosi
     <motion.div
       ref={containerRef}
       className={`draggable-widget ${collapsed ? 'collapsed' : ''} ${isDragging ? 'dragging' : ''}`}
-      style={{ x, y, zIndex }}
+      style={{ x, y, zIndex, width: customWidth || undefined }}
       drag
       dragControls={dragControls}
       dragListener={false}
