@@ -24,7 +24,7 @@ export default function DraggableWidget({ id, title, icon, children, defaultPosi
 
   const [collapsed, setCollapsed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [zIndex, setZIndex] = useState(10);
+  const [zIndex, setZIndex] = useState(100);
   const [windowSize, setWindowSize] = useState({ 
     width: typeof window !== 'undefined' ? window.innerWidth : 1000, 
     height: typeof window !== 'undefined' ? window.innerHeight : 800 
@@ -44,10 +44,13 @@ export default function DraggableWidget({ id, title, icon, children, defaultPosi
   }, []);
 
   const startDrag = (event) => {
-    if (event.target.closest('button') || event.target.closest('input') || event.target.closest('select')) return;
-    setZIndex(Date.now() % 10000 + 100);
+    // Only drag from the header, and not from buttons
+    if (event.target.closest('button') || event.target.closest('input')) return;
+    
+    // Bring to front
+    setZIndex(prev => Math.max(prev, Date.now() % 10000 + 1000));
     setIsDragging(true);
-    dragControls.start(event);
+    dragControls.start(event, { snapToCursor: false });
   };
 
   const handleDragEnd = () => {

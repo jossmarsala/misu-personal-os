@@ -12,7 +12,6 @@ export default function CalendarView({ visible, onClose }) {
   const { tasks, weeklyPlan } = useTasks();
   const { t, language } = useLanguage();
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedTask, setSelectedTask] = useState(null);
 
   // Resizing state (specific to Calendar for now as requested)
   const [size, setSize] = useState({ width: 420, height: 420 });
@@ -116,7 +115,6 @@ export default function CalendarView({ visible, onClose }) {
                       key={idx} 
                       className="calendar-task-dot"
                       style={{ backgroundColor: getEnergyColor(task.energyRequired || 3) }}
-                      onClick={() => setSelectedTask(task)}
                     >
                       <div className="calendar-task-hover-tag">
                         {task.title}
@@ -157,26 +155,6 @@ export default function CalendarView({ visible, onClose }) {
           <div className="resize-handle-icon" />
         </div>
 
-        <AnimatePresence>
-          {selectedTask && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="calendar-task-detail"
-            >
-              <div className="detail-header">
-                <h3>{selectedTask.title}</h3>
-                <button onClick={() => setSelectedTask(null)}>✕</button>
-              </div>
-              <div className="detail-body">
-                <p>{selectedTask.description || t('tasks.fieldDescription')}</p>
-                {selectedTask.deadline && <p><strong>{t('tasks.fieldDeadline')}:</strong> {selectedTask.deadline}</p>}
-                {selectedTask.estimatedHours && <p><strong>{t('tasks.fieldHours')}:</strong> {selectedTask.estimatedHours}h</p>}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </DraggableWidget>
   );

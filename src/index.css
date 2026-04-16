@@ -108,13 +108,13 @@ body::before {
 /* Energy 5: Peak — Prismatic Yellow → Rainbow Fade */
 :root[data-energy="5"] {
   --energy-color-a: #ffeb3b;
-  --energy-color-b: #03a9f4;
+  --energy-color-b: #78d4ff;
   --energy-primary: #fbc02d;
   --energy-accent: #fff176;
   --energy-glow: rgba(255, 235, 59, 0.4);
   --energy-surface: rgba(255, 235, 59, 0.15);
-  --energy-gradient: linear-gradient(135deg, #ffeb3b, #ff4081, #03a9f4);
-  --energy-gradient-soft: linear-gradient(135deg, rgba(255, 235, 59, 0.3), rgba(255, 64, 129, 0.3));
+  --energy-gradient: linear-gradient(135deg, #ffeb3b, #e6ff40, #03a9f4);
+  --energy-gradient-soft: linear-gradient(135deg, rgba(255, 235, 59, 0.3), rgba(64, 255, 249, 0.3));
   --energy-gradient-card: linear-gradient(160deg, #fff9c4 0%, #e1f5fe 100%);
 }
 
