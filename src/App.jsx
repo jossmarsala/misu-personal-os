@@ -165,7 +165,7 @@ function App() {
           className="widget-glass-container"
         />
         {/* X2: Keyboard shortcut hint */}
-        <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: '4px', marginLeft: '8px' }}>
+        <span className="cmd-k-hint">
           <Command size={10} /><kbd style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '9px' }}>K</kbd>
         </span>
       </div>
