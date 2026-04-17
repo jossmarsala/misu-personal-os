@@ -3,8 +3,30 @@ import { useTasks } from '../context/TaskContext';
 import { loadSettings, saveSettings, exportToJSON, importFromJSON } from '../services/storage';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-import { X, Download, Upload, Trash2, Key, LogOut, Check, User, Database, AlertTriangle } from 'lucide-react';
+import { X, Download, Upload, Trash2, Key, LogOut, Check, User, Database, AlertTriangle, HelpCircle } from 'lucide-react';
 import './SettingsModal.css';
+
+/** Minimal inline help tooltip — no extra deps needed */
+function HelpTip({ text }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <span className="help-tip" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+      <button
+        className="help-tip__btn"
+        onClick={() => setOpen(o => !o)}
+        aria-label="Help"
+        type="button"
+      >
+        <HelpCircle size={13} />
+      </button>
+      {open && (
+        <span className="help-tip__bubble" role="tooltip">
+          {text}
+        </span>
+      )}
+    </span>
+  );
+}
 
 export default function SettingsModal({ onClose }) {
   const { tasks, importTasksFromJSON, clearAll } = useTasks();
@@ -111,7 +133,11 @@ export default function SettingsModal({ onClose }) {
               {t('settings.apiKey')}
             </div>
             <div className="settings-section__card">
-              <p className="settings-section__desc">{t('settings.apiKeyDesc')}</p>
+              <p className="settings-section__desc">
+                {t('settings.apiKeyDesc')}
+                {' '}
+                <HelpTip text={t('settings.apiKeyHelp')} />
+              </p>
               <div className="settings-api-row">
                 <input
                   className="input"
@@ -178,7 +204,11 @@ export default function SettingsModal({ onClose }) {
               <div className="settings-danger-row">
                 <div>
                   <span className="settings-danger-row__title">{t('settings.clearAll')}</span>
-                  <span className="settings-danger-row__desc">This action cannot be undone</span>
+                  <span className="settings-danger-row__desc">
+                    {t('settings.clearAllDesc')}
+                    {' '}
+                    <HelpTip text={t('settings.clearAllHelp')} />
+                  </span>
                 </div>
                 <button
                   className={`btn btn-sm ${confirmClear ? 'btn-danger' : 'btn-secondary'}`}
