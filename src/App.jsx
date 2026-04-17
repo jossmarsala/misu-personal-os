@@ -80,6 +80,7 @@ function App() {
         isChunk: false,
         chunkLabel: '',
         dndId: `${targetDay}-${task.id}-manual-${Date.now()}`,
+        energyRequired: task.energyRequired || 3,
       };
       setWeeklyPlan(prev => ({
         ...prev,

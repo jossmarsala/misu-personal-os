@@ -114,6 +114,7 @@
 }
 
 .planner__task {
+  position: relative;
   padding: 2px;
   border-radius: var(--radius-sm);
   background: transparent;
@@ -228,4 +229,35 @@
 
 @media (max-width: 480px) {
   .planner__week { grid-template-columns: 1fr; }
+}
+
+.planner__task-delete {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 2;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.planner__task:hover .planner__task-delete {
+  opacity: 1;
+}
+
+.planner__task-delete:hover {
+  background: var(--energy-surface);
+  color: var(--energy-primary);
+  border-color: var(--energy-primary);
+  transform: scale(1.1);
 }

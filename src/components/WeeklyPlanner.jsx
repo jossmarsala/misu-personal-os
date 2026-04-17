@@ -43,7 +43,14 @@ export default function WeeklyPlanner() {
       
       for (const day of Object.keys(result)) {
         if (Array.isArray(result[day])) {
-          result[day] = result[day].map((t, idx) => ({ ...t, dndId: `${day}-${t.taskId}-${idx}-${Date.now()}` }));
+          result[day] = result[day].map((t, idx) => {
+            const associatedTask = tasks.find(x => x.id === t.taskId);
+            return {
+              ...t,
+              dndId: `${day}-${t.taskId}-${idx}-${Date.now()}`,
+              energyRequired: associatedTask ? associatedTask.energyRequired : 3
+            };
+          });
         }
       }
       
