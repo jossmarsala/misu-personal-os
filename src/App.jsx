@@ -36,7 +36,7 @@ function App() {
   const { t } = useLanguage();
   const energyDef = getEnergyDef(currentEnergy);
 
-  const { advice, helperVisible, helperType, setHelperVisible } = useMindfulness(showDND);
+  const { advice, helperVisible, helperType, setHelperVisible } = useMindfulness(showDND, showMusic, showPomodoro);
 
   // Handle commands emitted by CommandPalette via custom events
   useEffect(() => {
@@ -257,7 +257,7 @@ function App() {
         visible={helperVisible}
         advice={t(advice) || ''}
         type={helperType}
-        onClose={() => setHelperVisible(false)}
+        onClose={setHelperVisible}
       />
 
       {/* Global SVG Filters for Gradient Orbs */}

@@ -94,6 +94,13 @@ export default function MisuHelper({ advice, visible, onClose, type = 'advice' }
     info:        <Info     size={18} className="misu-helper__icon" />,
   };
 
+  const titles = {
+    advice:      'Misu says',
+    mindfulness: '4-7-8 Breathing',
+    surprise:    'Nice one ✨',
+    info:        'Quick tip',
+  };
+
   return (
     <AnimatePresence>
       {visible && (
@@ -116,7 +123,7 @@ export default function MisuHelper({ advice, visible, onClose, type = 'advice' }
             </div>
             <div className="misu-helper__text">
               <h4 className="misu-helper__title">
-                {type === 'mindfulness' ? '4-7-8 Breathing' : 'Misu Advice'}
+                {titles[type] ?? 'Misu says'}
               </h4>
               <p className="misu-helper__desc">{advice}</p>
             </div>
@@ -131,3 +138,4 @@ export default function MisuHelper({ advice, visible, onClose, type = 'advice' }
     </AnimatePresence>
   );
 }
+

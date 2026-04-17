@@ -143,6 +143,16 @@ export const translations = {
       audio: "Audio",
       focus: "Focus",
       calendar: "Calendar"
+    },
+    tips: {
+      firstTask: "You added your first task! 🎉 Try changing your energy level on the right to get personalized recommendations that match how you feel right now.",
+      firstComplete: "You completed your first task! 🚀 Head to the Weekly Plan section and let AI schedule the rest of your week intelligently.",
+      morningGreeting: "Good morning! ☀️ You have tasks waiting. Set your energy level to match how you feel today — Misu will suggest the right ones to start with.",
+      overdueWarning: "You have overdue tasks. No pressure — pick one and tackle just 25 minutes of it. A small start beats a perfect plan.",
+      whisperMode: "You switched to Whisper mode 🌿 This is a great time to rest or do something light. Close any non-essential widgets and let your mind breathe.",
+      heavyWorkload: "Big day ahead! You have several heavy tasks. Consider using the Pomodoro timer to break them into focused 25-minute sprints.",
+      musicIntro: "Music adapts to your energy level 🎵 Each mood has its own curated playlist. Change your energy level to shift the vibe.",
+      pomodoroIntro: "Select a task in the Pomodoro timer to track your focus session. When the timer ends, you can mark it as done directly."
     }
   },
   es: {
@@ -289,6 +299,16 @@ export const translations = {
       audio: "Audio",
       focus: "Enfoque",
       calendar: "Calendario"
+    },
+    tips: {
+      firstTask: "¡Añadiste tu primera tarea! 🎉 Prueba cambiar tu nivel de energía a la derecha para recibir recomendaciones personalizadas según cómo te sientes ahora.",
+      firstComplete: "¡Completaste tu primera tarea! 🚀 Ve a la sección de Plan Semanal y deja que la IA organice el resto de tu semana de forma inteligente.",
+      morningGreeting: "¡Buenos días! ☀️ Tienes tareas esperando. Ajusta tu nivel de energía según cómo te sientes hoy — Misu te sugerirá por dónde empezar.",
+      overdueWarning: "Tienes tareas atrasadas. Sin presión — elige una y dedícale solo 25 minutos. Un pequeño inicio supera al plan perfecto.",
+      whisperMode: "Cambiaste al modo Susurro 🌿 Es un buen momento para descansar o hacer algo ligero. Cierra los widgets que no necesites y deja respirar tu mente.",
+      heavyWorkload: "¡Gran día por delante! Tienes varias tareas pesadas. Considera usar el temporizador Pomodoro para dividirlas en sprints de 25 minutos.",
+      musicIntro: "La música se adapta a tu nivel de energía 🎵 Cada estado tiene su propia playlist. Cambia tu energía para cambiar el ambiente.",
+      pomodoroIntro: "Selecciona una tarea en el temporizador Pomodoro para hacer seguimiento de tu sesión. Cuando acabe, puedes marcarla como terminada directamente."
     }
   },
   it: {
@@ -435,6 +455,16 @@ export const translations = {
       audio: "Audio",
       focus: "Focus",
       calendar: "Calendario"
+    },
+    tips: {
+      firstTask: "Hai aggiunto il tuo primo compito! 🎉 Prova a cambiare il tuo livello di energia a destra per ricevere suggerimenti personalizzati in base a come ti senti adesso.",
+      firstComplete: "Hai completato il tuo primo compito! 🚀 Vai alla sezione Piano Settimanale e lascia che l'IA organizzi il resto della tua settimana in modo intelligente.",
+      morningGreeting: "Buongiorno! ☀️ Hai dei compiti in attesa. Imposta il tuo livello di energia in base a come ti senti oggi — Misu ti suggerirà da dove iniziare.",
+      overdueWarning: "Hai dei compiti in ritardo. Senza pressione — scegline uno e dedicaci solo 25 minuti. Un piccolo inizio vale più del piano perfetto.",
+      whisperMode: "Hai attivato la modalità Sussurro 🌿 È un buon momento per riposare o fare qualcosa di leggero. Chiudi i widget non essenziali e lascia respirare la mente.",
+      heavyWorkload: "Grande giornata in arrivo! Hai diversi compiti impegnativi. Considera di usare il timer Pomodoro per dividerli in sprint da 25 minuti.",
+      musicIntro: "La musica si adatta al tuo livello di energia 🎵 Ogni stato ha la sua playlist. Cambia il livello per cambiare l'atmosfera.",
+      pomodoroIntro: "Seleziona un compito nel timer Pomodoro per tracciare la tua sessione di focus. Quando il timer finisce, puoi segnarlo come completato direttamente."
     }
   }
 };
