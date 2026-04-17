@@ -120,7 +120,6 @@
   background: var(--card-bg);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-lg);
-  overflow: hidden;
 }
 
 .settings-section__card--danger {
