@@ -404,13 +404,13 @@
   }
 
   .widget-kbd-hint {
-    display: none;
+    display: none !important;
   }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
   .widget-kbd-hint {
-    display: none;
+    display: none !important;
   }
 }
 
