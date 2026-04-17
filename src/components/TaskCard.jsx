@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTasks } from '../context/TaskContext';
-import { Check, Pencil, Trash2, X, Save, ChevronDown, ChevronUp, Play, GripVertical } from 'lucide-react';
+import { Check, Pencil, Trash2, X, Save, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
 import { getEnergyDef } from '../utils/energy';
 import { formatDeadline, getDeadlineStatus } from '../utils/dateUtils';
 import { useLanguage } from '../context/LanguageContext';
@@ -13,7 +13,7 @@ import './TaskCard.css';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TaskCard({ task }) {
-  const { toggleComplete, updateTask, deleteTask, setFocusedTaskId } = useTasks();
+  const { toggleComplete, updateTask, deleteTask } = useTasks();
   const { t } = useLanguage();
   const { currentEnergy } = useEnergy();
   const [isEditing, setIsEditing] = useState(false);
@@ -202,18 +202,6 @@ export default function TaskCard({ task }) {
       </div>
 
       <div className="task-card__actions" style={{ flexShrink: 0 }}>
-        {!task.completed && (
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="btn btn-ghost btn-icon btn-sm"
-            onClick={() => setFocusedTaskId(task.id)}
-            aria-label="Zen Focus"
-            title="Zen Focus"
-          >
-            <Play size={14} />
-          </motion.button>
-        )}
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
