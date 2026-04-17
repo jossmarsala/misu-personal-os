@@ -23,6 +23,8 @@ const PomodoroWidget = lazy(() => import('./components/PomodoroWidget'));
 const MusicPlayer = lazy(() => import('./components/MusicPlayer'));
 const DNDWidget = lazy(() => import('./components/DNDWidget'));
 const CalendarView = lazy(() => import('./components/CalendarView'));
+const OnboardingTour = lazy(() => import('./components/OnboardingTour'));
+import { useOnboarding } from './hooks/useOnboarding';
 
 import './App.css';
 function App() {
@@ -37,6 +39,7 @@ function App() {
   const energyDef = getEnergyDef(currentEnergy);
 
   const { advice, helperVisible, helperType, setHelperVisible } = useMindfulness(showDND, showMusic, showPomodoro);
+  const { showOnboarding, finishOnboarding } = useOnboarding();
 
   // Handle commands emitted by CommandPalette via custom events
   useEffect(() => {
@@ -259,6 +262,11 @@ function App() {
         type={helperType}
         onClose={setHelperVisible}
       />
+
+      {/* First-time onboarding tour */}
+      <Suspense fallback={null}>
+        {showOnboarding && <OnboardingTour onFinish={finishOnboarding} />}
+      </Suspense>
 
       {/* Global SVG Filters for Gradient Orbs */}
       <svg style={{ position: 'absolute', width: 0, height: 0, opacity: 0, pointerEvents: 'none' }}>

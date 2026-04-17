@@ -156,6 +156,18 @@ export const translations = {
       heavyWorkload: "Big day ahead! You have several heavy tasks. Consider using the Pomodoro timer to break them into focused 25-minute sprints.",
       musicIntro: "Music adapts to your energy level 🎵 Each mood has its own curated playlist. Change your energy level to shift the vibe.",
       pomodoroIntro: "Select a task in the Pomodoro timer to track your focus session. When the timer ends, you can mark it as done directly."
+    },
+    onboarding: {
+      back: "Back",
+      next: "Next",
+      finish: "Let's go!",
+      welcome:         { title: "Welcome to Misu",            desc: "Your mood-aware task companion. Misu helps you work with your energy, not against it — fewer burnouts, more flow." },
+      energy:          { title: "The Energy System",          desc: "Set your energy level (1–4) to match how you feel right now. Misu uses this to surface the right tasks and music for your current state." },
+      tasks:           { title: "Create Tasks",               desc: "Add tasks with a title, deadline, estimated hours, and energy level required. Tasks are stored locally and sync to your weekly plan." },
+      recommendations: { title: "Smart Recommendations",     desc: "The 'What can I do now?' panel automatically surfaces tasks that match your current energy. No decision fatigue." },
+      widgets:         { title: "Widgets",                   desc: "Toggle Pomodoro, Music, Focus Shield, or Calendar from the top bar. All widgets are draggable — position them wherever suits you." },
+      planner:         { title: "AI Weekly Plan",            desc: "Hit 'Generate Weekly Plan' and Misu uses Gemini AI to spread your tasks across the week based on deadlines and energy needs." },
+      dnd:             { title: "Drag to Reorganize",        desc: "Your generated plan is fully interactive. Drag task blocks between days to fine-tune your schedule after the AI generates it." }
     }
   },
   es: {
@@ -315,6 +327,18 @@ export const translations = {
       heavyWorkload: "¡Gran día por delante! Tienes varias tareas pesadas. Considera usar el temporizador Pomodoro para dividirlas en sprints de 25 minutos.",
       musicIntro: "La música se adapta a tu nivel de energía 🎵 Cada estado tiene su propia playlist. Cambia tu energía para cambiar el ambiente.",
       pomodoroIntro: "Selecciona una tarea en el temporizador Pomodoro para hacer seguimiento de tu sesión. Cuando acabe, puedes marcarla como terminada directamente."
+    },
+    onboarding: {
+      back: "Atrás",
+      next: "Siguiente",
+      finish: "¡Empezar!",
+      welcome:         { title: "Bienvenido a Misu",              desc: "Tu compañero de tareas consciente de tu estado. Misu te ayuda a trabajar con tu energía, no en su contra." },
+      energy:          { title: "El Sistema de Energía",         desc: "Ajusta tu nivel de energía (1–4) según cómo te sientes ahora. Misu usa esto para mostrarte las tareas y la música ideal para tu estado actual." },
+      tasks:           { title: "Crea Tareas",                   desc: "Añade tareas con título, fecha límite, horas estimadas y nivel de energía requerido. Se guardan localmente y se sincronizan con tu plan semanal." },
+      recommendations: { title: "Recomendaciones Inteligentes",  desc: "El panel '¿Qué puedo hacer ahora?' muestra automáticamente las tareas que coinciden con tu energía. Sin agotamiento de decisiones." },
+      widgets:         { title: "Widgets",                       desc: "Activa Pomodoro, Música, Escudo de Enfoque o Calendario desde la barra superior. Todos son arrastrables." },
+      planner:         { title: "Plan Semanal con IA",           desc: "Pulsa 'Generar Plan Semanal' y Misu usa Gemini AI para distribuir tus tareas a lo largo de la semana según plazos y energía." },
+      dnd:             { title: "Arrastra para Reorganizar",    desc: "Tu plan generado es totalmente interactivo. Arrastra bloques de tareas entre días para ajustar tu horario después de la generación." }
     }
   },
   it: {
@@ -474,6 +498,18 @@ export const translations = {
       heavyWorkload: "Grande giornata in arrivo! Hai diversi compiti impegnativi. Considera di usare il timer Pomodoro per dividerli in sprint da 25 minuti.",
       musicIntro: "La musica si adatta al tuo livello di energia 🎵 Ogni stato ha la sua playlist. Cambia il livello per cambiare l'atmosfera.",
       pomodoroIntro: "Seleziona un compito nel timer Pomodoro per tracciare la tua sessione di focus. Quando il timer finisce, puoi segnarlo come completato direttamente."
+    },
+    onboarding: {
+      back: "Indietro",
+      next: "Avanti",
+      finish: "Iniziamo!",
+      welcome:         { title: "Benvenuto in Misu",             desc: "Il tuo compagno di attività consapevole del tuo umore. Misu ti aiuta a lavorare con la tua energia, non contro di essa." },
+      energy:          { title: "Il Sistema Energetico",        desc: "Imposta il tuo livello di energia (1–4) in base a come ti senti ora. Misu usa questo per mostrarti le attività e la musica giuste per il tuo stato attuale." },
+      tasks:           { title: "Crea Attività",               desc: "Aggiungi attività con titolo, scadenza, ore stimate e livello di energia richiesto. Vengono salvate localmente e sincronizzate con il tuo piano settimanale." },
+      recommendations: { title: "Suggerimenti Intelligenti",   desc: "Il pannello 'Cosa posso fare ora?' mostra automaticamente le attività che corrispondono alla tua energia attuale. Niente affaticamento decisionale." },
+      widgets:         { title: "Widget",                      desc: "Attiva Pomodoro, Musica, Scudo Focus o Calendario dalla barra superiore. Tutti i widget sono trascinabili." },
+      planner:         { title: "Piano Settimanale con IA",    desc: "Premi 'Genera Piano Settimanale' e Misu usa Gemini AI per distribuire le tue attività durante la settimana in base a scadenze ed energia." },
+      dnd:             { title: "Trascina per Riorganizzare",  desc: "Il tuo piano generato è completamente interattivo. Trascina i blocchi attività tra i giorni per ottimizzare il programma dopo la generazione." }
     }
   }
 };
