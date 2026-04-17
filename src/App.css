@@ -314,7 +314,6 @@
   padding: 0;
   margin: 0;
   gap: 12px;
-  flex-wrap: nowrap;
 }
 
 .widget-toggles:hover {
@@ -356,32 +355,63 @@
 
 @media (max-width: 768px) {
   .widget-toggles {
-    bottom: 24px;
+    bottom: 16px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    padding: 8px 16px;
+    gap: 6px;
+    flex-direction: row !important;
+    flex-wrap: nowrap;
+    align-items: center;
     width: max-content;
     max-width: calc(100vw - 32px);
     overflow-x: auto;
-    overflow-y: visible;
     -webkit-overflow-scrolling: touch;
-    padding: 12px 20px;
+    scrollbar-width: none;
+  }
+
+  .widget-toggles::-webkit-scrollbar {
+    display: none;
+  }
+
+  .widget-toggles:hover {
+    transform: translateX(-50%);
   }
 
   .widget-toggle-btn {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
   }
 
-  .cmd-k-hint {
-    display: none !important;
+  /* Scale down GlassIcons inside dock on mobile */
+  .widget-toggles .icon-btns {
+    font-size: 0.72em;
+    gap: 0.8em;
+    padding: 0;
+    flex-wrap: nowrap;
+  }
+
+  .widget-toggles .icon-btn {
+    width: 3.2em;
+    height: 3.2em;
+  }
+
+  /* Hide labels on mobile — they cause vertical overflow */
+  .widget-toggles .icon-btn__label {
+    display: none;
+  }
+
+  .widget-kbd-hint {
+    display: none;
   }
 }
 
-.cmd-k-hint {
-  font-size: 10px;
-  color: var(--text-tertiary);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: 8px;
+@media (min-width: 769px) and (max-width: 1024px) {
+  .widget-kbd-hint {
+    display: none;
+  }
 }
 
 /* ─── DND MODE OVERRIDES ─── */
