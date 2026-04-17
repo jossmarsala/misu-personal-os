@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 import BlurText from './BlurText';
 
 export default function Clock() {
   const [time, setTime] = useState(new Date());
+  const { language } = useLanguage(); // U1: Use app language instead of hardcoded es-ES
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const formatter = new Intl.DateTimeFormat('es-ES', { // Defaulting Spanish since user prefers it
+  const localeMap = { en: 'en-US', es: 'es-ES', it: 'it-IT' };
+  const formatter = new Intl.DateTimeFormat(localeMap[language] || 'en-US', {
     weekday: 'short',
     month: 'short',
     day: 'numeric',

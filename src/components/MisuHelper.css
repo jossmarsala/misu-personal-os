@@ -76,40 +76,124 @@
   color: var(--text-secondary);
 }
 
-/* Mindfulness specific styles */
 .misu-helper--mindfulness .misu-helper__visualizer {
   margin-top: 16px;
-  height: 40px;
+  padding-bottom: 4px;
+}
+
+/* ─── Linear Breathing Bar ─── */
+.breath-bar-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.misu-helper__circle {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
+.breath-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.breath-phase-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.4s ease;
+}
+
+.breath-phase-label[data-phase="inhale"] { color: var(--energy-primary); }
+.breath-phase-label[data-phase="hold"]   { color: var(--text-secondary); }
+.breath-phase-label[data-phase="exhale"] { color: var(--text-tertiary); }
+
+.breath-phase-seconds {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary);
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Track */
+.breath-bar-track {
+  position: relative;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--bg-input);
+  overflow: visible;
+}
+
+/* Animated fill */
+.breath-bar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-radius: 999px;
+  min-width: 4px;
+}
+
+.breath-bar-fill[data-phase="inhale"] {
+  background: linear-gradient(90deg, var(--energy-surface), var(--energy-primary));
+  box-shadow: 0 0 8px var(--energy-glow);
+}
+
+.breath-bar-fill[data-phase="hold"] {
   background: var(--energy-primary);
-  box-shadow: 0 0 20px var(--energy-glow);
-  animation: helper-breathe 19s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 6px var(--energy-glow);
 }
 
-@keyframes helper-breathe {
-  0%, 100% { 
-    transform: scale(0.85); 
-    opacity: 0.25; 
-    box-shadow: 0 0 10px var(--energy-glow);
-  }
-  21% { 
-    transform: scale(3.8); 
-    opacity: 1; 
-    box-shadow: 0 0 40px var(--energy-glow);
-  }
-  58% { 
-    transform: scale(3.8); 
-    opacity: 0.9; 
-    box-shadow: 0 0 30px var(--energy-glow);
-  }
+.breath-bar-fill[data-phase="exhale"] {
+  background: linear-gradient(90deg, var(--energy-surface), var(--energy-primary));
+  opacity: 0.6;
+}
+
+/* Glowing leading dot */
+.breath-bar-dot {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transition: background 0.4s ease;
+  pointer-events: none;
+}
+
+.breath-bar-dot[data-phase="inhale"] {
+  background: var(--energy-primary);
+  box-shadow: 0 0 10px var(--energy-glow), 0 0 4px var(--energy-primary);
+}
+
+.breath-bar-dot[data-phase="hold"] {
+  background: var(--energy-primary);
+  box-shadow: 0 0 8px var(--energy-glow);
+}
+
+.breath-bar-dot[data-phase="exhale"] {
+  background: var(--text-tertiary);
+  box-shadow: none;
+}
+
+/* Phase ticks row */
+.breath-bar-phases {
+  display: flex;
+  justify-content: space-between;
+}
+
+.breath-tick {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  opacity: 0.45;
+  transition: all 0.3s ease;
+}
+
+.breath-tick--active {
+  color: var(--energy-primary);
+  opacity: 1;
 }
 
 @media (max-width: 768px) {

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "app": "Misu",
+  "app": "MISU",
   "exportedAt": "2026-04-12T06:00:00Z",
   "tasks": [
     {
@@ -39,7 +39,7 @@
       "description": "Migrate from session-based auth to JWT tokens. Update middleware and test endpoints.",
       "deadline": "2026-04-18",
       "estimatedHours": 6,
-      "energyRequired": 5,
+      "energyRequired": 4,
       "completed": false,
       "createdAt": "2026-04-12T05:00:00Z"
     },

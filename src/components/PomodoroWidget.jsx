@@ -1,39 +1,33 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useTasks } from '../context/TaskContext';
-import { Timer, Play, Pause, SkipForward, RotateCcw, ChevronDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Timer, Play, Pause, SkipForward, RotateCcw } from 'lucide-react';
 import { playChime, playPop } from '../utils/audio';
 import { useLanguage } from '../context/LanguageContext';
 import DraggableWidget from './DraggableWidget';
 import './PomodoroWidget.css';
 
 const MODES = {
-  focus: { label: 'Focus', duration: 25 * 60, color: 'var(--energy-primary)' },
-  shortBreak: { label: 'Break', duration: 5 * 60, color: 'var(--energy-accent)' },
-  longBreak: { label: 'Long Break', duration: 15 * 60, color: 'var(--energy-accent)' },
+  focus:      { labelKey: 'pomodoro.focus',     duration: 25 * 60, color: 'var(--energy-primary)' },
+  shortBreak: { labelKey: 'pomodoro.break',     duration:  5 * 60, color: 'var(--energy-accent)'  },
+  longBreak:  { labelKey: 'pomodoro.longBreak', duration: 15 * 60, color: 'var(--energy-accent)'  },
 };
 
 export default function PomodoroWidget({ visible, onClose }) {
-  const { tasks, toggleComplete } = useTasks();
   const { t } = useLanguage();
-  const activeTasks = tasks.filter(t => !t.completed);
 
   const [mode, setMode] = useState('focus');
   const [timeLeft, setTimeLeft] = useState(MODES.focus.duration);
   const [isActive, setIsActive] = useState(false);
   const [sessions, setSessions] = useState(0);
-  const [boundTaskId, setBoundTaskId] = useState('');
-  const [showTaskPicker, setShowTaskPicker] = useState(false);
 
   const currentMode = MODES[mode];
   const totalTime = currentMode.duration;
-  const progress = 1 - (timeLeft / totalTime);
-  
-  // SVG circle math
-  const radius = 52;
+  const progress = 1 - timeLeft / totalTime;
+
+  // SVG ring math
+  const radius = 54;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - progress);
 
-  // Timer tick
   useEffect(() => {
     let interval = null;
     if (isActive && timeLeft > 0) {
@@ -41,11 +35,9 @@ export default function PomodoroWidget({ visible, onClose }) {
     } else if (timeLeft === 0 && isActive) {
       setIsActive(false);
       playChime();
-
       if (mode === 'focus') {
         const newSessions = sessions + 1;
         setSessions(newSessions);
-        // Every 4 focus sessions → long break
         const nextMode = newSessions % 4 === 0 ? 'longBreak' : 'shortBreak';
         setMode(nextMode);
         setTimeLeft(MODES[nextMode].duration);
@@ -58,7 +50,7 @@ export default function PomodoroWidget({ visible, onClose }) {
   }, [isActive, timeLeft, mode, sessions]);
 
   const toggle = () => {
-    setIsActive(!isActive);
+    setIsActive(a => !a);
     if (!isActive) playPop();
   };
 
@@ -81,17 +73,8 @@ export default function PomodoroWidget({ visible, onClose }) {
     }
   };
 
-  const completeTask = () => {
-    if (boundTaskId) {
-      toggleComplete(boundTaskId);
-      playPop();
-      setBoundTaskId('');
-    }
-  };
-
   const mins = Math.floor(timeLeft / 60).toString().padStart(2, '0');
   const secs = (timeLeft % 60).toString().padStart(2, '0');
-  const boundTask = tasks.find(t => t.id === boundTaskId);
 
   if (!visible) return null;
 
@@ -100,7 +83,7 @@ export default function PomodoroWidget({ visible, onClose }) {
       id="pomodoro" 
       title={t('pomodoro.title')} 
       icon={<Timer size={14} />}
-      defaultPosition={{ x: window.innerWidth - 310, y: 100 }}
+      defaultPosition={{ x: Math.max(20, window.innerWidth - 330), y: 100 }} // X3: safer positioning
     >
       <div className="pomodoro">
         {/* Mode tabs */}
@@ -111,17 +94,17 @@ export default function PomodoroWidget({ visible, onClose }) {
               className={`pomodoro__mode-btn ${mode === key ? 'active' : ''}`}
               onClick={() => { setMode(key); setTimeLeft(m.duration); setIsActive(false); }}
             >
-              {t(`pomodoro.${key}`)}
+            {t(`pomodoro.${key === 'shortBreak' ? 'break' : key === 'longBreak' ? 'longBreak' : key}`)}
             </button>
           ))}
         </div>
 
         {/* Timer ring */}
         <div className="pomodoro__ring-container">
-          <svg className="pomodoro__ring" viewBox="0 0 120 120">
-            <circle cx="60" cy="60" r={radius} className="pomodoro__ring-bg" />
+          <svg className="pomodoro__ring" viewBox="0 0 128 128">
+            <circle cx="64" cy="64" r={radius} className="pomodoro__ring-bg" />
             <circle
-              cx="60" cy="60" r={radius}
+              cx="64" cy="64" r={radius}
               className="pomodoro__ring-progress"
               style={{
                 strokeDasharray: circumference,
@@ -132,61 +115,29 @@ export default function PomodoroWidget({ visible, onClose }) {
           </svg>
           <div className="pomodoro__time">
             <span className="pomodoro__digits">{mins}:{secs}</span>
+            <span className="pomodoro__mode-label">{t(currentMode.labelKey)}</span>
           </div>
         </div>
 
         {/* Controls */}
         <div className="pomodoro__controls">
           <button className="pomodoro__btn pomodoro__btn--sm" onClick={reset} title={t('pomodoro.reset')}>
-            <RotateCcw size={16} />
+            <RotateCcw size={15} />
           </button>
           <button className={`pomodoro__btn pomodoro__btn--main ${isActive ? 'active' : ''}`} onClick={toggle}>
-            {isActive ? <Pause size={20} /> : <Play size={20} />}
+            {isActive ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" style={{ marginLeft: '2px' }} />}
           </button>
           <button className="pomodoro__btn pomodoro__btn--sm" onClick={skip} title={t('pomodoro.skip')}>
-            <SkipForward size={16} />
+            <SkipForward size={15} />
           </button>
         </div>
 
         {/* Session dots */}
         <div className="pomodoro__sessions">
-          {[0,1,2,3].map(i => (
+          {[0, 1, 2, 3].map(i => (
             <div key={i} className={`pomodoro__dot ${i < (sessions % 4) ? 'filled' : ''}`} />
           ))}
         </div>
-
-        {/* Task picker */}
-        <div className="pomodoro__task-bind">
-          <button 
-            className="pomodoro__task-picker" 
-            onClick={() => setShowTaskPicker(!showTaskPicker)}
-          >
-            <span>{boundTask ? boundTask.title : t('pomodoro.selectTask')}</span>
-            <ChevronDown size={14} />
-          </button>
-          {showTaskPicker && (
-            <div className="pomodoro__task-list">
-              {activeTasks.map(t => (
-                <button 
-                  key={t.id}
-                  className="pomodoro__task-option"
-                  onClick={() => { setBoundTaskId(t.id); setShowTaskPicker(false); }}
-                >
-                  {t.title}
-                </button>
-              ))}
-              {activeTasks.length === 0 && (
-                <div className="pomodoro__task-option" style={{ opacity: 0.5 }}>{t('pomodoro.noTasks')}</div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {boundTask && (
-          <button className="pomodoro__done-btn" onClick={completeTask}>
-            ✓ {t('pomodoro.markDone')}
-          </button>
-        )}
       </div>
     </DraggableWidget>
   );

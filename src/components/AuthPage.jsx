@@ -1,11 +1,11 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useEnergy } from '../context/EnergyContext';
 import { getEnergyDef } from '../utils/energy';
-import { Headphones, Mail, Lock, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
-import BlurText from './BlurText';
-import GradientBlinds from './GradientBlinds';
+import { Mail, Lock, ArrowRight, Loader2, CheckCircle2, Eye, EyeOff } from 'lucide-react';
+import MosaicBackground from './MosaicBackground';
 import './AuthPage.css';
 
 const ERROR_MAP = {
@@ -33,38 +33,45 @@ const ERROR_MAP = {
 
 function friendlyError(message, lang) {
   for (const [key, translations] of Object.entries(ERROR_MAP)) {
-    if (message?.includes(key)) {
-      return translations[lang] || translations.en;
-    }
+    if (message?.includes(key)) return translations[lang] || translations.en;
   }
   return message;
 }
+
+const formVariants = {
+  hidden: { opacity: 0, x: 24 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } },
+  exit:    { opacity: 0, x: -24, transition: { duration: 0.22, ease: 'easeIn' } },
+};
+
+const fieldVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: (i) => ({ opacity: 1, y: 0, transition: { delay: i * 0.07, duration: 0.35, ease: [0.16, 1, 0.3, 1] } }),
+};
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
   const { login, signup } = useAuth();
   const { t, language } = useLanguage();
-  const { currentEnergy } = useEnergy(); 
+  const { currentEnergy } = useEnergy();
   const energyDef = getEnergyDef(currentEnergy || 3);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
       if (isLogin) {
         await login(email, password);
       } else {
         const result = await signup(email, password);
-        if (result?.user && !result?.session) {
-          setSignupSuccess(true);
-        }
+        if (result?.user && !result?.session) setSignupSuccess(true);
       }
     } catch (err) {
       setError(friendlyError(err.message, language));
@@ -73,135 +80,246 @@ export default function AuthPage() {
     }
   };
 
+  const switchMode = () => { setIsLogin(!isLogin); setError(''); };
+
+  // ─── Success Screen ───
   if (signupSuccess) {
     return (
-      <div className="auth-container">
-        <div className="auth-split-card" style={{ maxWidth: '400px' }}>
-          <div className="auth-success" style={{ padding: 'var(--space-8)' }}>
-            <CheckCircle2 size={48} className="auth-success-icon" />
-            <h2>{t('auth.successTitle')}</h2>
-            <p>{t('auth.successMsg')}</p>
-            <button 
-              className="btn btn-primary btn-full" 
-              onClick={() => { setSignupSuccess(false); setIsLogin(true); }}
-              style={{ marginTop: 'var(--space-6)' }}
-            >
-              {t('auth.loginBtn')}
-              <ArrowRight size={16} />
-            </button>
-          </div>
-        </div>
+      <div className="auth-page">
+        <motion.div
+          className="auth-success-card"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
+          >
+            <CheckCircle2 size={52} className="auth-success-icon" />
+          </motion.div>
+          <h2>{t('auth.successTitle')}</h2>
+          <p>{t('auth.successMsg')}</p>
+          <button
+            className="btn btn-primary btn-full"
+            style={{ marginTop: 'var(--space-6)' }}
+            onClick={() => { setSignupSuccess(false); setIsLogin(true); }}
+          >
+            {t('auth.loginBtn')} <ArrowRight size={16} />
+          </button>
+        </motion.div>
       </div>
     );
   }
 
+  // ─── Main Layout ───
   return (
-    <div className="auth-container">
-      <div className="auth-split-card">
-        
-        {/* Visual Left Pane */}
-        <div className="auth-card__left">
-           <GradientBlinds
-            gradientColors={['#FF5F6D', '#FFC371', '#00C9FF', '#92FE9D', '#FF9A9E', '#FFFFFF']}
-            angle={45}
-            noise={0.05}
-            blindCount={14}
-            blindMinWidth={40}
-            spotlightRadius={0.6}
-            spotlightSoftness={0.8}
-            spotlightOpacity={1}
-            mouseDampening={0.2}
-            distortAmount={0}
-            shineDirection="right"
-            mixBlendMode="lighten"
-          />
-        </div>
+    <div className="auth-page">
 
-        {/* Form Right Pane */}
-        <div className="auth-card__right">
-          <div className="auth-header">
-            <Headphones className="auth-logo" size={32} />
-            <h2>
-              <BlurText 
-                text={isLogin ? t('auth.loginTitle') : t('auth.signupTitle')} 
-                animateBy="words" 
-                delay={100} 
-                direction="bottom" 
-                className="auth-title-large"
-              />
-            </h2>
-            <p>{isLogin ? t('auth.welcomeBack') : t('auth.initSpace')}</p>
+      {/* Left visual pane — full mosaic */}
+      <div className="auth-visual">
+        <MosaicBackground
+          colorA={energyDef.vividColorA}
+          colorB={energyDef.vividColorB}
+          tileSize={22}
+          speed={0.28}
+        />
+
+        {/* Overlaid branding */}
+        <motion.div
+          className="auth-visual__content"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="auth-visual__wordmark">
+            <span className="auth-visual__logo">M</span>
+            <span className="auth-visual__brand">misu</span>
           </div>
+          <h1 className="auth-visual__headline">
+            Your mind,<br />
+            <em>organised.</em>
+          </h1>
+          <p className="auth-visual__tagline">
+            Energy-aware tasks,<br />focus, and planning — all in one place.
+          </p>
 
-          {error && <div className="auth-error">{error}</div>}
+          {/* Energy level dots */}
+          <div className="auth-visual__energy-dots">
+            {[1,2,3,4].map(i => (
+              <div
+                key={i}
+                className={`auth-dot ${i <= (currentEnergy || 3) ? 'active' : ''}`}
+              />
+            ))}
+          </div>
+        </motion.div>
+      </div>
 
-          <form onSubmit={handleSubmit} className="auth-form">
-            <div className="form-group">
-              <label>{t('auth.email')}</label>
-              <div className="input-wrapper">
-                <Mail size={16} />
-                <input 
-                  type="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="input-minimal"
-                  placeholder="hello.misu@gmail.com"
-                />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label>{t('auth.password')}</label>
-              <div className="input-wrapper">
-                <Lock size={16} />
-                <input 
-                  type="password" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                  className="input-minimal"
-                  placeholder="••••••••"
-                />
-              </div>
-              {!isLogin && (
-                <span className="auth-hint">{t('auth.passwordHint')}</span>
-              )}
-            </div>
-
-            {isLogin && (
-              <div className="auth-options">
-                <label>
-                  <input type="checkbox" style={{ accentColor: 'var(--energy-primary)' }} /> {t('auth.rememberMe')}
-                </label>
-                <a href="#" style={{ color: 'var(--text-tertiary)', textDecoration: 'none' }}>{t('auth.forgotPassword')}</a>
-              </div>
-            )}
-
-            <div style={{ marginTop: 'var(--space-2)', width: '100%' }}>
-              <button 
-                type="submit" 
-                disabled={loading} 
-                className="btn btn-primary btn-full"
-                style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%' }}>
-                  {loading ? <Loader2 className="spin" size={16} /> : (isLogin ? t('auth.loginBtn') : t('auth.signupBtn'))}
-                  {!loading && <ArrowRight size={16} />}
-                </div>
-              </button>
-            </div>
-          </form>
-
-          <div className="auth-switch">
-             <span>{isLogin ? t('auth.noAccount') : t('auth.alreadyHaveAccount')}</span>
-            <button className="btn btn-ghost btn-sm" onClick={() => { setIsLogin(!isLogin); setError(''); }} type="button">
-              {isLogin ? t('auth.signupLink') : t('auth.loginLink')}
+      {/* Right form pane */}
+      <div className="auth-form-pane">
+        <motion.div
+          className="auth-form-wrapper"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {/* Mode toggle pill */}
+          <div className="auth-mode-toggle">
+            <button
+              className={`auth-mode-btn ${isLogin ? 'active' : ''}`}
+              onClick={() => { setIsLogin(true); setError(''); }}
+              type="button"
+            >
+              {t('auth.loginBtn') || 'Sign In'}
+            </button>
+            <button
+              className={`auth-mode-btn ${!isLogin ? 'active' : ''}`}
+              onClick={() => { setIsLogin(false); setError(''); }}
+              type="button"
+            >
+              {t('auth.signupLink') || 'Create Account'}
             </button>
           </div>
-        </div>
-        
+
+          {/* Form header */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={isLogin ? 'login-header' : 'signup-header'}
+              className="auth-form-header"
+              variants={formVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              <h2 className="auth-form-title">
+                {isLogin ? t('auth.loginTitle') : t('auth.signupTitle')}
+              </h2>
+              <p className="auth-form-subtitle">
+                {isLogin ? t('auth.welcomeBack') : t('auth.initSpace')}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Error */}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                className="auth-error"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+              >
+                {error}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Form */}
+          <AnimatePresence mode="wait">
+            <motion.form
+              key={isLogin ? 'login-form' : 'signup-form'}
+              onSubmit={handleSubmit}
+              className="auth-form"
+              variants={formVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              {/* Email */}
+              <motion.div className="auth-field" custom={0} variants={fieldVariants} initial="hidden" animate="visible">
+                <label className="auth-label" htmlFor="auth-email">
+                  <Mail size={13} /> {t('auth.email')}
+                </label>
+                <input
+                  id="auth-email"
+                  type="email"
+                  className="auth-input"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  placeholder="hello@misu.app"
+                  autoComplete="email"
+                />
+              </motion.div>
+
+              {/* Password */}
+              <motion.div className="auth-field" custom={1} variants={fieldVariants} initial="hidden" animate="visible">
+                <label className="auth-label" htmlFor="auth-password">
+                  <Lock size={13} /> {t('auth.password')}
+                </label>
+                <div className="auth-input-wrap">
+                  <input
+                    id="auth-password"
+                    type={showPassword ? 'text' : 'password'}
+                    className="auth-input"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    placeholder="••••••••"
+                    autoComplete={isLogin ? 'current-password' : 'new-password'}
+                  />
+                  <button
+                    type="button"
+                    className="auth-eye-btn"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+                {!isLogin && (
+                  <span className="auth-hint">{t('auth.passwordHint')}</span>
+                )}
+              </motion.div>
+
+              {/* Remember / Forgot */}
+              {isLogin && (
+                <motion.div
+                  className="auth-options"
+                  custom={2}
+                  variants={fieldVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <label className="auth-remember">
+                    <input type="checkbox" style={{ accentColor: 'var(--energy-primary)' }} />
+                    {t('auth.rememberMe')}
+                  </label>
+                  <a href="#" className="auth-forgot">{t('auth.forgotPassword')}</a>
+                </motion.div>
+              )}
+
+              {/* Submit */}
+              <motion.button
+                type="submit"
+                disabled={loading}
+                className="btn btn-primary btn-full auth-submit"
+                custom={3}
+                variants={fieldVariants}
+                initial="hidden"
+                animate="visible"
+                whileHover={{ scale: loading ? 1 : 1.02 }}
+                whileTap={{ scale: loading ? 1 : 0.98 }}
+              >
+                {loading
+                  ? <Loader2 className="spin" size={18} />
+                  : <>{isLogin ? t('auth.loginBtn') : t('auth.signupBtn')} <ArrowRight size={16} /></>
+                }
+              </motion.button>
+            </motion.form>
+          </AnimatePresence>
+
+          {/* Switch mode footer */}
+          <p className="auth-switch">
+            {isLogin ? t('auth.noAccount') : t('auth.alreadyHaveAccount')}
+            <button className="auth-switch-btn" onClick={switchMode} type="button">
+              {isLogin ? t('auth.signupLink') : t('auth.loginLink')}
+            </button>
+          </p>
+        </motion.div>
       </div>
     </div>
   );

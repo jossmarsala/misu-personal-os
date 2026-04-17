@@ -14,6 +14,9 @@ export function getRecommendations(tasks, currentEnergy) {
   else if (currentEnergy === 3) maxTasks = 4;
 
   const scored = activeTasks.map(task => {
+    // L5: Hard gate — don't recommend tasks that exceed current energy by more than 1 level
+    if (task.energyRequired > currentEnergy + 1) return null;
+
     let score = 100; // Base score
 
     // Energy match scoring
@@ -47,19 +50,21 @@ export function getRecommendations(tasks, currentEnergy) {
     return { ...task, score };
   });
 
-  // Sort by score descending, then by deadline ascending
-  scored.sort((a, b) => {
-    if (b.score !== a.score) return b.score - a.score;
-    const daysA = getDaysUntil(a.deadline) ?? 999;
-    const daysB = getDaysUntil(b.deadline) ?? 999;
-    return daysA - daysB;
-  });
+  // L5: Filter nulls, then sort by score descending then deadline ascending
+  const filteredScored = scored
+    .filter(Boolean)
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      const daysA = getDaysUntil(a.deadline) ?? 999;
+      const daysB = getDaysUntil(b.deadline) ?? 999;
+      return daysA - daysB;
+    });
 
   // Apply limits and timeboxing
   const finalRecs = [];
   let accumulatedHours = 0;
 
-  for (const task of scored) {
+  for (const task of filteredScored) {
     if (finalRecs.length >= maxTasks) break;
 
     // Timeboxing: If low energy, restrict total recommended time
@@ -76,9 +81,10 @@ export function getRecommendations(tasks, currentEnergy) {
   }
 
   // Edge case fallback: if nothing was selected, return the highest scored task
-  if (finalRecs.length === 0 && scored.length > 0) {
-    return [scored[0]];
+  if (finalRecs.length === 0 && filteredScored.length > 0) {
+    return [filteredScored[0]];
   }
 
   return finalRecs;
 }
+

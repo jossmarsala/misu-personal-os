@@ -27,8 +27,8 @@ export function useMindfulness(dndVisible) {
       const activeTasksCount = tasks.filter(t => !t.completed).length;
       const timeSinceActivity = (Date.now() - lastActivityRef.current) / 1000 / 60; // minutes
 
-      // If high energy (4-5) but no activity for > 20 mins and has pending tasks
-      if (currentEnergy >= 4 && activeTasksCount > 0 && timeSinceActivity > 20 && !helperVisible && !breathingActive) {
+      // L6: Triggers for energy >= 3 (medium and above) with pending tasks
+      if (currentEnergy >= 3 && activeTasksCount > 0 && timeSinceActivity > 20 && !helperVisible && !breathingActive) {
         setHelperType('mindfulness'); // Change to mindfulness type to show the circle
         setAdvice('mindfulness.idleAdvice');
         setHelperVisible(true);

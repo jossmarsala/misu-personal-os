@@ -17,9 +17,9 @@ export default function EnergySelector() {
       <div className="energy-selector__track">
         <motion.div 
           className="energy-selector__highlight"
-          animate={{ x: (currentEnergy - 1) * 48 }}
+          animate={{ x: (currentEnergy - 1) * 60 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          style={{ width: '44px' }}
+          style={{ width: '56px' }}
         />
         
         {ENERGY_LEVELS.map(e => (
@@ -35,37 +35,26 @@ export default function EnergySelector() {
           >
             <GradientOrb 
               color={e.vividColorA} 
-              size="24px" 
+              size="32px" 
               style={{ 
                 opacity: currentEnergy === e.level ? 1 : 0.6,
                 transform: currentEnergy === e.level ? 'scale(1.1)' : 'scale(1)'
               }} 
             />
             <span style={{ 
-              fontSize: '0.6rem', 
+              fontSize: '0.95rem', 
               fontWeight: '800', 
-              opacity: currentEnergy === e.level ? 1 : 0.4,
-              color: currentEnergy === e.level ? 'white' : 'inherit',
-              marginTop: '-4px'
+              color: currentEnergy === e.level ? '#ffffff' : 'rgba(255, 255, 255, 0.65)',
+              textShadow: currentEnergy === e.level 
+                ? '0 2px 8px rgba(0, 0, 0, 0.5)' 
+                : '0 1px 4px rgba(0, 0, 0, 0.4)',
+              marginTop: '-4px',
+              transition: 'all 0.3s'
             }}>
               {e.level}
             </span>
           </button>
         ))}
-      </div>
-
-      <div className="energy-selector__info">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentEnergy}
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5 }}
-          >
-            <div className="energy-selector__name">{t(`energy.${currentEnergy}.label`)}</div>
-            <div className="energy-selector__desc">{t(`energy.${currentEnergy}.desc`)}</div>
-          </motion.div>
-        </AnimatePresence>
       </div>
     </div>
   );

@@ -10,8 +10,8 @@ import './MusicPlayer.css';
 const moodTracksImport = import.meta.glob('/public/audio/moods/**/*.mp3', { query: '?url', import: 'default', eager: true });
 
 import { motion, AnimatePresence } from 'framer-motion';
-
 import GradientOrb from './GradientOrb';
+import Aurora from './Aurora';
 
 export default function MusicPlayer({ visible }) {
   const { currentEnergy, dndActive } = useEnergy();
@@ -54,7 +54,7 @@ export default function MusicPlayer({ visible }) {
       setCurrentTrackName(t('music.noTracksFolder') + ' /' + currentEnergy);
       setIsPlaying(false);
     }
-  }, [currentEnergy, t]); // Removed isPlaying from deps to avoid loop
+  }, [currentEnergy, t, isPlaying]); // L4: include isPlaying so closure sees correct state
 
   const togglePlay = () => {
     if (playlist.length === 0) return;
@@ -97,36 +97,28 @@ export default function MusicPlayer({ visible }) {
       id="music" 
       title={t('music.title')} 
       icon={<Music size={14} />}
-      defaultPosition={{ x: window.innerWidth - 320, y: 120 }}
+      defaultPosition={{ x: Math.max(20, window.innerWidth - 340), y: 120 }} // X3: safer positioning
     >
       <div className="music-player">
-        <div className="music-player__header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+        {/* Header: mode name + track name + orb */}
+        <div className="music-player__header">
           <div className="music-player__now-playing">
             <span className="music-player__mode-name">{energyDef.name}</span>
             <AnimatePresence mode="wait">
-              <motion.span 
+              <motion.span
                 key={currentTrackName}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 0.6, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                style={{ 
-                  fontSize: '11px', 
-                  display: 'block',
-                  color: 'var(--text-secondary)', 
-                  maxWidth: '160px', 
-                  textOverflow: 'ellipsis', 
-                  overflow: 'hidden', 
-                  whiteSpace: 'nowrap',
-                  fontWeight: 500,
-                  marginTop: '2px'
-                }} 
+                className="music-player__track-name"
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 8 }}
+                transition={{ duration: 0.2 }}
                 title={currentTrackName}
               >
                 {currentTrackName}
               </motion.span>
             </AnimatePresence>
           </div>
-          <div className="music-player__orb-container" style={{ width: '48px', height: '48px' }}>
+          <div className="music-player__orb-container">
             <GradientOrb color={energyDef.vividColorA} size="100%" />
           </div>
         </div>
@@ -141,32 +133,34 @@ export default function MusicPlayer({ visible }) {
           />
         )}
 
-        <div className={`music-player__eq ${isPlaying ? 'playing' : ''}`}>
-          {[...Array(10)].map((_, i) => (
-            <div 
-              key={i} 
-              className="music-player__bar" 
-              style={{ 
-                animationDelay: `${i * 0.1}s`,
-                height: isPlaying ? undefined : `${4 + Math.random() * 8}px`
-              }} 
-            />
-          ))}
+        {/* Sound wave visualizer */}
+        <div className="music-player__aurora-wrap">
+          <Aurora 
+            colorStops={[energyDef.colorB, energyDef.vividColorA, energyDef.colorA]}
+            blend={0.5}
+            amplitude={isPlaying ? 1.2 : 0.1}
+            speed={isPlaying ? 8.0 : 0.2}
+            isPlaying={isPlaying}
+          />
         </div>
 
-        <div className="music-player__controls" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {/* Controls row */}
+        <div className="music-player__controls">
           <motion.button 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.06 }}
+            whileTap={{ scale: 0.94 }}
             className={`music-player__play-btn ${isPlaying ? 'active' : ''}`} 
             onClick={togglePlay}
             disabled={playlist.length === 0}
           >
-            {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" style={{ marginLeft: '2px' }} />}
+            {isPlaying
+              ? <Pause size={18} fill="currentColor" />
+              : <Play size={18} fill="currentColor" style={{ marginLeft: '2px' }} />
+            }
           </motion.button>
           
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <div className="music-player__side-controls">
+            <div className="music-player__btn-row">
               <button 
                 className="btn-ghost btn-icon btn-sm"
                 onClick={nextTrack}

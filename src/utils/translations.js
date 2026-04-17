@@ -48,6 +48,7 @@ export const translations = {
       fieldDescription: "Description (optional)",
       create: "Create Task",
       emptyState: "No tasks here. Add one above to start your session.",
+      emptyCompleted: "No completed tasks yet — finish one to see it here!",  // X1 fix
       splitToggle: "Split into blocks",
       splitCount: "Number of blocks",
       totalHours: "Total Hours",
@@ -57,6 +58,7 @@ export const translations = {
       title: "Weekly Plan",
       subtitle: "AI-powered schedule based on your tasks",
       generate: "Generate Weekly Plan",
+      regenerate: "Regenerate Plan",  // X5 fix: distinct label when plan exists
       restDay: "Rest day",
       loading: "Tuning the playlist...",
       error: "The AI encountered an issue. Please try again.",
@@ -100,11 +102,11 @@ export const translations = {
       2: { label: "Calm", desc: "Gentle focus for light and easy tasks", musicDesc: "Nostalgic sounds • Piano", msg: "Ease into something manageable...", empty: "No matching tasks — enjoy the calm." },
       3: { label: "Rhythm", desc: "Steady rhythm for fluid productivity", musicDesc: "Lo-fi beats", msg: "Good rhythm going. Try these...", empty: "All clear — you're ahead of schedule!" },
       4: { label: "Pulse", desc: "High creative spark and mental drive", musicDesc: "Animated beats", msg: "Feeling inspired! Take on something creative...", empty: "No big tasks left — channel that spark elsewhere!" },
-      5: { label: "Peak", desc: "Full power for your biggest challenges", musicDesc: "Old Jazz classics", msg: "You're in the zone! Tackle the big ones...", empty: "Everything's done — you're unstoppable!" }
+      // Note: Level 5 has been removed; system is now 4 levels only (L3 fix)
     },
     mindfulness: {
       breathing: "Inhale (4s), Hold (7s), Exhale (8s). Repeat 4 times to recalibrate your nervous system.",
-      idleAdvice: "You've been at peak energy for a while without moving tasks. Maybe a 2-minute breathing break would help you break the friction?",
+      idleAdvice: "You have been inactive for 20+ minutes. Here is a little breathing exercise that might help you break the friction!",
       dndIntro: "Focus Shield Active",
       dndHelp: "White: improves concentration and blocks distractions. Pink: balances and calms the mind. Brown: induces deep relaxation and supports sleep."
     },
@@ -192,6 +194,7 @@ export const translations = {
       fieldDescription: "Descripción (opcional)",
       create: "Crear Tarea",
       emptyState: "No hay tareas. Añade una arriba para comenzar tu sesión.",
+      emptyCompleted: "Aún sin tareas completadas — ¡termina una para verla aquí!",
       splitToggle: "Dividir en bloques",
       splitCount: "Número de bloques",
       totalHours: "Horas totales",
@@ -201,6 +204,7 @@ export const translations = {
       title: "Plan Semanal",
       subtitle: "Horario impulsado por IA basado en tus tareas",
       generate: "Generar Plan Semanal",
+      regenerate: "Regenerar Plan",
       restDay: "Día de descanso",
       loading: "Preparando la playlist...",
       error: "La IA encontró un problema. Por favor intenta de nuevo.",
@@ -244,11 +248,11 @@ export const translations = {
       2: { label: "Calma", desc: "Enfoque ligero para tareas tranquilas", musicDesc: "Suave y nostálgico • Piano", msg: "Empieza con algo manejable...", empty: "No hay tareas coincidentes — disfruta la calma." },
       3: { label: "Ritmo", desc: "Ritmo constante para avanzar con fluidez", musicDesc: "Lo-fi", msg: "Buen ritmo. Prueba estas...", empty: "¡Todo despejado! Vas antes de lo previsto." },
       4: { label: "Impulso", desc: "Alta creatividad y energía mental", musicDesc: "Beats animados", msg: "¡Estás inspirado! Anímate a algo creativo...", empty: "No quedan tareas grandes — ¡canaliza esa chispa!" },
-      5: { label: "Pulso", desc: "Máxima potencia para tus desafíos más grandes", musicDesc: "Jazz viejo", msg: "¡Estás en la zona! Enfréntate a los grandes...", empty: "Todo terminado — ¡nada puede detenerte!" }
+      // Nivel 5 eliminado — el sistema ahora tiene 4 niveles (L3 fix)
     },
     mindfulness: {
       breathing: "Inhala (4s), Mantén (7s), Exhala (8s). Repetir 4 veces para recalibrar tu sistema nervioso.",
-      idleAdvice: "Llevas un tiempo en máxima energía sin mover tareas. ¿Quizás 2 minutos de respiración te ayuden a romper la inercia?",
+      idleAdvice: "Has estado inactivo durante más de 20 minutos. ¡Aquí tienes un pequeño ejercicio de respirazione que podría ayudarte!",
       dndIntro: "Escudo de Enfoque Activo",
       dndHelp: "Blanco: mejora la concentración y bloquea distracciones. Rosa: equilibra y calma la mente. Marrón: induce relajación profunda y favorece el sueño."
     },
@@ -336,6 +340,7 @@ export const translations = {
       fieldDescription: "Descrizione (opzionale)",
       create: "Crea Attività",
       emptyState: "Nessuna attività qui. Aggiungine una sopra per iniziare la tua sessione.",
+      emptyCompleted: "Ancora nessuna attività completata — finiscine una per vederla qui!",
       splitToggle: "Dividi in blocchi",
       splitCount: "Numero di blocchi",
       totalHours: "Ore totali",
@@ -345,6 +350,7 @@ export const translations = {
       title: "Piano Settimanale",
       subtitle: "Programma basato sull'IA in base alle tue attività",
       generate: "Genera Piano Settimanale",
+      regenerate: "Rigenera Piano",
       restDay: "Giorno di riposo",
       loading: "Preparando la playlist...",
       error: "L'IA ha riscontrato un problema. Riprova.",
@@ -388,11 +394,11 @@ export const translations = {
       2: { label: "Calma", desc: "Concentrazione leggera per compiti tranquilli", musicDesc: "Suoni nostalgici • Piano", msg: "Inizia con qualcosa di gestibile...", empty: "Nessun compito corrispondente — goditi la calma." },
       3: { label: "Ritmo", desc: "Ritmo costante per avanzare con fluidità", musicDesc: "Lo-fi", msg: "Buon ritmo. Prova questi...", empty: "Tutto libero — sei in anticipo!" },
       4: { label: "Impulso", desc: "Alta creatività ed energia mentale", musicDesc: "Beats vivaci", msg: "Sei ispirato! Affronta qualcosa di creativo...", empty: "Nessun compito grande rimasto — canalizza quella scintilla!" },
-      5: { label: "Battito", desc: "Massima potenza per le tue sfide più grandi", musicDesc: "Jazz d'epoca", msg: "Sei nella zona! Affronta i più grandi...", empty: "Tutto finito — sei inarrestabile!" }
+      // Livello 5 rimosso — il sistema ora ha 4 livelli (L3 fix)
     },
     mindfulness: {
       breathing: "Inspira (4s), Trattieni (7s), Espira (8s). Ripeti 4 volte per ricalibrare il sistema nervoso.",
-      idleAdvice: "Sei al massimo dell'energia da un po' senza aggiornare compiti. Forse 2 minuti di respirazione ti aiuteranno a ritrovare il flusso?",
+      idleAdvice: "Sei stato inattivo per più di 20 minuti. Ecco un piccolo esercizio di respirazione che potrebbe aiutarti a ritrovare il flusso!",
       dndIntro: "Scudo Focus Attivo",
       dndHelp: "Bianco: migliora la concentrazione e blocca le distrazioni. Rosa: equilibra e calma la mente. Marrone: induce un rilassamento profondo e favorisce il sonno."
     },

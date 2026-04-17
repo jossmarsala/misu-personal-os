@@ -3,6 +3,15 @@ import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '../services/supabaseClient';
 import { useAuth } from './AuthContext';
 
+// Debounce helper — avoids spamming Supabase on rapid task changes (L7)
+function useDebounceRef(fn, delay) {
+  const timerRef = useRef(null);
+  return useCallback((...args) => {
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => fn(...args), delay);
+  }, [fn, delay]);
+}
+
 const TaskContext = createContext();
 
 export function TaskProvider({ children }) {
@@ -81,111 +90,69 @@ export function TaskProvider({ children }) {
     }
   }, [user, isOffline]); // trigger mount fetch when user or online status resolves
 
-  // Sync to local and Supabase on change
+  // ── Consolidated, debounced sync (fixes L1 double-write + L7 no-debounce) ──
+  const syncToSupabase = useCallback(async (currentTasks, currentPlan) => {
+    if (!user?.id || isOffline) return;
+    const { error } = await supabase
+      .from('user_data')
+      .upsert({ user_id: user.id, payload: { tasks: currentTasks, weeklyPlan: currentPlan } }, { onConflict: 'user_id' });
+    if (error) {
+      console.error('Supabase sync error:', error);
+      setNeedsSync(true);
+    } else {
+      setNeedsSync(false);
+    }
+  }, [user, isOffline]);
+
+  const debouncedSync = useDebounceRef(syncToSupabase, 1500);
+
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
       return;
     }
-    
-    // Always backup to localStorage immediately (offline-first)
+
+    // Always back up locally first (offline-first)
     localStorage.setItem('misu-offline-tasks', JSON.stringify(tasks));
     localStorage.setItem('misu-offline-plan', JSON.stringify(weeklyPlan));
 
     if (!loading && user?.id) {
       if (isOffline) {
-        setNeedsSync(true); // Flag that we have unsynced cloud items
+        setNeedsSync(true);
         return;
       }
+      debouncedSync(tasks, weeklyPlan);
+    }
+  }, [tasks, weeklyPlan, loading, user, isOffline, debouncedSync]);
 
-      const sync = async () => {
+  // Fix L2: reconnect sync now correctly includes weeklyPlan
+  useEffect(() => {
+    if (!isOffline && needsSync && user?.id) {
+      const pushLocal = async () => {
         const { error } = await supabase
           .from('user_data')
           .upsert({ user_id: user.id, payload: { tasks, weeklyPlan } }, { onConflict: 'user_id' });
-        
-        if (error) {
-          console.error("Supabase sync error:", error);
-          setNeedsSync(true);
-        } else {
-          setNeedsSync(false);
-        }
+        if (!error) setNeedsSync(false);
       };
-      sync();
+      pushLocal();
     }
-  }, [tasks, loading, user, isOffline]);
+  }, [isOffline, needsSync, tasks, weeklyPlan, user]);
 
-  // Sync to cloud if weeklyPlan changes independently
-  useEffect(() => {
-    if (!loading && user?.id && !isOffline) {
-      const sync = async () => {
-        await supabase
-          .from('user_data')
-          .upsert({ user_id: user.id, payload: { tasks, weeklyPlan } }, { onConflict: 'user_id' });
-      };
-      sync();
-    }
-    localStorage.setItem('misu-offline-plan', JSON.stringify(weeklyPlan));
-  }, [weeklyPlan]);
-
-  // Try syncing if returning online with dirty data
-  useEffect(() => {
-    if (!isOffline && needsSync && user?.id) {
-       const pushLocal = async () => {
-         const { error } = await supabase
-           .from('user_data')
-           .upsert({ user_id: user.id, payload: { tasks } }, { onConflict: 'user_id' });
-         if (!error) setNeedsSync(false);
-       };
-       pushLocal();
-    }
-  }, [isOffline, needsSync, tasks, user]);
-
+  // X7: Removed dead split-blocks branching — TaskForm no longer exposes splitCount
   const addTask = useCallback((taskData) => {
-    const splitCount = parseInt(taskData.splitCount) || 1;
     const totalHours = parseFloat(taskData.estimatedHours) || 1;
-    
-    if (splitCount > 1) {
-      const parentId = uuidv4();
-      const blockSize = Math.round((totalHours / splitCount) * 100) / 100;
-      const newTasks = [];
-      
-      for (let i = 0; i < splitCount; i++) {
-        const isLast = i === splitCount - 1;
-        // Last block absorbs any rounding differences
-        const currentBlockSize = isLast 
-          ? Math.round((totalHours - (blockSize * (splitCount - 1))) * 100) / 100 
-          : blockSize;
-        
-        newTasks.push({
-          id: uuidv4(),
-          parentTaskId: parentId,
-          title: `${taskData.title} (${i + 1}/${splitCount})`,
-          description: taskData.description || '',
-          deadline: taskData.deadline || null,
-          estimatedHours: currentBlockSize,
-          energyRequired: taskData.energyRequired || 3,
-          completed: false,
-          createdAt: new Date().toISOString(),
-          isChunk: true,
-          chunkLabel: `${i + 1}/${splitCount}`
-        });
-      }
-      setTasks(prev => [...newTasks, ...prev]);
-      return newTasks[0];
-    } else {
-      const newTask = {
-        id: uuidv4(),
-        title: taskData.title,
-        description: taskData.description || '',
-        deadline: taskData.deadline || null,
-        estimatedHours: totalHours,
-        energyRequired: taskData.energyRequired || 3,
-        completed: false,
-        createdAt: new Date().toISOString(),
-      };
-      setTasks(prev => [newTask, ...prev]);
-      return newTask;
-    }
+    const newTask = {
+      id: uuidv4(),
+      title: taskData.title,
+      description: taskData.description || '',
+      deadline: taskData.deadline || null,
+      estimatedHours: totalHours,
+      energyRequired: taskData.energyRequired || 3,
+      completed: false,
+      createdAt: new Date().toISOString(),
+    };
+    setTasks(prev => [newTask, ...prev]);
+    return newTask;
   }, []);
 
   const updateTask = useCallback((id, updates) => {
@@ -232,6 +199,7 @@ export function TaskProvider({ children }) {
   return (
     <TaskContext.Provider value={{
       tasks,
+      loading,  // X6: expose so components can show skeletons
       addTask,
       updateTask,
       deleteTask,

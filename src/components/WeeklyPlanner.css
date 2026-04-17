@@ -97,8 +97,13 @@
 }
 
 .planner__day-today .planner__day-name {
-  color: var(--energy-primary);
+  color: var(--text-primary);
   font-weight: 800;
+}
+
+.planner__day-today .planner__day-date {
+  color: var(--text-primary);
+  opacity: 0.8;
 }
 
 .planner__day-tasks {

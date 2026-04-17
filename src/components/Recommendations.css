@@ -8,21 +8,7 @@
   margin-bottom: var(--space-4);
 }
 
-.recommendations__title {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  font-size: 1.4rem;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
-  margin-bottom: 2px;
-}
 
-.recommendations__message {
-  font-size: 0.8rem;
-  color: var(--text-tertiary);
-  font-style: italic;
-  transition: color var(--transition-base);
-}
 
 .recommendations__list {
   display: flex;

@@ -1,3 +1,4 @@
+/* ─── TOGGLE BUTTON ─── */
 .task-form {
   margin-bottom: var(--space-4);
 }
@@ -8,163 +9,245 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  padding: var(--space-4);
+  padding: 12px var(--space-4);
   border-radius: var(--radius-lg);
   border: 1px dashed var(--border-primary);
-  background: var(--card-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  color: var(--text-secondary);
+  background: transparent;
+  color: var(--text-tertiary);
   cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.85rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.82rem;
   font-weight: 500;
-  transition: all 0.3s;
+  transition: all 0.25s;
 }
 
 .task-form__toggle:hover {
   border-color: var(--energy-primary);
   color: var(--energy-primary);
-  background: var(--bg-card-hover);
-  transform: scale(1.01);
+  background: var(--energy-surface);
 }
 
+/* ─── FORM BODY ─── */
 .task-form__body {
-  padding: var(--space-6);
+  padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-lg);
   background: var(--card-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: var(--glass-border);
   box-shadow: var(--card-shadow);
-  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  position: relative;
-  overflow: hidden;
-}
-
-.task-form__body::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: var(--glass-noise);
-  opacity: 0.02;
-  pointer-events: none;
-}
-
-.task-form__grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
-}
-
-.task-form__grid .full-width {
-  grid-column: 1 / -1;
-}
-
-.task-form__group {
+  animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   display: flex;
   flex-direction: column;
+  gap: var(--space-2);
 }
 
-.task-form__energy-row {
+/* ─── PRIMARY ROW: title + actions ─── */
+.task-form__primary {
   display: flex;
-  gap: 6px;
+  align-items: center;
+  gap: var(--space-2);
 }
 
-.task-form__energy-btn {
+.task-form__title-input {
   flex: 1;
-  padding: var(--space-2) var(--space-1);
-  border-radius: var(--radius-full);
-  border: 1.5px solid var(--border-primary);
   background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
+  border: none;
+  outline: none;
   font-family: 'Outfit', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 500;
-  text-align: center;
-  transition: all var(--transition-base);
-}
-
-.task-form__energy-btn:hover {
-  border-color: var(--border-hover);
-}
-
-.task-form__energy-btn.selected {
-  background: var(--energy-gradient);
-  border-color: transparent;
-  color: white;
-}
-
-.task-form__actions {
-  display: flex;
-  gap: var(--space-3);
-  margin-top: var(--space-4);
-  justify-content: flex-end;
-}
-
-.split-controls {
-  background: var(--bg-secondary);
-  padding: 12px;
-  border-radius: var(--radius-md);
-  margin-top: 4px;
-}
-
-.split-toggle-row {
-  display: flex;
-  align-items: center;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.checkbox-container input {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  accent-color: var(--energy-primary);
-}
-
-.checkbox-label {
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--text-primary);
+  padding: 4px 0;
+  border-bottom: 1.5px solid var(--border-primary);
+  transition: border-color 0.2s;
+  min-width: 0;
 }
 
-.split-fields {
-  display: flex;
-  align-items: flex-end;
-  gap: 20px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border-primary);
-}
-
-.split-input-group {
-  width: 140px;
-}
-
-.input.sm {
-  padding: 8px 12px;
-}
-
-.split-info {
-  font-size: 0.75rem;
+.task-form__title-input::placeholder {
   color: var(--text-tertiary);
-  padding-bottom: 8px;
+  font-weight: 400;
 }
 
-.split-info strong {
+.task-form__title-input:focus {
+  border-bottom-color: var(--energy-primary);
+}
+
+.task-form__submit {
+  padding: 8px 14px !important;
+  border-radius: var(--radius-full) !important;
+  flex-shrink: 0;
+}
+
+.task-form__close-btn {
+  all: unset;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.task-form__close-btn:hover {
+  background: var(--bg-input);
+  color: var(--text-secondary);
+}
+
+/* ─── META ROW: date, hours, energy ─── */
+.task-form__meta-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.task-form__meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-primary);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.task-form__meta-pill:focus-within {
+  border-color: var(--energy-primary);
+  color: var(--energy-primary);
+  box-shadow: 0 0 0 3px var(--energy-glow);
+}
+
+.task-form__meta-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  width: 100%;
+  cursor: pointer;
+}
+
+/* Date input still relies on placeholder overlay in some browsers, but let's just style date/time natively */
+.task-form__meta-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+.task-form__meta-pill--date {
+  position: relative;
+}
+
+.task-form__meta-pill--date input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.task-form__meta-placeholder {
+  pointer-events: none;
+  white-space: nowrap;
+  font-family: 'Outfit', sans-serif;
+}
+
+.task-form__meta-pill--number input {
+  width: 32px;
+  text-align: center;
+  padding: 0;
+  -moz-appearance: textfield;
+}
+
+.task-form__meta-pill--number input::-webkit-outer-spin-button,
+.task-form__meta-pill--number input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ─── ENERGY PICKER ─── */
+.task-form__energy-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-primary);
+  background: var(--bg-input);
+}
+
+.task-form__energy-dot {
+  all: unset;
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+  transition: all 0.2s;
+  border: 1.5px solid transparent;
+}
+
+.task-form__energy-dot:hover {
+  opacity: 0.8;
+  transform: scale(1.15);
+}
+
+.task-form__energy-dot.selected {
+  opacity: 1;
+  transform: scale(1.25);
+  box-shadow: var(--dot-shadow, none);
+}
+
+.task-form__energy-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding-left: 4px;
+  transition: color 0.3s;
+  white-space: nowrap;
+}
+
+/* ─── MORE TOGGLE ─── */
+.task-form__more-btn {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--border-primary);
+  color: var(--text-tertiary);
+  background: var(--bg-input);
+  transition: all 0.2s;
+  margin-left: auto;
+}
+
+.task-form__more-btn:hover {
+  border-color: var(--energy-primary);
   color: var(--energy-primary);
 }
 
-@media (max-width: 768px) {
-  .task-form__grid {
-    grid-template-columns: 1fr;
-  }
+/* ─── EXTRA FIELDS ─── */
+.task-form__extra {
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-primary);
+}
+
+.task-form__desc {
+  resize: none;
+  font-size: 0.85rem;
+  min-height: 56px !important;
 }

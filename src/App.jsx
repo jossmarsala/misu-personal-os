@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import { useEnergy } from './context/EnergyContext';
 import { useTasks } from './context/TaskContext';
 import { loadSettings, saveSettings } from './services/storage';
@@ -6,25 +6,25 @@ import { getEnergyDef } from './utils/energy';
 import Header from './components/Header';
 import TaskList from './components/TaskList';
 import Recommendations from './components/Recommendations';
-import WeeklyPlanner from './components/WeeklyPlanner';
-import SettingsModal from './components/SettingsModal';
 import EnergySelector from './components/EnergySelector';
-import GradientBlinds from './components/GradientBlinds';
+import MosaicBackground from './components/MosaicBackground';
 import CommandPalette from './components/CommandPalette';
-import PomodoroWidget from './components/PomodoroWidget';
-import MusicPlayer from './components/MusicPlayer';
 import GlassIcons from './components/GlassIcons';
-import DNDWidget from './components/DNDWidget';
-import CalendarView from './components/CalendarView';
 import MisuHelper from './components/MisuHelper';
 import { useMindfulness } from './hooks/useMindfulness';
-import { Clock, CheckCircle2, Timer, Music, Wind, Shield, Calendar } from 'lucide-react';
+import { Clock, CheckCircle2, Timer, Music, Wind, Shield, Calendar, Command } from 'lucide-react';
 import { useLanguage } from './context/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// C3: Lazy-load heavy widgets to reduce initial bundle chunk size
+const WeeklyPlanner = lazy(() => import('./components/WeeklyPlanner'));
+const SettingsModal = lazy(() => import('./components/SettingsModal'));
+const PomodoroWidget = lazy(() => import('./components/PomodoroWidget'));
+const MusicPlayer = lazy(() => import('./components/MusicPlayer'));
+const DNDWidget = lazy(() => import('./components/DNDWidget'));
+const CalendarView = lazy(() => import('./components/CalendarView'));
+
 import './App.css';
-
-const DEFAULT_API_KEY = 'AIzaSyD3FlFwMgIYzfPsqbdEUXp7Dkzw-tiG3RY';
-
 function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [showPomodoro, setShowPomodoro] = useState(false);
@@ -32,18 +32,29 @@ function App() {
   const [showDND, setShowDND] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const { currentEnergy, dndActive, breathingActive, setBreathingActive } = useEnergy();
-  const { tasks } = useTasks();
+  const { tasks, deleteTask } = useTasks();
   const { t } = useLanguage();
   const energyDef = getEnergyDef(currentEnergy);
 
   const { advice, helperVisible, helperType, setHelperVisible } = useMindfulness(showDND);
 
+  // Handle commands emitted by CommandPalette via custom events
   useEffect(() => {
-    const settings = loadSettings();
-    if (!settings.geminiApiKey) {
-      saveSettings({ ...settings, geminiApiKey: DEFAULT_API_KEY });
-    }
-  }, []);
+    const handler = (e) => {
+      const { action } = e.detail;
+      if (action === 'toggle-pomodoro') setShowPomodoro(p => !p);
+      if (action === 'toggle-music') setShowMusic(p => !p);
+      if (action === 'toggle-dnd') setShowDND(p => !p);
+      if (action === 'toggle-calendar') setShowCalendar(p => !p);
+      if (action === 'open-settings') setSettingsOpen(true);
+      if (action === 'clear-completed') {
+        tasks.filter(t => t.completed).forEach(t => deleteTask(t.id));
+      }
+    };
+    window.addEventListener('misu:command', handler);
+    return () => window.removeEventListener('misu:command', handler);
+  }, [tasks, deleteTask]);
+
 
   const stats = useMemo(() => {
     const active = tasks.filter(t => !t.completed);
@@ -57,43 +68,47 @@ function App() {
       <Header onOpenSettings={() => setSettingsOpen(true)} />
       <CommandPalette />
 
-      {/* Widget toggle buttons via GlassIcons centered */}
-      <div className="widget-toggles" style={{ display: 'flex', gap: '16px', fontSize: '10px', justifyContent: 'center', width: '100%', marginBottom: 'var(--space-2)' }}>
-        <GlassIcons 
+      {/* Widget toggle buttons — X2: Add Cmd+K hint */}
+      <div className="widget-toggles">
+        <GlassIcons
           items={[
-            { 
-              icon: <Timer size={20} />, 
-              color: showPomodoro ? energyDef.colorA : 'gray', 
-              label: t('widgets.focus'), 
-              onClick: () => setShowPomodoro(!showPomodoro) 
+            {
+              icon: <Timer size={20} />,
+              color: showPomodoro ? energyDef.colorA : 'gray',
+              label: t('widgets.focus'),
+              onClick: () => setShowPomodoro(!showPomodoro)
             },
-            { 
-              icon: <Music size={20} />, 
-              color: showMusic ? energyDef.colorA : 'gray', 
-              label: t('widgets.audio'), 
-              onClick: () => setShowMusic(!showMusic) 
+            {
+              icon: <Music size={20} />,
+              color: showMusic ? energyDef.colorA : 'gray',
+              label: t('widgets.audio'),
+              onClick: () => setShowMusic(!showMusic)
             },
-            { 
-              icon: <Shield size={20} />, 
-              color: showDND ? energyDef.colorA : 'gray', 
-              label: t('settings.shield'), 
-              onClick: () => setShowDND(!showDND) 
+            {
+              icon: <Shield size={20} />,
+              color: showDND ? energyDef.colorA : 'gray',
+              label: t('settings.shield'),
+              onClick: () => setShowDND(!showDND)
             },
-            { 
-              icon: <Calendar size={20} />, 
-              color: showCalendar ? energyDef.colorA : 'gray', 
-              label: t('widgets.calendar'), 
-              onClick: () => setShowCalendar(!showCalendar) 
+            {
+              icon: <Calendar size={20} />,
+              color: showCalendar ? energyDef.colorA : 'gray',
+              label: t('widgets.calendar'),
+              onClick: () => setShowCalendar(!showCalendar)
             }
-          ]} 
+          ]}
           colorful={true}
           className="widget-glass-container"
         />
+        {/* X2: Keyboard shortcut hint */}
+        <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: '4px', marginLeft: '8px' }}>
+          <Command size={10} /><kbd style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '9px' }}>K</kbd>
+        </span>
       </div>
 
       <main className="app__main">
-        <div className="container" style={{ paddingBottom: 'var(--space-9)' }}>
-          <motion.div 
+        <div className="container" style={{ paddingBottom: '120px' }}>
+          <motion.div
             className="bento-grid"
             initial="hidden"
             animate="show"
@@ -105,127 +120,142 @@ function App() {
               }
             }}
           >
-            {/* Hero card */}
-            <motion.div 
-              className="bento-grid__hero bento-card bento-card--accent hero-card"
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                show: { opacity: 1, y: 0 }
-              }}
-            >
-              <div style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 1.0, mixBlendMode: 'normal', pointerEvents: 'none' }}>
-                <GradientBlinds
-                  gradientColors={[energyDef.vividColorA, energyDef.vividColorB]}
-                  angle={0}
-                  noise={0.05}
-                  blindCount={12}
-                  blindMinWidth={50}
-                  spotlightRadius={0.5}
-                  spotlightSoftness={1}
-                  spotlightOpacity={1}
-                  mouseDampening={0.15}
-                  distortAmount={0}
-                  shineDirection="left"
-                  mixBlendMode="lighten"
-                />
-              </div>
-              <div className="hero-card__content">
-                <motion.h2 
-                  className="hero-card__title"
-                  layoutId="hero-title"
-                >
-                  {t('hero.title')}{' '}
-                  <span style={{ fontStyle: 'italic' }}>{t(`energy.${currentEnergy}.label`)}</span>{' '}
-                  {t('hero.energySuffix')}
-                </motion.h2>
-                <p className="hero-card__subtitle">
-                  {t(`energy.${currentEnergy}.desc`)}
-                </p>
-                <p className="hero-card__music-desc">
-                  {t(`energy.${currentEnergy}.musicDesc`)}
-                </p>
-              </div>
-              <div className="hero-card__energy">
-                <EnergySelector />
-              </div>
-            </motion.div>
+            <div style={{ gridColumn: 'span 2' }}>
+              {/* Hero card */}
+              <motion.div
+                className="bento-grid__hero bento-card bento-card--accent hero-card"
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  show: { opacity: 1, y: 0 }
+                }}
+              >
+                <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+                  <MosaicBackground
+                    colorA={energyDef.vividColorA}
+                    colorB={energyDef.vividColorB}
+                    colorC={
+                      currentEnergy === 1 ? '#5BC9F5' : // Touch of Light Blue for energy 1
+                      currentEnergy === 2 ? '#DC143C' : // Touch of Crimson Red for energy 2
+                      currentEnergy === 4 ? '#8A2BE2' : // Touch of BlueViolet for energy 4
+                      undefined
+                    }
+                    tileSize={20}
+                    speed={0.35}
+                  />
+                </div>
+                <div className="hero-card__content">
+                  <motion.h2
+                    className="hero-card__title"
+                    layoutId="hero-title"
+                  >
+                    {t('hero.title')}{' '}
+                    <span style={{ fontStyle: 'italic' }}>{t(`energy.${currentEnergy}.label`)}</span>{' '}
+                    {t('hero.energySuffix')}
+                  </motion.h2>
+                  <p className="hero-card__subtitle">
+                    {t(`energy.${currentEnergy}.desc`)}
+                  </p>
+                </div>
+                <div className="hero-card__energy">
+                  <EnergySelector />
+                </div>
+              </motion.div>
 
-            {/* Stats row */}
-            <motion.div 
-              className="stats-row"
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                show: { opacity: 1, y: 0 }
-              }}
-            >
-              <div className="stat-card bento-card">
-                <span className="stat-card__label">
-                  <Clock size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />
-                  {t('stats.hoursToGo')}
-                </span>
-                <span className="stat-card__value">{stats.totalHours}</span>
-                <span className="stat-card__hint">{stats.active} {t('stats.activeTasks')}</span>
-              </div>
-              <div className="stat-card bento-card bento-card--gradient">
-                <span className="stat-card__label" style={{ opacity: 0.7 }}>
-                  <CheckCircle2 size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />
-                  {t('common.completed')}
-                </span>
-                <span className="stat-card__value">{stats.completed}</span>
-                <span className="stat-card__hint" style={{ opacity: 0.6 }}>{t('stats.tasksFinished')}</span>
-              </div>
-            </motion.div>
-
-            {/* Recommendations sidebar */}
-            <motion.div 
-              className="bento-grid__reco bento-card reco-card"
-              variants={{
-                hidden: { opacity: 0, x: 20 },
-                show: { opacity: 1, x: 0 }
-              }}
-            >
-              <Recommendations />
-            </motion.div>
+            </div>
 
             {/* Tasks */}
-            <motion.div 
+            <motion.div
               className="bento-grid__tasks bento-card"
               variants={{
                 hidden: { opacity: 0, y: 20 },
                 show: { opacity: 1, y: 0 }
               }}
             >
-              <h2 className="section-title" style={{ marginBottom: 'var(--space-4)' }}>{t('tasks.title')}</h2>
+              <h2 className="section-title" style={{ marginBottom: 'var(--space-4)' }}>
+                <CheckCircle2 size={18} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--energy-primary)' }} />
+                {t('tasks.title')}
+              </h2>
               <TaskList />
             </motion.div>
 
-            {/* Weekly Planner */}
-            <motion.div 
+            {/* Recommendations sidebar + mini stats */}
+            <motion.div
+              className="bento-grid__reco"
+              variants={{
+                hidden: { opacity: 0, x: 20 },
+                show: { opacity: 1, x: 0 }
+              }}
+            >
+              <div className="bento-card reco-card">
+                <Recommendations />
+              </div>
+              <div className="stats-mini">
+                <div className="stat-chip bento-card">
+                  <span className="stat-chip__label">
+                    <Clock size={10} style={{ verticalAlign: 'middle', marginRight: 3 }} />
+                    {t('stats.hoursToGo')}
+                  </span>
+                  <span className="stat-chip__value">{stats.totalHours}</span>
+                  <span className="stat-chip__hint">{stats.active} {t('stats.activeTasks')}</span>
+                </div>
+                <div className="stat-chip bento-card bento-card--gradient" style={{ position: 'relative', overflow: 'hidden' }}>
+                  <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', opacity: 0.55 }}>
+                    <MosaicBackground
+                      colorA={energyDef.vividColorB}
+                      colorB={energyDef.vividColorA}
+                      colorC={
+                        currentEnergy === 1 ? '#5BC9F5' :
+                        currentEnergy === 2 ? '#DC143C' :
+                        currentEnergy === 4 ? '#8A2BE2' :
+                        undefined
+                      }
+                      tileSize={12}
+                      speed={0.18}
+                    />
+                  </div>
+                  <span className="stat-chip__label" style={{ position: 'relative', zIndex: 1, color: '#000', textShadow: '0 1px 2px rgba(255, 255, 255, 0.3)' }}>
+                    <CheckCircle2 size={10} style={{ verticalAlign: 'middle', marginRight: 3 }} />
+                    {t('common.completed')}
+                  </span>
+                  <span className="stat-chip__value" style={{ position: 'relative', zIndex: 1, color: '#000', textShadow: '0 2px 6px rgba(255, 255, 255, 0.4)' }}>{stats.completed}</span>
+                  <span className="stat-chip__hint" style={{ position: 'relative', zIndex: 1, color: '#000', textShadow: '0 1px 2px rgba(255, 255, 255, 0.3)' }}>{t('stats.tasksFinished')}</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Weekly Planner — C3: Lazy-loaded */}
+            <motion.div
               className="bento-grid__planner bento-card"
               variants={{
                 hidden: { opacity: 0, y: 20 },
                 show: { opacity: 1, y: 0 }
               }}
             >
-              <WeeklyPlanner />
+              <Suspense fallback={<div className="shimmer" style={{ height: '300px', borderRadius: 'var(--radius-lg)' }} />}>
+                <WeeklyPlanner />
+              </Suspense>
             </motion.div>
           </motion.div>
         </div>
       </main>
 
       {settingsOpen && (
-        <SettingsModal onClose={() => setSettingsOpen(false)} />
+        <Suspense fallback={null}>
+          <SettingsModal onClose={() => setSettingsOpen(false)} />
+        </Suspense>
       )}
-      
-      {/* Draggable Widgets */}
-      <PomodoroWidget visible={showPomodoro} onClose={() => setShowPomodoro(false)} />
-      <MusicPlayer visible={showMusic} />
-      <DNDWidget visible={showDND} />
-      <CalendarView visible={showCalendar} onClose={() => setShowCalendar(false)} />
-      
-      <MisuHelper 
-        visible={helperVisible} 
-        advice={t(advice) || ''} 
+
+      {/* C3: Lazy-loaded Draggable Widgets */}
+      <Suspense fallback={null}>
+        <PomodoroWidget visible={showPomodoro} onClose={() => setShowPomodoro(false)} />
+        <MusicPlayer visible={showMusic} />
+        <DNDWidget visible={showDND} />
+        <CalendarView visible={showCalendar} onClose={() => setShowCalendar(false)} />
+      </Suspense>
+
+      <MisuHelper
+        visible={helperVisible}
+        advice={t(advice) || ''}
         type={helperType}
         onClose={() => setHelperVisible(false)}
       />
@@ -241,14 +271,14 @@ function App() {
             <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="3" result="noise" />
             <feColorMatrix type="saturate" values="0" />
             <feBlend in="SourceGraphic" in2="noise" mode="soft-light" />
-            
+
             {/* Color Quantization for Pixelated Look */}
             <feComponentTransfer>
               <feFuncR type="discrete" tableValues="0 0.15 0.3 0.45 0.6 0.75 0.9 1" />
               <feFuncG type="discrete" tableValues="0 0.15 0.3 0.45 0.6 0.75 0.9 1" />
               <feFuncB type="discrete" tableValues="0 0.15 0.3 0.45 0.6 0.75 0.9 1" />
             </feComponentTransfer>
-            
+
             {/* Mosaic Effect (Chunky Pixels) */}
             <feMorphology operator="dilate" radius="1.5" />
           </filter>

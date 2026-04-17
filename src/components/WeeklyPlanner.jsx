@@ -115,7 +115,7 @@ export default function WeeklyPlanner() {
       <div className="planner__header">
         <div className="planner__title-area">
           <h2 className="section-title" style={{ marginBottom: 0 }}>
-            <Calendar size={20} style={{ verticalAlign: 'middle', marginRight: '8px' }} />
+            <Calendar size={18} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--energy-primary)' }} />
             {t('planner.title')}
           </h2>
           <p className="section-subtitle">{t('planner.subtitle')}</p>
@@ -132,7 +132,7 @@ export default function WeeklyPlanner() {
             ) : (
               <Sparkles size={16} />
             )}
-            {plan ? t('planner.generate') : t('planner.generate')}
+            {plan ? t('planner.regenerate') || 'Regenerate Plan' : t('planner.generate')}
           </button>
         </div>
       </div>

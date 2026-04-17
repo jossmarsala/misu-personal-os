@@ -10,7 +10,7 @@ import GradientOrb from './GradientOrb';
 import './TaskList.css';
 
 export default function TaskList() {
-  const { tasks } = useTasks();
+  const { tasks, loading } = useTasks(); // X6: consume loading state
   const { t } = useLanguage();
   const { currentEnergy } = useEnergy();
   const energyDef = getEnergyDef(currentEnergy);
@@ -44,6 +44,18 @@ export default function TaskList() {
     active: tasks.filter(t => !t.completed).length,
     completed: tasks.filter(t => t.completed).length,
   };
+
+  // X6: Show skeleton while data is loading from Supabase
+  if (loading) {
+    return (
+      <div id="task-list">
+        <div style={{ height: '44px', borderRadius: 'var(--radius-lg)', background: 'var(--bg-input)', marginBottom: 'var(--space-4)' }} className="shimmer" />
+        {[1, 2, 3].map(i => (
+          <div key={i} style={{ height: '64px', borderRadius: 'var(--card-radius)', background: 'var(--bg-input)', marginBottom: '8px', animationDelay: `${i * 0.1}s` }} className="shimmer" />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div id="task-list">
@@ -93,9 +105,12 @@ export default function TaskList() {
           <div style={{ width: '80px', height: '80px', marginBottom: 'var(--space-4)', opacity: 0.4 }}>
             <GradientOrb color={energyDef.vividColorA} size="100%" />
           </div>
+          {/* X1: Contextual empty state messages per filter */}
           <p className="task-list__empty-text">
             {filter === 'completed'
-              ? t('tasks.emptyState')
+              ? t('tasks.emptyCompleted') || 'No completed tasks yet'
+              : filter === 'active'
+              ? t(`energy.${currentEnergy}.empty`)
               : t('tasks.emptyState')}
           </p>
         </div>

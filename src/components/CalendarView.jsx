@@ -55,10 +55,13 @@ export default function CalendarView({ visible, onClose }) {
       days.push(new Date(year, month, i));
     }
     
-    // Next month padding
-    const endOffset = 42 - days.length;
-    for (let i = 1; i <= endOffset; i++) {
-      days.push(new Date(year, month + 1, i));
+    // A4: Dynamic padding — only fill to a complete row (not always 42 cells)
+    const remainder = days.length % 7;
+    if (remainder !== 0) {
+      const endOffset = 7 - remainder;
+      for (let i = 1; i <= endOffset; i++) {
+        days.push(new Date(year, month + 1, i));
+      }
     }
     
     return days;
@@ -87,8 +90,15 @@ export default function CalendarView({ visible, onClose }) {
         </div>
 
         <div className="calendar-grid">
-          {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(d => (
-            <div key={d} className="calendar-grid__weekday">{d}</div>
+          {/* X8: Locale-aware weekday headers */}
+          {Array.from({ length: 7 }, (_, i) => {
+            // Monday-first: 0=Mon, 6=Sun; adjust reference date to a known Monday
+            const refMonday = new Date(2024, 0, 1); // Jan 1 2024 is a Monday
+            const d = new Date(refMonday);
+            d.setDate(refMonday.getDate() + i);
+            return d.toLocaleDateString(language, { weekday: 'narrow' });
+          }).map((day, i) => (
+            <div key={i} className="calendar-grid__weekday">{day}</div>
           ))}
           {daysInMonth.map((date, i) => {
             const dateStr = toInputDate(date);

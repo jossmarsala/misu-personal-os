@@ -37,8 +37,11 @@ export default function Header({ onOpenSettings }) {
     <header className="header" id="header">
       <div className="container">
         <div className="header__inner">
-          <div className="header__brand" style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-            <span className="header__logo">Misu</span>
+          <div className="header__brand" style={{ display: 'flex', alignItems: 'center' }}>
+            <span className="header__logo">MISU</span>
+          </div>
+
+          <div className="header__center" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center' }}>
             <Clock />
           </div>
 

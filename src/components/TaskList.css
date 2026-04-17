@@ -13,13 +13,55 @@
   font-family: 'JetBrains Mono', monospace;
 }
 
+/* Task list fills the bento card vertically */
+#task-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
 .task-list__items {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1;
+  min-height: 0;
+  max-height: 340px; /* ~4 task cards + gaps */
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  padding-right: 4px;
+
+  /* Subtle fade at bottom to hint there's more */
+  mask-image: linear-gradient(to bottom, #000 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 85%, transparent 100%);
+}
+
+/* Prevent individual task cards from compressing */
+.task-list__items > * {
+  flex-shrink: 0;
+}
+
+/* Thin styled scrollbar */
+.task-list__items::-webkit-scrollbar {
+  width: 4px;
+}
+
+.task-list__items::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.task-list__items::-webkit-scrollbar-thumb {
+  background: var(--text-tertiary);
+  border-radius: 4px;
+  opacity: 0.4;
 }
 
 .task-list__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   padding: var(--space-7) var(--space-5);
   color: var(--text-tertiary);

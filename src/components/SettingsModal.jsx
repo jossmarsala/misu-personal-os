@@ -3,7 +3,7 @@ import { useTasks } from '../context/TaskContext';
 import { loadSettings, saveSettings, exportToJSON, importFromJSON } from '../services/storage';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-import { X, Download, Upload, Trash2, Key, LogOut, Check } from 'lucide-react';
+import { X, Download, Upload, Trash2, Key, LogOut, Check, User, Database, AlertTriangle } from 'lucide-react';
 import './SettingsModal.css';
 
 export default function SettingsModal({ onClose }) {
@@ -28,14 +28,11 @@ export default function SettingsModal({ onClose }) {
     setTimeout(() => setSaveSuccess(false), 2000);
   };
 
-  const handleExport = () => {
-    exportToJSON(tasks);
-  };
+  const handleExport = () => exportToJSON(tasks);
 
   const handleImport = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
     try {
       const imported = await importFromJSON(file);
       importTasksFromJSON(imported);
@@ -45,7 +42,6 @@ export default function SettingsModal({ onClose }) {
       setImportStatus(`${t('common.error')} ${err.message}`);
       setTimeout(() => setImportStatus(null), 4000);
     }
-    
     e.target.value = '';
   };
 
@@ -66,92 +62,135 @@ export default function SettingsModal({ onClose }) {
   return (
     <div className="settings-overlay" onClick={handleOverlayClick} id="settings-modal">
       <div className="settings-modal scale-in">
+
+        {/* Header */}
         <div className="settings-modal__header">
-          <h2 className="settings-modal__title">{t('common.settings')}</h2>
+          <div className="settings-modal__header-left">
+            <div className="settings-modal__header-icon">
+              <Key size={16} />
+            </div>
+            <div>
+              <h2 className="settings-modal__title">{t('common.settings')}</h2>
+              <p className="settings-modal__subtitle">Manage your preferences</p>
+            </div>
+          </div>
           <button className="btn btn-ghost btn-icon" onClick={onClose} aria-label="Close settings">
             <X size={18} />
           </button>
         </div>
 
-        {/* Gemini API Key */}
-        <div className="settings-modal__section">
-          <h3 className="settings-modal__section-title">
-            <Key size={14} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-            {t('settings.apiKey')}
-          </h3>
-          <p className="settings-modal__section-desc">
-            {t('settings.apiKeyDesc')}
-          </p>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <input
-              className="input"
-              type="password"
-              placeholder="..."
-              value={apiKey}
-              onChange={e => setApiKey(e.target.value)}
-              id="api-key-input"
-            />
-            <button 
-              className={`btn btn-sm ${saveSuccess ? 'btn-success' : 'btn-primary'}`} 
-              onClick={handleSaveApiKey}
-              style={{ minWidth: '70px', transition: 'all 0.3s ease' }}
-            >
-              {saveSuccess ? <Check size={18} className="animate-scale-in" /> : t('common.save')}
-            </button>
-          </div>
-        </div>
+        <div className="settings-modal__body">
 
-        <hr className="settings-modal__divider" />
+          {/* ─── Account Section ─── */}
+          <section className="settings-section">
+            <div className="settings-section__label">
+              <User size={12} />
+              {t('common.account')}
+            </div>
+            <div className="settings-section__card">
+              <div className="settings-account">
+                <div className="settings-account__avatar">
+                  {user?.email?.[0]?.toUpperCase() || 'U'}
+                </div>
+                <div className="settings-account__info">
+                  <span className="settings-account__title">{t('settings.signedInAs')}</span>
+                  <span className="settings-account__email">{user?.email}</span>
+                </div>
+                <button className="btn btn-ghost btn-sm settings-logout" onClick={logout}>
+                  <LogOut size={14} />
+                  {t('common.logout')}
+                </button>
+              </div>
+            </div>
+          </section>
 
-        {/* Export / Import */}
-        <div className="settings-modal__section">
-          <h3 className="settings-modal__section-title">{t('settings.dataManagement')}</h3>
-          <div className="settings-section">
-            <h3 className="settings-subtitle">{t('common.account')}</h3>
-            <p className="settings-desc">{t('settings.signedInAs')} <strong>{user?.email}</strong></p>
-            <button className="btn btn-ghost" onClick={logout} style={{ width: '100%', marginTop: 'var(--space-2)' }}>
-              <LogOut size={16} /> {t('common.logout')}
-            </button>
-          </div>
-          
-          <div className="settings-modal__actions">
-            <button className="btn btn-secondary" onClick={handleExport}>
-              <Download size={16} /> {t('settings.export')}
-            </button>
-            <button className="btn btn-secondary" onClick={() => fileInputRef.current?.click()}>
-              <Upload size={16} /> {t('settings.import')}
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json"
-              style={{ display: 'none' }}
-              onChange={handleImport}
-            />
-          </div>
-          {importStatus && (
-            <p style={{
-              marginTop: '8px',
-              fontSize: '0.8rem',
-              color: importStatus.startsWith('Error') ? 'var(--danger)' : 'var(--success)',
-            }}>
-              {importStatus}
-            </p>
-          )}
-        </div>
+          {/* ─── API Key Section ─── */}
+          <section className="settings-section">
+            <div className="settings-section__label">
+              <Key size={12} />
+              {t('settings.apiKey')}
+            </div>
+            <div className="settings-section__card">
+              <p className="settings-section__desc">{t('settings.apiKeyDesc')}</p>
+              <div className="settings-api-row">
+                <input
+                  className="input"
+                  type="password"
+                  placeholder="sk-..."
+                  value={apiKey}
+                  onChange={e => setApiKey(e.target.value)}
+                  id="api-key-input"
+                />
+                <button
+                  className={`btn btn-sm ${saveSuccess ? 'btn-success' : 'btn-primary'}`}
+                  onClick={handleSaveApiKey}
+                  style={{ minWidth: '70px', flexShrink: 0 }}
+                >
+                  {saveSuccess ? <Check size={16} /> : t('common.save')}
+                </button>
+              </div>
+            </div>
+          </section>
 
-        <hr className="settings-modal__divider" />
+          {/* ─── Data Management Section ─── */}
+          <section className="settings-section">
+            <div className="settings-section__label">
+              <Database size={12} />
+              {t('settings.dataManagement')}
+            </div>
+            <div className="settings-section__card">
+              <div className="settings-data-actions">
+                <button className="settings-data-btn" onClick={handleExport}>
+                  <div className="settings-data-btn__icon">
+                    <Download size={16} />
+                  </div>
+                  <div>
+                    <span className="settings-data-btn__title">{t('settings.export')}</span>
+                    <span className="settings-data-btn__hint">Download tasks as JSON</span>
+                  </div>
+                </button>
+                <button className="settings-data-btn" onClick={() => fileInputRef.current?.click()}>
+                  <div className="settings-data-btn__icon">
+                    <Upload size={16} />
+                  </div>
+                  <div>
+                    <span className="settings-data-btn__title">{t('settings.import')}</span>
+                    <span className="settings-data-btn__hint">Restore from JSON file</span>
+                  </div>
+                </button>
+                <input ref={fileInputRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleImport} />
+              </div>
+              {importStatus && (
+                <p className={`settings-import-status ${importStatus.startsWith('Error') ? 'error' : 'success'}`}>
+                  {importStatus}
+                </p>
+              )}
+            </div>
+          </section>
 
-        {/* Danger Zone */}
-        <div className="settings-modal__section">
-          <h3 className="settings-modal__section-title">{t('settings.dangerZone')}</h3>
-          <button
-            className={`btn ${confirmClear ? 'btn-danger' : 'btn-secondary'}`}
-            onClick={handleClear}
-          >
-            <Trash2 size={16} />
-            {confirmClear ? t('settings.confirmClear') : t('settings.clearAll')}
-          </button>
+          {/* ─── Danger Zone ─── */}
+          <section className="settings-section settings-section--danger">
+            <div className="settings-section__label settings-section__label--danger">
+              <AlertTriangle size={12} />
+              {t('settings.dangerZone')}
+            </div>
+            <div className="settings-section__card settings-section__card--danger">
+              <div className="settings-danger-row">
+                <div>
+                  <span className="settings-danger-row__title">{t('settings.clearAll')}</span>
+                  <span className="settings-danger-row__desc">This action cannot be undone</span>
+                </div>
+                <button
+                  className={`btn btn-sm ${confirmClear ? 'btn-danger' : 'btn-secondary'}`}
+                  onClick={handleClear}
+                >
+                  <Trash2 size={14} />
+                  {confirmClear ? t('settings.confirmClear') : t('common.delete')}
+                </button>
+              </div>
+            </div>
+          </section>
+
         </div>
       </div>
     </div>

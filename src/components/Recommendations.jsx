@@ -42,21 +42,23 @@ export default function Recommendations() {
   return (
     <div className="recommendations" id="recommendations">
       <div className="recommendations__header">
-        <motion.div 
+        <motion.h2 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="recommendations__title"
+          className="section-title"
+          style={{ marginBottom: '2px' }}
         >
           <Compass size={18} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--energy-primary)' }} />
           {t('recommendations.title')}
-        </motion.div>
-        <motion.div 
+        </motion.h2>
+        <motion.p 
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.6 }}
-          className="recommendations__message"
+          className="section-subtitle"
+          style={{ marginTop: 0 }}
         >
           {t(`energy.${currentEnergy}.msg`)}
-        </motion.div>
+        </motion.p>
       </div>
 
       <AnimatePresence mode="wait">

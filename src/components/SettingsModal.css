@@ -1,9 +1,12 @@
+/* ─────────────────────────────────────────
+   Settings Overlay
+───────────────────────────────────────── */
 .settings-overlay {
   position: fixed;
   inset: 0;
   background: var(--bg-overlay);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   z-index: 100;
   display: flex;
   align-items: center;
@@ -12,58 +15,285 @@
   animation: fadeIn 0.2s ease;
 }
 
+/* ─────────────────────────────────────────
+   Modal Container
+───────────────────────────────────────── */
 .settings-modal {
   width: 100%;
-  max-width: 460px;
-  max-height: 80vh;
+  max-width: 480px;
+  max-height: 88vh;
   overflow-y: auto;
-  padding: var(--space-6);
-  background: var(--card-bg);
-  border-radius: var(--card-radius);
-  box-shadow: var(--shadow-lg);
+  background: var(--bg-primary);
+  border-radius: calc(var(--card-radius) + 4px);
+  border: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-lg), 0 32px 80px rgba(0,0,0,0.18);
   animation: scaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
+.settings-modal::-webkit-scrollbar { width: 4px; }
+.settings-modal::-webkit-scrollbar-track { background: transparent; }
+.settings-modal::-webkit-scrollbar-thumb { background: var(--border-primary); border-radius: 4px; }
+
+/* ─────────────────────────────────────────
+   Header
+───────────────────────────────────────── */
 .settings-modal__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-5);
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--border-primary);
+  position: sticky;
+  top: 0;
+  background: var(--bg-primary);
+  z-index: 2;
+}
+
+.settings-modal__header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.settings-modal__header-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-lg);
+  background: var(--energy-surface);
+  color: var(--energy-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .settings-modal__title {
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
-  font-size: 1.4rem;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  line-height: 1.2;
 }
 
-.settings-modal__section {
-  margin-bottom: var(--space-5);
-}
-
-.settings-modal__section-title {
+.settings-modal__subtitle {
   font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
   color: var(--text-tertiary);
-  margin-bottom: var(--space-3);
+  margin-top: 2px;
 }
 
-.settings-modal__section-desc {
+/* ─────────────────────────────────────────
+   Body
+───────────────────────────────────────── */
+.settings-modal__body {
+  padding: var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ─────────────────────────────────────────
+   Section
+───────────────────────────────────────── */
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.settings-section__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  padding: 0 2px;
+}
+
+.settings-section__label--danger {
+  color: var(--danger);
+}
+
+.settings-section__card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.settings-section__card--danger {
+  border-color: color-mix(in srgb, var(--danger) 20%, transparent);
+  background: color-mix(in srgb, var(--danger) 5%, var(--card-bg));
+}
+
+.settings-section__desc {
   font-size: 0.78rem;
   color: var(--text-tertiary);
-  margin-bottom: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  padding-bottom: 0;
+  line-height: 1.5;
 }
 
-.settings-modal__actions {
+/* ─────────────────────────────────────────
+   Account Row
+───────────────────────────────────────── */
+.settings-account {
   display: flex;
+  align-items: center;
   gap: var(--space-3);
-  flex-wrap: wrap;
+  padding: var(--space-4);
 }
 
-.settings-modal__divider {
+.settings-account__avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--energy-gradient);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.settings-account__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-account__title {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.settings-account__email {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settings-logout {
+  flex-shrink: 0;
+  gap: 6px;
+}
+
+/* ─────────────────────────────────────────
+   API Key Row
+───────────────────────────────────────── */
+.settings-api-row {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+}
+
+.settings-api-row .input {
+  flex: 1;
+  font-size: 0.82rem;
+}
+
+/* ─────────────────────────────────────────
+   Data Actions
+───────────────────────────────────────── */
+.settings-data-actions {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-data-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: transparent;
   border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.settings-data-btn:last-child {
+  border-bottom: none;
+}
+
+.settings-data-btn:hover {
+  background: var(--bg-secondary);
+}
+
+.settings-data-btn__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.settings-data-btn:hover .settings-data-btn__icon {
+  background: var(--energy-surface);
+  color: var(--energy-primary);
+}
+
+.settings-data-btn__title {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.settings-data-btn__hint {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+.settings-import-status {
+  font-size: 0.75rem;
+  padding: var(--space-2) var(--space-4);
   border-top: 1px solid var(--border-primary);
-  margin: var(--space-5) 0;
+}
+
+.settings-import-status.error { color: var(--danger); }
+.settings-import-status.success { color: var(--success); }
+
+/* ─────────────────────────────────────────
+   Danger Zone
+───────────────────────────────────────── */
+.settings-danger-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.settings-danger-row__title {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.settings-danger-row__desc {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  margin-top: 2px;
 }

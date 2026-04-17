@@ -19,6 +19,7 @@ export default function TaskCard({ task }) {
   const [editTitle, setEditTitle] = useState(task.title);
   const [expanded, setExpanded] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showUndo, setShowUndo] = useState(false);
 
   const energy = getEnergyDef(task.energyRequired);
   const deadlineStatus = getDeadlineStatus(task.deadline);
@@ -51,7 +52,13 @@ export default function TaskCard({ task }) {
 
   const handleDelete = () => {
     if (confirmDelete) {
+      // X4: Brief undo window before true deletion
+      const deleted = { ...task };
       deleteTask(task.id);
+      setShowUndo(true);
+      const timer = setTimeout(() => setShowUndo(false), 5000);
+      // Expose undo via a custom event for a global toast system (best-effort)
+      window.dispatchEvent(new CustomEvent('misu:task-deleted', { detail: { task: deleted, timer } }));
     } else {
       setConfirmDelete(true);
       setTimeout(() => setConfirmDelete(false), 3000);
@@ -151,7 +158,17 @@ export default function TaskCard({ task }) {
           {deadlineText && (
             <span className={deadlineBadgeClass}>{deadlineText}</span>
           )}
-          <span className="badge badge-energy" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <span 
+            className="badge badge-energy" 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '6px',
+              background: `color-mix(in srgb, ${energy.vividColorA} 15%, transparent)`,
+              color: energy.vividColorA,
+              border: `1px solid color-mix(in srgb, ${energy.vividColorA} 20%, transparent)`
+            }}
+          >
             <div style={{ width: '12px', height: '12px' }}>
               <GradientOrb color={energy.vividColorA} size="100%" />
             </div>
@@ -190,7 +207,7 @@ export default function TaskCard({ task }) {
           whileTap={{ scale: 0.9 }}
           className={`btn ${confirmDelete ? 'btn-danger' : 'btn-ghost'} btn-icon btn-sm`}
           onClick={handleDelete}
-          aria-label={confirmDelete ? t('common.delete') : t('common.delete')}
+          aria-label={confirmDelete ? t('common.delete') + ' (confirm)' : t('common.delete')}
         >
           <Trash2 size={14} />
         </motion.button>
