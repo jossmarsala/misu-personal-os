@@ -15,7 +15,7 @@ export default function CalendarView({ visible, onClose }) {
 
 
   const tasksWithDeadlines = useMemo(() => {
-    return tasks.filter(t => t.deadline);
+    return tasks.filter(t => t.deadline && !t.completed);
   }, [tasks]);
 
   const weeklyPlanTasks = useMemo(() => {
@@ -25,6 +25,7 @@ export default function CalendarView({ visible, onClose }) {
       weeklyPlan[day].forEach(task => {
         // Look up original task to get energy level and detailed description
         const original = tasks.find(t => t.id === task.taskId);
+        if (original && original.completed) return;
         all.push({ 
           ...task, 
           scheduledDate: day,
@@ -122,7 +123,7 @@ export default function CalendarView({ visible, onClose }) {
                     const def = getEnergyDef(task.energyRequired);
                     return (
                       <div 
-                        key={idx} 
+                        key={task.id || task.taskId || idx} 
                         className="calendar-task-dot"
                         tabIndex="0"
                         style={{ background: def.vividColorA, boxShadow: `0 0 4px 1px color-mix(in srgb, ${def.vividColorA} 60%, transparent)` }}
