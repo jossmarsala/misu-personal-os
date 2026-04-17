@@ -10,7 +10,7 @@
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   transition: box-shadow 0.3s ease, width 0.3s ease;
-  overflow: hidden;
+  /* overflow: hidden; removed to let tooltips break outside window bounds */
   touch-action: none;
   user-select: none;
 }
@@ -34,6 +34,7 @@
   cursor: grab;
   border-bottom: 1px solid var(--border-primary);
   background: var(--energy-surface);
+  border-radius: 19px 19px 0 0;
 }
 
 .draggable-widget.collapsed .draggable-widget__header {
