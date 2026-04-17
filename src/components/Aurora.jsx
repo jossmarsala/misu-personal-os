@@ -94,10 +94,10 @@ void main() {
   vec3 rampColor;
   COLOR_RAMP(colors, uv.x, rampColor);
   
-  // Multi-layered noise for harsher, more detailed movement
-  float n1 = snoise(vec2(uv.x * 4.0 + uTime * 0.2, uTime * 0.4)) * 0.5;
-  float n2 = snoise(vec2(uv.x * 12.0 - uTime * 0.5, uTime * 0.8)) * 0.2;
-  float n3 = snoise(vec2(uv.x * 24.0 + uTime * 1.2, uTime * 1.5)) * 0.05;
+  // Multi-layered noise for softer, broader movement
+  float n1 = snoise(vec2(uv.x * 2.5 + uTime * 0.1, uTime * 0.2)) * 0.5;
+  float n2 = snoise(vec2(uv.x * 6.0 - uTime * 0.3, uTime * 0.4)) * 0.2;
+  float n3 = snoise(vec2(uv.x * 12.0 + uTime * 0.6, uTime * 0.8)) * 0.05;
   
   float combinedNoise = (n1 + n2 + n3) * uAmplitude;
   float height = exp(combinedNoise);
@@ -106,8 +106,8 @@ void main() {
   float intensity = 0.7 * height;
   
   float midPoint = 0.2;
-  // Sharper blend for harsher edges
-  float auroraAlpha = smoothstep(midPoint - uBlend * 0.2, midPoint + uBlend * 0.2, intensity);
+  // Softer blend for blurrier edges
+  float auroraAlpha = smoothstep(midPoint - uBlend * 0.8, midPoint + uBlend * 0.8, intensity);
   
   // Use the ramp color directly without darkening it by intensity
   // This prevents 'dirty' dark edges when blending in light mode
@@ -163,8 +163,15 @@ export default function Aurora(props) {
     }
 
     const colorStopsArray = colorStops.map(hex => {
-      const c = new Color(hex);
-      return [c.r, c.g, c.b];
+      if (!hex || typeof hex !== 'string') return [1, 1, 1];
+      let safeHex = hex;
+      if (safeHex.startsWith('#') && safeHex.length === 9) safeHex = safeHex.slice(0, 7);
+      try {
+        const c = new Color(safeHex);
+        return [c.r || 0, c.g || 0, c.b || 0];
+      } catch(e) {
+        return [1, 1, 1];
+      }
     });
 
     program = new Program(gl, {
@@ -207,10 +214,22 @@ export default function Aurora(props) {
 
       program.uniforms.uBlend.value = propsRef.current.blend ?? blend;
       const stops = propsRef.current.colorStops ?? colorStops;
+      
       program.uniforms.uColorStops.value = stops.map(hex => {
-        const c = new Color(hex);
-        return [c.r, c.g, c.b];
+        if (!hex || typeof hex !== 'string') return [1, 1, 1];
+        // Safely strip alpha if it's an 8-char hex (like #RRGGBBAA)
+        let safeHex = hex;
+        if (safeHex.startsWith('#') && safeHex.length === 9) {
+          safeHex = safeHex.slice(0, 7);
+        }
+        try {
+          const c = new Color(safeHex);
+          return [c.r || 0, c.g || 0, c.b || 0];
+        } catch(e) {
+          return [1, 1, 1];
+        }
       });
+      
       renderer.render({ scene: mesh });
     };
     animateId = requestAnimationFrame(update);

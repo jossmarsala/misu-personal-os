@@ -209,7 +209,7 @@ function App() {
                         currentEnergy === 4 ? '#8A2BE2' :
                         undefined
                       }
-                      tileSize={12}
+                      tileSize={40}
                       speed={0.18}
                     />
                   </div>

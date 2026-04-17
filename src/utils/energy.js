@@ -7,8 +7,8 @@ export const ENERGY_LEVELS = [
   {
     level: 1,
     name: 'Whisper',
-    colorA: '#cfe08aff',
-    colorB: '#eaf6b8ff',
+    colorA: '#C5D4B5',
+    colorB: '#E2EADA',
     vividColorA: '#a6cf80ff',
     vividColorB: '#489ceaff',
     gradientLabel: 'Moss → Sky',

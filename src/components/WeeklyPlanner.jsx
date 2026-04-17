@@ -6,6 +6,7 @@ import { loadSettings } from '../services/storage';
 import { useLanguage } from '../context/LanguageContext';
 import { playChime, playPop } from '../utils/audio';
 import { Calendar, Sparkles, RefreshCw } from 'lucide-react';
+import { PixelLoaderMini } from './PixelLoader';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, KeyboardSensor } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 import DroppableColumn from './DroppableColumn';
@@ -139,14 +140,10 @@ export default function WeeklyPlanner() {
 
       {loading && (
         <div className="planner__loading animate-fade-in">
-          <div className="planner__loading-dots">
-            <div className="planner__loading-dot" />
-            <div className="planner__loading-dot" />
-            <div className="planner__loading-dot" />
-          </div>
-          <span className="planner__loading-text">
-            {t('planner.loading')}
-          </span>
+          <PixelLoaderMini
+            label={t('planner.loading')}
+            height={88}
+          />
         </div>
       )}
 
