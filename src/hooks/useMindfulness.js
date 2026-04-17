@@ -189,14 +189,6 @@ export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
     }
   }, [musicVisible]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ─── Pomodoro widget first open ───────────────────────────
-  useEffect(() => {
-    if (pomodoroVisible && !hasSeen(FLAGS.POMODORO_INTRO)) {
-      markSeen(FLAGS.POMODORO_INTRO);
-      setTimeout(() => showTip('tips.pomodoroIntro', 'info'), 800);
-    }
-  }, [pomodoroVisible]); // eslint-disable-line react-hooks/exhaustive-deps
-
   return {
     advice,
     helperVisible,

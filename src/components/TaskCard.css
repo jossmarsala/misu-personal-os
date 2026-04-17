@@ -138,3 +138,82 @@
 @media (max-width: 768px) {
   .task-card__actions { opacity: 1; }
 }
+
+/* ── Drag Handle ─────────────────────────────────────────── */
+.task-card__drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  opacity: 0;
+  cursor: grab;
+  padding: 4px 2px;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
+  flex-shrink: 0;
+  order: -1; /* sits before checkbox */
+  touch-action: none;
+}
+
+.task-card:hover .task-card__drag-handle {
+  opacity: 1;
+}
+
+.task-card__drag-handle:hover {
+  color: var(--energy-primary);
+  background: var(--energy-surface);
+}
+
+.task-card__drag-handle:active {
+  cursor: grabbing;
+}
+
+.task-card.dragging {
+  opacity: 0.4;
+  box-shadow: none;
+}
+
+/* ── Drag Ghost (DragOverlay) ──────────────────────────── */
+.task-drag-ghost {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--bg-primary);
+  border: 1.5px solid var(--energy-primary);
+  border-radius: var(--card-radius);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.22), 0 0 0 3px var(--energy-glow);
+  backdrop-filter: blur(12px);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: rotate(2deg);
+  animation: ghost-pop 0.15s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.task-drag-ghost__title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.task-drag-ghost__meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--energy-primary);
+  background: var(--energy-surface);
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+@keyframes ghost-pop {
+  from { opacity: 0; transform: scale(0.9) rotate(2deg); }
+  to   { opacity: 1; transform: scale(1) rotate(2deg); }
+}
+

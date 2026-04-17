@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useTasks } from '../context/TaskContext';
 import { generateWeeklyPlan } from '../services/gemini';
 import { getWeekDays, formatDayShort, toInputDate } from '../utils/dateUtils';
@@ -7,8 +7,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { playChime, playPop } from '../utils/audio';
 import { Calendar, Sparkles, RefreshCw } from 'lucide-react';
 import { PixelLoaderMini } from './PixelLoader';
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, KeyboardSensor } from '@dnd-kit/core';
-import { sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
+import { SortableContext, sortableKeyboardCoordinates, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import DroppableColumn from './DroppableColumn';
 import { useEnergy } from '../context/EnergyContext';
 import { getEnergyDef } from '../utils/energy';
@@ -57,30 +56,26 @@ export default function WeeklyPlanner() {
     }
   };
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
-
-  const handleDragEnd = useCallback((event) => {
+  // Internal planner reordering — triggered by top-level DndContext via custom event
+  const handlePlannerDragEnd = useCallback((event) => {
     const { active, over } = event;
     if (!over) return;
-    
+
     const activeId = active.id;
     const overId = over.id;
     if (activeId === overId) return;
 
     setPlan(prev => {
       const newPlan = { ...prev };
-      
+
       let sourceDay = null;
       let targetDay = null;
-      
+
       for (const day of Object.keys(newPlan)) {
         if (newPlan[day].some(t => t.dndId === activeId)) sourceDay = day;
         if (newPlan[day].some(t => t.dndId === overId)) targetDay = day;
       }
-      
+
       if (!targetDay && dayKeys.includes(overId)) targetDay = overId;
       if (!sourceDay || !targetDay) return prev;
 
@@ -92,17 +87,14 @@ export default function WeeklyPlanner() {
       } else {
         const sourceList = [...newPlan[sourceDay]];
         const targetList = [...newPlan[targetDay]];
-        
         const activeItemIndex = sourceList.findIndex(t => t.dndId === activeId);
         const [movedTask] = sourceList.splice(activeItemIndex, 1);
-        
         if (dayKeys.includes(overId)) {
           targetList.push(movedTask);
         } else {
           const overIndex = targetList.findIndex(t => t.dndId === overId);
           targetList.splice(overIndex, 0, movedTask);
         }
-        
         newPlan[sourceDay] = sourceList;
         newPlan[targetDay] = targetList;
       }
@@ -110,6 +102,12 @@ export default function WeeklyPlanner() {
       return newPlan;
     });
   }, [dayKeys]);
+
+  useEffect(() => {
+    const handler = (e) => handlePlannerDragEnd(e.detail);
+    window.addEventListener('misu:planner-drag-end', handler);
+    return () => window.removeEventListener('misu:planner-drag-end', handler);
+  }, [handlePlannerDragEnd]);
 
   return (
     <div className="planner" id="weekly-planner">
@@ -164,27 +162,25 @@ export default function WeeklyPlanner() {
       )}
 
       {!loading && plan && (
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <div className="planner__week animate-fade-in">
-            {weekDays.map((date, i) => {
-              const dayKey = dayKeys[i];
-              const dayTasks = plan[dayKey] || [];
-              const isToday = toInputDate(date) === today;
+        <div className="planner__week animate-fade-in">
+          {weekDays.map((date, i) => {
+            const dayKey = dayKeys[i];
+            const dayTasks = plan[dayKey] || [];
+            const isToday = toInputDate(date) === today;
 
-              return (
-                <DroppableColumn 
-                  key={dayKey}
-                  id={dayKey}
-                  dayTasks={dayTasks}
-                  t={t}
-                  dayName={formatDayShort(date)}
-                  dayDate={date.getDate()}
-                  isToday={isToday}
-                />
-              );
-            })}
-          </div>
-        </DndContext>
+            return (
+              <DroppableColumn
+                key={dayKey}
+                id={dayKey}
+                dayTasks={dayTasks}
+                t={t}
+                dayName={formatDayShort(date)}
+                dayDate={date.getDate()}
+                isToday={isToday}
+              />
+            );
+          })}
+        </div>
       )}
     </div>
   );

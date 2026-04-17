@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useTasks } from '../context/TaskContext';
-import { Check, Pencil, Trash2, X, Save, ChevronDown, ChevronUp, Play } from 'lucide-react';
+import { Check, Pencil, Trash2, X, Save, ChevronDown, ChevronUp, Play, GripVertical } from 'lucide-react';
 import { getEnergyDef } from '../utils/energy';
 import { formatDeadline, getDeadlineStatus } from '../utils/dateUtils';
 import { useLanguage } from '../context/LanguageContext';
 import { useEnergy } from '../context/EnergyContext';
 import { playUISound } from '../services/AudioService';
 import GradientOrb from './GradientOrb';
+import { useDraggable } from '@dnd-kit/core';
 import './TaskCard.css';
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,6 +21,13 @@ export default function TaskCard({ task }) {
   const [expanded, setExpanded] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showUndo, setShowUndo] = useState(false);
+
+  // Drag source — allows task to be dropped into the weekly planner
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: `task-card-${task.id}`,
+    disabled: task.completed,
+    data: { type: 'task-card', task },
+  });
 
   const energy = getEnergyDef(task.energyRequired);
   const deadlineStatus = getDeadlineStatus(task.deadline);
@@ -75,15 +83,28 @@ export default function TaskCard({ task }) {
 
   return (
     <motion.div
+      ref={setNodeRef}
       layout
       initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
+      animate={{ opacity: isDragging ? 0.4 : 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       whileHover={{ y: -2 }}
-      className={`task-card ${task.completed ? 'completed' : ''}`}
+      className={`task-card ${task.completed ? 'completed' : ''} ${isDragging ? 'dragging' : ''}`}
       data-task-energy={task.energyRequired}
       id={`task-${task.id}`}
     >
+      {/* Drag handle — only shown on non-completed tasks */}
+      {!task.completed && (
+        <span
+          className="task-card__drag-handle"
+          {...attributes}
+          {...listeners}
+          aria-label="Drag to planner"
+          title="Drag to planner"
+        >
+          <GripVertical size={14} />
+        </span>
+      )}
       <motion.button
         whileTap={{ scale: 0.9 }}
         className={`task-card__checkbox ${task.completed ? 'checked' : ''}`}

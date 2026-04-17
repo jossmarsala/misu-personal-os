@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, lazy, Suspense } from 'react';
+import { useState, useEffect, useMemo, lazy, Suspense, useCallback } from 'react';
 import { useEnergy } from './context/EnergyContext';
 import { useTasks } from './context/TaskContext';
 import { loadSettings, saveSettings } from './services/storage';
@@ -15,6 +15,10 @@ import { useMindfulness } from './hooks/useMindfulness';
 import { Clock, CheckCircle2, Timer, Music, Wind, Shield, Calendar, Command } from 'lucide-react';
 import { useLanguage } from './context/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
+import { sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
+import { playPop } from './utils/audio';
+import { toInputDate, getWeekDays } from './utils/dateUtils';
 
 // C3: Lazy-load heavy widgets to reduce initial bundle chunk size
 const WeeklyPlanner = lazy(() => import('./components/WeeklyPlanner'));
@@ -34,12 +38,63 @@ function App() {
   const [showDND, setShowDND] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const { currentEnergy, dndActive, breathingActive, setBreathingActive } = useEnergy();
-  const { tasks, deleteTask } = useTasks();
+  const { tasks, deleteTask, weeklyPlan, setWeeklyPlan } = useTasks();
   const { t } = useLanguage();
   const energyDef = getEnergyDef(currentEnergy);
 
   const { advice, helperVisible, helperType, setHelperVisible } = useMindfulness(showDND, showMusic, showPomodoro);
   const { showOnboarding, finishOnboarding } = useOnboarding();
+
+  // ── Shared DnD setup (spans task list + weekly planner) ──
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const [activeDragTask, setActiveDragTask] = useState(null); // for DragOverlay
+
+  const handleDragStart = useCallback((event) => {
+    const { active } = event;
+    if (active.data.current?.type === 'task-card') {
+      setActiveDragTask(active.data.current.task);
+    }
+  }, []);
+
+  const handleDragEnd = useCallback((event) => {
+    const { active, over } = event;
+    setActiveDragTask(null);
+    if (!over) return;
+
+    const activeType = active.data.current?.type;
+
+    // ── Cross-zone: task card dropped onto a planner day ──
+    if (activeType === 'task-card') {
+      if (!weeklyPlan) return; // no plan — silently do nothing
+      const targetDay = over.id; // must match a YYYY-MM-DD key
+      if (!weeklyPlan[targetDay]) return;
+      const task = active.data.current.task;
+      const newBlock = {
+        taskId: task.id,
+        title: task.title,
+        hours: task.estimatedHours || 1,
+        isChunk: false,
+        chunkLabel: '',
+        dndId: `${targetDay}-${task.id}-manual-${Date.now()}`,
+      };
+      setWeeklyPlan(prev => ({
+        ...prev,
+        [targetDay]: [...(prev[targetDay] || []), newBlock],
+      }));
+      playPop();
+      return;
+    }
+
+    // ── Within planner: reorder blocks between days ──
+    if (activeType === 'planner-block') {
+      // Delegated to WeeklyPlanner's internal handler via event — handled below
+      window.dispatchEvent(new CustomEvent('misu:planner-drag-end', { detail: event }));
+    }
+  }, [weeklyPlan, setWeeklyPlan]);
 
   // Handle commands emitted by CommandPalette via custom events
   useEffect(() => {
@@ -58,7 +113,6 @@ function App() {
     return () => window.removeEventListener('misu:command', handler);
   }, [tasks, deleteTask]);
 
-
   const stats = useMemo(() => {
     const active = tasks.filter(t => !t.completed);
     const completed = tasks.filter(t => t.completed);
@@ -67,6 +121,12 @@ function App() {
   }, [tasks]);
 
   return (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
     <div className={`app ${dndActive ? 'app--dnd-active' : ''}`}>
       <Header onOpenSettings={() => setSettingsOpen(true)} />
       <CommandPalette />
@@ -292,7 +352,18 @@ function App() {
           </filter>
         </defs>
       </svg>
+
+      {/* Drag overlay — shown while dragging a task card */}
+      <DragOverlay dropAnimation={null}>
+        {activeDragTask && (
+          <div className="task-drag-ghost">
+            <span className="task-drag-ghost__title">{activeDragTask.title}</span>
+            <span className="task-drag-ghost__meta">{activeDragTask.estimatedHours || 1}h</span>
+          </div>
+        )}
+      </DragOverlay>
     </div>
+    </DndContext>
   );
 }
 

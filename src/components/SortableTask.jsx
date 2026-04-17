@@ -11,7 +11,7 @@ export default function SortableTask({ id, task, t, children }) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id });
+  } = useSortable({ id, data: { type: 'planner-block' } });
 
   const energyDef = getEnergyDef(task.energyRequired || 3);
 
