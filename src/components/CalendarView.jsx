@@ -3,7 +3,7 @@ import { useTasks } from '../context/TaskContext';
 import { useLanguage } from '../context/LanguageContext';
 import { formatDayShort, toInputDate } from '../utils/dateUtils';
 import DraggableWidget from './DraggableWidget';
-import { getEnergyColor } from '../utils/energy';
+import { getEnergyDef } from '../utils/energy';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './CalendarView.css';
@@ -118,16 +118,21 @@ export default function CalendarView({ visible, onClose }) {
               >
                 <span className="day-number">{date.getDate()}</span>
                 <div className="day-tasks">
-                  {dailyTasks.map((task, idx) => (
-                    <div 
-                      key={idx} 
-                      className="calendar-task-dot"
-                    >
-                      <div className="calendar-task-hover-tag">
-                        {task.title}
+                  {dailyTasks.map((task, idx) => {
+                    const def = getEnergyDef(task.energyRequired);
+                    return (
+                      <div 
+                        key={idx} 
+                        className="calendar-task-dot"
+                        tabIndex="0"
+                        style={{ background: def.vividColorA, boxShadow: `0 0 4px 1px color-mix(in srgb, ${def.vividColorA} 60%, transparent)` }}
+                      >
+                        <div className="calendar-task-hover-tag">
+                          {task.title}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             );
