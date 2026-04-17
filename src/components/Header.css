@@ -60,4 +60,8 @@
   align-items: center;
   gap: var(--space-3);
 }
-
+@media (max-width: 768px) {
+  .header__center {
+    display: none !important;
+  }
+}
