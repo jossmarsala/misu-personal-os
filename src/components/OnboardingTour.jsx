@@ -5,24 +5,21 @@ import { ChevronLeft, ChevronRight, ArrowRight, X, Sparkles } from 'lucide-react
 import { useLanguage } from '../context/LanguageContext';
 import './OnboardingTour.css';
 
-// ── Step definitions ─────────────────────────────────────────
-// Each step targets a DOM element by CSS selector.
-// The 4 steps cover the core value pillars of Misu OS.
-const STEP_KEYS = ['energy', 'tasks', 'widgets', 'planner'];
-
+// ── Step definitions ──────────────────────────────────────────
+// Natural page flow: energy system → task creation → recommendations → planner
 function getSteps(t) {
   return [
     {
-      // Step 1 — Energy-aware recommendations
-      target: '.reco-card',
+      // Step 1 — The energy system: explain all 4 levels
+      target: '#energy-selector',
       content: t('tour.energy.content'),
       title: t('tour.energy.title'),
-      placement: 'left',
+      placement: 'bottom',
       skipBeacon: true,
-      spotlightPadding: 8,
+      spotlightPadding: 16,
     },
     {
-      // Step 2 — Task creation (quick add)
+      // Step 2 — Create first task
       target: '#add-task-btn',
       content: t('tour.tasks.content'),
       title: t('tour.tasks.title'),
@@ -31,28 +28,35 @@ function getSteps(t) {
       spotlightPadding: 12,
     },
     {
-      // Step 3 — Widget toolbar (Pomodoro, Music, Focus Shield, Calendar)
-      target: '.widget-glass-container',
-      content: t('tour.widgets.content'),
-      title: t('tour.widgets.title'),
-      placement: 'bottom',
+      // Step 3 — "What can I do now?" energy-matched recommendations
+      target: '.reco-card',
+      content: t('tour.reco.content'),
+      title: t('tour.reco.title'),
+      placement: 'left',
       skipBeacon: true,
       spotlightPadding: 10,
     },
     {
-      // Step 4 — Weekly planner
+      // Step 4 — Weekly planner & AI scheduling
       target: '#weekly-planner',
       content: t('tour.planner.content'),
       title: t('tour.planner.title'),
       placement: 'top',
       skipBeacon: true,
-      spotlightPadding: 8,
+      spotlightPadding: 10,
     },
   ];
 }
 
+// ── Energy level pills (shown inside step 1 tooltip) ─────────
+const ENERGY_PILLS = [
+  { level: 1, label: 'Whisper', labelEs: 'Susurro', labelIt: 'Sussurro', color: '#60a5fa', desc: 'Rest & recovery' },
+  { level: 2, label: 'Calm',    labelEs: 'Calma',   labelIt: 'Calma',    color: '#34d399', desc: 'Light work' },
+  { level: 3, label: 'Rhythm',  labelEs: 'Ritmo',   labelIt: 'Ritmo',    color: '#f59e0b', desc: 'Steady output' },
+  { level: 4, label: 'Pulse',   labelEs: 'Impulso', labelIt: 'Impulso',  color: '#f87171', desc: 'Full power' },
+];
+
 // ── Custom Tooltip Component ─────────────────────────────────
-// Matches Misu's glassmorphism / rounded-card aesthetic.
 function MisuTooltip({
   continuous,
   index,
@@ -65,6 +69,7 @@ function MisuTooltip({
   isLastStep,
 }) {
   const progress = ((index + 1) / size) * 100;
+  const isEnergyStep = index === 0;
 
   return (
     <AnimatePresence mode="wait">
@@ -109,6 +114,19 @@ function MisuTooltip({
         {/* Content */}
         <p className="joyride-tooltip__content">{step.content}</p>
 
+        {/* Energy pills — only on step 1 */}
+        {isEnergyStep && (
+          <div className="joyride-tooltip__energy-pills">
+            {ENERGY_PILLS.map(({ level, label, color }) => (
+              <div key={level} className="joyride-tooltip__energy-pill" style={{ '--pill-color': color }}>
+                <span className="joyride-tooltip__energy-pill-dot" />
+                <span className="joyride-tooltip__energy-pill-num">{level}</span>
+                <span className="joyride-tooltip__energy-pill-label">{label}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Navigation */}
         <div className="joyride-tooltip__nav">
           {index > 0 ? (
@@ -144,13 +162,13 @@ export default function OnboardingTour({ onFinish }) {
   const handleEvent = useCallback((data, controls) => {
     const { action, status, type } = data;
 
-    // Tour finished or skipped
+    // Tour finished or skipped naturally
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status) && type === EVENTS.TOUR_END) {
       onFinish();
       return;
     }
 
-    // Close button clicked — end the tour
+    // Close button explicitly clicked — end the tour
     if (action === ACTIONS.CLOSE && type === EVENTS.STEP_AFTER) {
       controls.stop();
       onFinish();
@@ -173,9 +191,9 @@ export default function OnboardingTour({ onFinish }) {
       }}
       options={{
         zIndex: 400,
-        overlayColor: 'rgba(0, 0, 0, 0.45)',
-        spotlightRadius: 28,
-        scrollOffset: 80,
+        overlayColor: 'rgba(0, 0, 0, 0.5)',
+        spotlightRadius: 24,
+        scrollOffset: 100,
         overlayClickAction: false,
         closeButtonAction: 'skip',
       }}
@@ -183,16 +201,10 @@ export default function OnboardingTour({ onFinish }) {
         hideArrow: true,
       }}
       styles={{
-        overlay: {
-          // removed backdropFilter because it blurs the spotlight cutout area
-        },
+        overlay: {},
         spotlight: {},
-        beacon: {
-          display: 'none',
-        },
-        tooltipContainer: {
-          textAlign: 'left',
-        },
+        beacon: { display: 'none' },
+        tooltipContainer: { textAlign: 'left' },
       }}
     />
   );

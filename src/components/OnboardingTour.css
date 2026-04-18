@@ -6,8 +6,8 @@
 /* ── Tooltip Card ───────────────────────────────────────── */
 .joyride-tooltip {
   position: relative;
-  width: 340px;
-  max-width: 92vw;
+  width: 360px;
+  max-width: 94vw;
   background: var(--bg-primary);
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
@@ -93,7 +93,7 @@
 /* ── Title ──────────────────────────────────────────────── */
 .joyride-tooltip__title {
   font-family: 'Poppins', sans-serif;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.02em;
@@ -105,12 +105,59 @@
 
 /* ── Content ────────────────────────────────────────────── */
 .joyride-tooltip__content {
-  font-size: 0.82rem;
+  font-size: 0.81rem;
   line-height: 1.65;
   color: var(--text-secondary);
   padding: 8px 24px 0;
   position: relative;
   z-index: 1;
+}
+
+/* ── Energy pills (step 1 only) ─────────────────────────── */
+.joyride-tooltip__energy-pills {
+  display: flex;
+  gap: 6px;
+  padding: 12px 24px 0;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.joyride-tooltip__energy-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px 4px 7px;
+  border-radius: var(--radius-full, 9999px);
+  background: color-mix(in srgb, var(--pill-color) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pill-color) 35%, transparent);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: transform 0.2s;
+}
+
+.joyride-tooltip__energy-pill:hover {
+  transform: scale(1.04);
+}
+
+.joyride-tooltip__energy-pill-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--pill-color);
+  flex-shrink: 0;
+  box-shadow: 0 0 6px var(--pill-color);
+}
+
+.joyride-tooltip__energy-pill-num {
+  font-weight: 800;
+  color: var(--pill-color);
+  font-size: 0.72rem;
+}
+
+.joyride-tooltip__energy-pill-label {
+  color: var(--text-tertiary);
 }
 
 /* ── Navigation ─────────────────────────────────────────── */
@@ -166,17 +213,41 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Override Joyride's internal styles
+   Soft / feathered spotlight edge
+   Uses a radial mask SVG filter on the Joyride overlay to
+   produce a graduated blur along the spotlight boundary.
    ═══════════════════════════════════════════════════════════ */
+
+/* The overlay SVG that Joyride renders — we add a soft radial
+   filter to the spotlight path itself via CSS. In v3 Joyride
+   renders the spotlight as an SVG <path> inside the overlay. */
+.react-joyride__overlay {
+  /* Allow the spotlight feathering filter below to apply */
+}
+
+/* Feather / soft-edge on the spotlight cutout:
+   Apply a box-shadow "bloom" that diffuses inward from the
+   hole edge. Combined with a generous border-radius from the
+   spotlightRadius option, this creates a soft, non-rigid look. */
+.react-joyride__spotlight {
+  border-radius: 24px !important;
+  /* Layered box-shadows to simulate a feathered/blurred edge */
+  box-shadow:
+    /* Inner glow diffusing outward from spotlight boundary */
+    0 0 0 4px  rgba(255, 255, 255, 0.04),
+    0 0 0 10px rgba(255, 255, 255, 0.025),
+    0 0 0 20px rgba(255, 255, 255, 0.012),
+    0 0 0 38px rgba(255, 255, 255, 0.005),
+    /* Large dark shadow that is the actual overlay dimming */
+    0 0 0 9999px rgba(0, 0, 0, 0.5) !important;
+  /* Subtle backdrop blur on just the spotlight element blurs
+     its hard edge without blurring the element it highlights */
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.08));
+}
 
 /* Hide default beacon pulsing circle */
 .__floater__open {
   filter: none !important;
-}
-
-/* Spotlight should match our rounded cards */
-.react-joyride__spotlight {
-  border-radius: var(--card-radius, 28px) !important;
 }
 
 /* ── Mobile ─────────────────────────────────────────────── */
@@ -188,23 +259,22 @@
   }
 
   .joyride-tooltip__title {
-    font-size: 1rem;
+    font-size: 0.98rem;
+    padding: 10px 16px 0;
   }
 
   .joyride-tooltip__content {
     font-size: 0.78rem;
+    padding: 6px 16px 0;
   }
 
   .joyride-tooltip__step-chip {
     margin: 16px 16px 0;
   }
 
-  .joyride-tooltip__title {
+  .joyride-tooltip__energy-pills {
     padding: 10px 16px 0;
-  }
-
-  .joyride-tooltip__content {
-    padding: 6px 16px 0;
+    gap: 5px;
   }
 
   .joyride-tooltip__nav {

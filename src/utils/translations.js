@@ -174,12 +174,24 @@ export const translations = {
     tour: {
       back: "Back",
       next: "Next",
-      skip: "Skip",
+      skip: "Skip tour",
       finish: "Let's go!",
-      energy:  { title: "Your Energy, Your Tasks",   content: "This panel reads your current mood and suggests only the tasks that match it. No decision fatigue — just pick one and flow." },
-      tasks:   { title: "Capture Ideas Instantly",   content: "Tap here to add a task in seconds. Set a deadline, estimated hours, and energy level — Misu handles the rest." },
-      widgets: { title: "Your Focus Toolkit",        content: "Pomodoro timer, ambient music, focus shield, and calendar — all draggable and built to keep you in flow state." },
-      planner: { title: "AI Plans Your Week",        content: "Hit Generate and Misu's AI spreads your tasks across the week based on deadlines and energy. Drag blocks to fine-tune." },
+      energy: {
+        title: "Your Energy Sets the Pace",
+        content: "Misu runs on 4 energy levels — not arbitrary numbers, but real cognitive states. Whisper (1) is for rest. Calm (2) for light work. Rhythm (3) for steady output. Pulse (4) when you're firing on all cylinders. Pick the one that matches how you feel right now.",
+      },
+      tasks: {
+        title: "Add Your First Task",
+        content: "Hit the + button to create a task. Give it a title, deadline, estimated hours, and the energy level it requires. That last field is key — Misu uses it to suggest the right tasks at the right time.",
+      },
+      reco: {
+        title: "What Can You Do Right Now?",
+        content: "This panel reads your current energy level and surfaces only the tasks that match it. No scrolling through a long list, no decision fatigue — just a curated shortlist based on how you actually feel.",
+      },
+      planner: {
+        title: "Let AI Organize Your Week",
+        content: "Hit \"Generate Weekly Plan\" and Misu's AI spreads your tasks across the week, respecting deadlines and energy requirements. You can drag blocks between days to fine-tune the schedule anytime.",
+      },
     }
   },
   es: {
@@ -357,12 +369,24 @@ export const translations = {
     tour: {
       back: "Atrás",
       next: "Siguiente",
-      skip: "Saltar",
+      skip: "Saltar tour",
       finish: "¡Empezar!",
-      energy:  { title: "Tu Energía, Tus Tareas",       content: "Este panel lee tu estado actual y sugiere solo las tareas que se ajustan a él. Sin fatiga de decisión — elige una y fluye." },
-      tasks:   { title: "Captura Ideas al Instante",    content: "Toca aquí para añadir una tarea en segundos. Establece fecha, horas estimadas y nivel de energía — Misu se encarga del resto." },
-      widgets: { title: "Tu Kit de Enfoque",            content: "Pomodoro, música ambiental, escudo de enfoque y calendario — todos arrastrables y diseñados para mantenerte en estado de flujo." },
-      planner: { title: "La IA Planifica tu Semana",    content: "Pulsa Generar y la IA de Misu distribuye tus tareas en la semana según plazos y energía. Arrastra bloques para ajustar." },
+      energy: {
+        title: "Tu Energía Marca el Ritmo",
+        content: "Misu funciona con 4 niveles de energía — no números arbitrarios, sino estados cognitivos reales. Susurro (1) es para descansar. Calma (2) para trabajo ligero. Ritmo (3) para avance constante. Impulso (4) cuando estás a full. Elige el que describe cómo te sientes ahora.",
+      },
+      tasks: {
+        title: "Añade Tu Primera Tarea",
+        content: "Pulsa el botón + para crear una tarea. Ponle título, fecha límite, horas estimadas y el nivel de energía que requiere. Ese último campo es clave — Misu lo usa para sugerirte las tareas correctas en el momento correcto.",
+      },
+      reco: {
+        title: "¿Qué Puedes Hacer Ahora?",
+        content: "Este panel lee tu nivel de energía actual y muestra solo las tareas que encajan con él. Sin scrollear listas largas, sin fatiga de decisión — solo una selección curada según cómo te sientes de verdad.",
+      },
+      planner: {
+        title: "La IA Organiza Tu Semana",
+        content: "Pulsa \"Generar Plan Semanal\" y la IA de Misu distribuye tus tareas a lo largo de la semana, respetando plazos y niveles de energía. Puedes arrastrar bloques entre días para ajustar el plan cuando quieras.",
+      },
     }
   },
   it: {
@@ -540,12 +564,24 @@ export const translations = {
     tour: {
       back: "Indietro",
       next: "Avanti",
-      skip: "Salta",
+      skip: "Salta tour",
       finish: "Iniziamo!",
-      energy:  { title: "La Tua Energia, Le Tue Attività",  content: "Questo pannello legge il tuo stato attuale e suggerisce solo le attività adatte. Niente affaticamento decisionale — scegli una e fluisci." },
-      tasks:   { title: "Cattura Idee all'Istante",         content: "Tocca qui per aggiungere un'attività in pochi secondi. Imposta scadenza, ore stimate e livello di energia — Misu fa il resto." },
-      widgets: { title: "Il Tuo Kit di Focus",              content: "Pomodoro, musica d'ambiente, scudo focus e calendario — tutti trascinabili e progettati per mantenerti in stato di flusso." },
-      planner: { title: "L'IA Pianifica la Tua Settimana",  content: "Premi Genera e l'IA di Misu distribuisce le tue attività nella settimana in base a scadenze ed energia. Trascina i blocchi per aggiustare." },
+      energy: {
+        title: "La Tua Energia Determina il Ritmo",
+        content: "Misu funziona con 4 livelli di energia — non numeri arbitrari, ma stati cognitivi reali. Sussurro (1) per riposare. Calma (2) per lavoro leggero. Ritmo (3) per avanzare costantemente. Impulso (4) quando sei al massimo. Scegli quello che descrive come ti senti adesso.",
+      },
+      tasks: {
+        title: "Aggiungi la Tua Prima Attività",
+        content: "Premi il tasto + per creare un'attività. Dagli un titolo, una scadenza, le ore stimate e il livello di energia richiesto. Quest'ultimo campo è fondamentale — Misu lo usa per suggerirti le attività giuste al momento giusto.",
+      },
+      reco: {
+        title: "Cosa Puoi Fare Adesso?",
+        content: "Questo pannello legge il tuo livello di energia attuale e mostra solo le attività che gli corrispondono. Niente scorrimento di lunghe liste, niente affaticamento decisionale — solo una selezione curata in base a come ti senti davvero.",
+      },
+      planner: {
+        title: "L'IA Organizza la Tua Settimana",
+        content: "Premi \"Genera Piano Settimanale\" e l'IA di Misu distribuisce le tue attività durante la settimana, rispettando scadenze e livelli di energia. Puoi trascinare i blocchi tra i giorni per ottimizzare il piano in qualsiasi momento.",
+      },
     }
   }
 };
