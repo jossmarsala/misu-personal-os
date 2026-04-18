@@ -169,91 +169,122 @@ export default function AuthPage() {
     setPassword('');
   };
 
-  // ── Forgot Password modal ────────────────────────────────────────────────────
-  if (showForgot) {
+  // ── Forgot Password Overlay ──────────────────────────────────────────────────
+  const renderForgotOverlay = () => {
+    if (!showForgot) return null;
     return (
-      <div className="auth-page auth-page--center">
+      <AnimatePresence>
         <motion.div
-          className="auth-success-card"
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          className="auth-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
         >
-          {forgotSent ? (
-            <>
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.15, duration: 0.45, ease: [0.34, 1.56, 0.64, 1] }}
-              >
-                <Inbox size={48} className="auth-success-icon" />
-              </motion.div>
-              <h2>Check your inbox</h2>
-              <p style={{ marginBottom: 'var(--space-3)' }}>
-                We sent a password-reset link to <strong>{forgotEmail}</strong>.
-                Check your spam folder if it doesn't arrive within a few minutes.
-              </p>
-              <button
-                className="btn btn-primary btn-full"
-                style={{ marginTop: 'var(--space-5)' }}
-                onClick={() => { setShowForgot(false); setForgotSent(false); setForgotEmail(''); }}
-              >
-                Back to Sign In <ArrowRight size={16} />
-              </button>
-            </>
-          ) : (
-            <>
-              <h2 style={{ marginBottom: 'var(--space-2)' }}>Reset Password</h2>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginBottom: 'var(--space-5)' }}>
-                Enter your email and we'll send a secure reset link.
-              </p>
-              <form onSubmit={handleForgotSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div className="auth-field">
-                  <label className="auth-label" htmlFor="forgot-email">
-                    <Mail size={13} /> Email
-                  </label>
-                  <input
-                    id="forgot-email"
-                    type="email"
-                    className="auth-input"
-                    value={forgotEmail}
-                    onChange={e => setForgotEmail(e.target.value)}
-                    required
-                    placeholder="hello@misu.app"
-                    autoComplete="email"
-                    autoFocus
-                  />
+          <motion.div
+            className="auth-success-card"
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {forgotSent ? (
+              <>
+                <div className="auth-success-header">
+                  <motion.div
+                    className="auth-success-icon-wrap"
+                    initial={{ scale: 0, rotate: -15 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ delay: 0.15, type: "spring", stiffness: 200, damping: 20 }}
+                  >
+                    <div className="auth-success-icon-glow" />
+                    <div className="auth-success-icon-inner">
+                      <Inbox size={26} className="auth-success-icon" />
+                    </div>
+                  </motion.div>
+                  <h2 className="auth-success-title">Check your inbox</h2>
+                  <p className="auth-success-desc">
+                    We sent a password-reset link to <strong>{forgotEmail}</strong>.<br /><br />
+                    Check your spam folder if it doesn't arrive within a few minutes.
+                  </p>
                 </div>
-                {forgotError && (
-                  <div className="auth-error">{forgotError}</div>
-                )}
-                <motion.button
-                  type="submit"
-                  disabled={forgotLoading}
-                  className="btn btn-primary btn-full auth-submit"
-                  whileHover={{ scale: forgotLoading ? 1 : 1.02 }}
-                  whileTap={{ scale: forgotLoading ? 1 : 0.98 }}
-                >
-                  {forgotLoading
-                    ? <Loader2 className="spin" size={18} />
-                    : <>Send Reset Link <ArrowRight size={16} /></>
-                  }
-                </motion.button>
+                
                 <button
-                  type="button"
-                  className="auth-switch-btn"
-                  style={{ textAlign: 'center' }}
-                  onClick={() => { setShowForgot(false); setForgotError(''); }}
+                  className="auth-success-btn-ghost"
+                  onClick={() => { setShowForgot(false); setForgotSent(false); setForgotEmail(''); }}
                 >
-                  ← Cancel
+                  <RotateCcw size={14} />
+                  <span>Back to Sign In</span>
                 </button>
-              </form>
-            </>
-          )}
+              </>
+            ) : (
+              <>
+                <div className="auth-success-header" style={{ marginBottom: '24px' }}>
+                   <motion.div
+                    className="auth-success-icon-wrap"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.1, type: "spring", stiffness: 200, damping: 20 }}
+                  >
+                    <div className="auth-success-icon-glow" />
+                    <div className="auth-success-icon-inner">
+                      <Lock size={26} className="auth-success-icon" />
+                    </div>
+                  </motion.div>
+                  <h2 className="auth-success-title">Reset Password</h2>
+                  <p className="auth-success-desc">
+                    Enter your email and we'll send a secure reset link.
+                  </p>
+                </div>
+
+                <form onSubmit={handleForgotSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div className="auth-field" style={{ textAlign: 'left' }}>
+                    <label className="auth-label" htmlFor="forgot-email">
+                      <Mail size={13} /> Email
+                    </label>
+                    <input
+                      id="forgot-email"
+                      type="email"
+                      className="auth-input"
+                      value={forgotEmail}
+                      onChange={e => setForgotEmail(e.target.value)}
+                      required
+                      placeholder="hello@misu.app"
+                      autoComplete="email"
+                      autoFocus
+                    />
+                  </div>
+                  {forgotError && (
+                    <div className="auth-error">{forgotError}</div>
+                  )}
+                  <motion.button
+                    type="submit"
+                    disabled={forgotLoading}
+                    className="btn btn-primary btn-full auth-submit"
+                    whileHover={{ scale: forgotLoading ? 1 : 1.02 }}
+                    whileTap={{ scale: forgotLoading ? 1 : 0.98 }}
+                    style={{ marginTop: '8px' }}
+                  >
+                    {forgotLoading
+                      ? <Loader2 className="spin" size={18} />
+                      : <>Send Reset Link <ArrowRight size={16} /></>
+                    }
+                  </motion.button>
+                  <button
+                    type="button"
+                    className="auth-switch-btn"
+                    style={{ textAlign: 'center', marginTop: '8px' }}
+                    onClick={() => { setShowForgot(false); setForgotError(''); }}
+                  >
+                    ← Cancel
+                  </button>
+                </form>
+              </>
+            )}
+          </motion.div>
         </motion.div>
-      </div>
+      </AnimatePresence>
     );
-  }
+  };
 
   // ── Sign-up success screen (Overlay) ─────────────────────────────────────────
   const renderSuccessOverlay = () => {
@@ -590,6 +621,7 @@ export default function AuthPage() {
       </div>
 
       {renderSuccessOverlay()}
+      {renderForgotOverlay()}
     </div>
   );
 }
