@@ -11,6 +11,8 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   // True when a user just verified their email by clicking the link
   const [justVerified, setJustVerified] = useState(false);
+  // True when a user clicked the reset password link
+  const [resetMode, setResetMode] = useState(false);
 
   useEffect(() => {
     if (!supabase) {
@@ -38,7 +40,16 @@ export function AuthProvider({ children }) {
         const isRecent = Date.now() - confirmedAt < 5 * 60 * 1000;
         if (isRecent) setJustVerified(true);
       }
+
+      if (event === 'PASSWORD_RECOVERY') {
+        setResetMode(true);
+      }
     });
+
+    // Also check URL for ?reset=1 as a fallback/hint if needed
+    if (window.location.search.includes('reset=1') || window.location.hash.includes('type=recovery')) {
+      setResetMode(true);
+    }
 
     return () => subscription.unsubscribe();
   }, []);
@@ -75,6 +86,13 @@ export function AuthProvider({ children }) {
     if (error) throw error;
   };
 
+  const updatePassword = async (newPassword) => {
+    if (!supabase) throw new Error('Supabase not configured');
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) throw error;
+    setResetMode(false);
+  };
+
   const logout = async () => {
     if (!supabase) return;
     const { error } = await supabase.auth.signOut();
@@ -88,9 +106,12 @@ export function AuthProvider({ children }) {
       login,
       signup,
       forgotPassword,
+      updatePassword,
       logout,
       loading,
       justVerified,
+      resetMode,
+      setResetMode,
     }}>
       {!loading && children}
     </AuthContext.Provider>

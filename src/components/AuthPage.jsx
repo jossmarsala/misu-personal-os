@@ -105,7 +105,16 @@ export default function AuthPage() {
   const [forgotLoading, setForgotLoading] = useState(false);
   const [forgotError, setForgotError] = useState('');
 
-  const { login, signup, forgotPassword } = useAuth();
+  // Reset Password State
+  const [newPassword, setNewPassword] = useState('');
+  const [repeatPassword, setRepeatPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showRepeatPassword, setShowRepeatPassword] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetError, setResetError] = useState('');
+  const [resetSuccess, setResetSuccess] = useState(false);
+
+  const { login, signup, forgotPassword, updatePassword, resetMode, setResetMode } = useAuth();
   const { t, language } = useLanguage();
   const { currentEnergy } = useEnergy();
   const energyDef = getEnergyDef(currentEnergy || 3);
@@ -160,6 +169,38 @@ export default function AuthPage() {
       setForgotError(friendlyError(err.message, language));
     } finally {
       setForgotLoading(false);
+    }
+  };
+
+  const handleResetSubmit = async (e) => {
+    e.preventDefault();
+    setResetError('');
+    if (newPassword.length < MIN_PASSWORD_LEN) {
+      setResetError(
+        language === 'es' ? `La contraseña debe tener al menos ${MIN_PASSWORD_LEN} caracteres.`
+        : language === 'it' ? `La password deve avere almeno ${MIN_PASSWORD_LEN} caratteri.`
+        : `Password must be at least ${MIN_PASSWORD_LEN} characters.`
+      );
+      return;
+    }
+    if (newPassword !== repeatPassword) {
+      setResetError(t('auth.passwordMismatch') || "Passwords do not match.");
+      return;
+    }
+    setResetLoading(true);
+    try {
+      await updatePassword(newPassword);
+      setResetSuccess(true);
+      setTimeout(() => {
+        setResetMode(false);
+        setResetSuccess(false);
+        setNewPassword('');
+        setRepeatPassword('');
+      }, 3500);
+    } catch (err) {
+      setResetError(friendlyError(err.message, language));
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -274,6 +315,172 @@ export default function AuthPage() {
                     className="auth-switch-btn"
                     style={{ textAlign: 'center', marginTop: '8px' }}
                     onClick={() => { setShowForgot(false); setForgotError(''); }}
+                  >
+                    ← Cancel
+                  </button>
+                </form>
+              </>
+            )}
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
+    );
+  };
+
+  // ── Reset Password Overlay ───────────────────────────────────────────────────
+  const renderResetOverlay = () => {
+    if (!resetMode) return null;
+    const strength = getPasswordStrength(newPassword);
+
+    return (
+      <AnimatePresence>
+        <motion.div
+          className="auth-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.div
+            className="auth-success-card"
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {resetSuccess ? (
+              <>
+                <div className="auth-success-header">
+                  <motion.div
+                    className="auth-success-icon-wrap"
+                    initial={{ scale: 0, rotate: -15 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ delay: 0.15, type: "spring", stiffness: 200, damping: 20 }}
+                  >
+                    <div className="auth-success-icon-glow" style={{ background: 'radial-gradient(circle at center, #22c55e 0%, transparent 70%)' }} />
+                    <div className="auth-success-icon-inner" style={{ color: '#22c55e', borderColor: '#22c55e', background: 'rgba(34, 197, 94, 0.12)', boxShadow: 'none' }}>
+                      <CheckCircle2 size={26} />
+                    </div>
+                  </motion.div>
+                  <h2 className="auth-success-title">
+                    {language === 'es' ? 'Contraseña Actualizada' : language === 'it' ? 'Password Aggiornata' : 'Password Updated'}
+                  </h2>
+                  <p className="auth-success-desc">
+                    {language === 'es' ? 'Tu contraseña ha sido restablecida. Redirigiendo...' : language === 'it' ? 'La tua password è stata ripristinata. Reindirizzamento...' : 'Your password has been successfully reset. Redirecting...'}
+                  </p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="auth-success-header" style={{ marginBottom: '24px' }}>
+                   <motion.div
+                    className="auth-success-icon-wrap"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.1, type: "spring", stiffness: 200, damping: 20 }}
+                  >
+                    <div className="auth-success-icon-glow" />
+                    <div className="auth-success-icon-inner">
+                      <Lock size={26} className="auth-success-icon" />
+                    </div>
+                  </motion.div>
+                  <h2 className="auth-success-title">{t('auth.resetPasswordTitle') || 'Set New Password'}</h2>
+                  <p className="auth-success-desc">
+                    {t('auth.resetPasswordDesc') || 'Choose a strong password to secure your account.'}
+                  </p>
+                </div>
+
+                <form onSubmit={handleResetSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}>
+                  {/* New Password */}
+                  <div className="auth-field">
+                    <label className="auth-label" htmlFor="reset-password">
+                      <Lock size={13} /> {t('auth.newPassword') || 'New Password'}
+                    </label>
+                    <div className="auth-input-wrap">
+                      <input
+                        id="reset-password"
+                        type={showNewPassword ? 'text' : 'password'}
+                        className="auth-input"
+                        value={newPassword}
+                        onChange={e => { setNewPassword(e.target.value); setResetError(''); }}
+                        required
+                        minLength={MIN_PASSWORD_LEN}
+                        placeholder="••••••••"
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        className="auth-eye-btn"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                      >
+                        {showNewPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                      </button>
+                    </div>
+
+                    {newPassword.length > 0 && strength && (
+                      <div className="auth-strength">
+                        <div className="auth-strength__bar">
+                          {[1, 2, 3].map(lvl => (
+                            <div
+                              key={lvl}
+                              className={`auth-strength__seg ${lvl <= strength.level ? `auth-strength__seg--${strength.level}` : ''}`}
+                            />
+                          ))}
+                        </div>
+                        <span className={`auth-strength__label auth-strength__label--${strength.level}`}>
+                          {strength.label}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Repeat Password */}
+                  <div className="auth-field">
+                    <label className="auth-label" htmlFor="reset-repeat-password">
+                      <Lock size={13} /> {t('auth.repeatPassword') || 'Repeat Password'}
+                    </label>
+                    <div className="auth-input-wrap">
+                      <input
+                        id="reset-repeat-password"
+                        type={showRepeatPassword ? 'text' : 'password'}
+                        className="auth-input"
+                        value={repeatPassword}
+                        onChange={e => { setRepeatPassword(e.target.value); setResetError(''); }}
+                        required
+                        minLength={MIN_PASSWORD_LEN}
+                        placeholder="••••••••"
+                      />
+                      <button
+                        type="button"
+                        className="auth-eye-btn"
+                        onClick={() => setShowRepeatPassword(!showRepeatPassword)}
+                      >
+                        {showRepeatPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {resetError && (
+                    <div className="auth-error" style={{ marginBottom: 0 }}>{resetError}</div>
+                  )}
+
+                  <motion.button
+                    type="submit"
+                    disabled={resetLoading}
+                    className="btn btn-primary btn-full auth-submit"
+                    whileHover={{ scale: resetLoading ? 1 : 1.02 }}
+                    whileTap={{ scale: resetLoading ? 1 : 0.98 }}
+                    style={{ marginTop: '8px' }}
+                  >
+                    {resetLoading
+                      ? <Loader2 className="spin" size={18} />
+                      : <>{t('auth.updatePasswordBtn') || 'Update Password'} <ArrowRight size={16} /></>
+                    }
+                  </motion.button>
+                  <button
+                    type="button"
+                    className="auth-switch-btn"
+                    style={{ textAlign: 'center', marginTop: '8px' }}
+                    onClick={() => { setResetMode(false); setResetError(''); setNewPassword(''); setRepeatPassword(''); }}
                   >
                     ← Cancel
                   </button>
@@ -636,6 +843,7 @@ export default function AuthPage() {
 
       {renderSuccessOverlay()}
       {renderForgotOverlay()}
+      {renderResetOverlay()}
     </div>
   );
 }
