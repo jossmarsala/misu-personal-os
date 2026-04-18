@@ -188,9 +188,13 @@ export const translations = {
         title: "What Can You Do Right Now?",
         content: "This panel reads your current energy level and surfaces only the tasks that match it. No scrolling through a long list, no decision fatigue — just a curated shortlist based on how you actually feel.",
       },
+      widgets: {
+        title: "Your Focus Toolkit",
+        content: "Pomodoro timer, ambient music, focus shield, and calendar — all draggable and built to keep you in a flow state. Toggle them from here.",
+      },
       planner: {
         title: "Let AI Organize Your Week",
-        content: "Hit \"Generate Weekly Plan\" and Misu's AI spreads your tasks across the week, respecting deadlines and energy requirements. You can drag blocks between days to fine-tune the schedule anytime.",
+        content: "Hit \"Generate Weekly Plan\" and Misu's AI spreads your tasks across the week, respecting deadlines and energy requirements. You can also drag tasks directly from the tasks list into the planner, and drag blocks between days to fine-tune the schedule anytime.",
       },
     }
   },
@@ -383,9 +387,13 @@ export const translations = {
         title: "¿Qué Puedes Hacer Ahora?",
         content: "Este panel lee tu nivel de energía actual y muestra solo las tareas que encajan con él. Sin scrollear listas largas, sin fatiga de decisión — solo una selección curada según cómo te sientes de verdad.",
       },
+      widgets: {
+        title: "Tu Kit de Enfoque",
+        content: "Pomodoro, música ambiental, escudo de enfoque y calendario — todos arrastrables y diseñados para mantenerte en estado de flujo. Actívalos desde aquí.",
+      },
       planner: {
         title: "La IA Organiza Tu Semana",
-        content: "Pulsa \"Generar Plan Semanal\" y la IA de Misu distribuye tus tareas a lo largo de la semana, respetando plazos y niveles de energía. Puedes arrastrar bloques entre días para ajustar el plan cuando quieras.",
+        content: "Pulsa \"Generar Plan Semanal\" y la IA de Misu distribuye tus tareas a lo largo de la semana, respetando plazos y niveles de energía. También puedes arrastrar tareas directamente desde la lista de tareas al planificador, y arrastrar bloques entre días para ajustar el plan cuando quieras.",
       },
     }
   },
@@ -578,9 +586,13 @@ export const translations = {
         title: "Cosa Puoi Fare Adesso?",
         content: "Questo pannello legge il tuo livello di energia attuale e mostra solo le attività che gli corrispondono. Niente scorrimento di lunghe liste, niente affaticamento decisionale — solo una selezione curata in base a come ti senti davvero.",
       },
+      widgets: {
+        title: "Il Tuo Kit di Focus",
+        content: "Pomodoro, musica d'ambiente, scudo focus e calendario — tutti trascinabili e progettati per mantenerti in stato di flusso. Attivali da qui.",
+      },
       planner: {
         title: "L'IA Organizza la Tua Settimana",
-        content: "Premi \"Genera Piano Settimanale\" e l'IA di Misu distribuisce le tue attività durante la settimana, rispettando scadenze e livelli di energia. Puoi trascinare i blocchi tra i giorni per ottimizzare il piano in qualsiasi momento.",
+        content: "Premi \"Genera Piano Settimanale\" e l'IA di Misu distribuisce le tue attività durante la settimana, rispettando scadenze e livelli di energia. Puoi anche trascinare le attività direttamente dalla lista al planner, e trascinare i blocchi tra i giorni per ottimizzare il piano in qualsiasi momento.",
       },
     }
   }

@@ -37,7 +37,16 @@ function getSteps(t) {
       spotlightPadding: 10,
     },
     {
-      // Step 4 — Weekly planner & AI scheduling
+      // Step 4 — Widget toolbar (Pomodoro, Music, Focus Shield, Calendar)
+      target: '.widget-glass-container',
+      content: t('tour.widgets.content'),
+      title: t('tour.widgets.title'),
+      placement: 'bottom',
+      skipBeacon: true,
+      spotlightPadding: 10,
+    },
+    {
+      // Step 5 — Weekly planner & AI scheduling
       target: '#weekly-planner',
       content: t('tour.planner.content'),
       title: t('tour.planner.title'),

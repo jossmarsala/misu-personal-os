@@ -6,17 +6,17 @@
 /* ── Tooltip Card ───────────────────────────────────────── */
 .joyride-tooltip {
   position: relative;
-  width: 360px;
+  width: 380px;
   max-width: 94vw;
-  background: var(--bg-primary);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border-radius: calc(var(--card-radius, 28px) - 4px);
-  border: 1px solid var(--border-primary);
+  background: color-mix(in srgb, var(--bg-primary) 95%, transparent);
+  backdrop-filter: blur(48px);
+  -webkit-backdrop-filter: blur(48px);
+  border-radius: calc(var(--card-radius, 28px) + 2px);
+  border: 1px solid color-mix(in srgb, var(--border-primary) 80%, transparent);
   box-shadow:
-    var(--shadow-lg),
-    0 0 60px rgba(0, 0, 0, 0.12),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    var(--shadow-xl),
+    0 10px 40px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   padding: 0;
   overflow: hidden;
   z-index: 401;
@@ -78,37 +78,39 @@
 .joyride-tooltip__step-chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  margin: 20px 24px 0;
-  padding: 4px 10px;
+  gap: 6px;
+  margin: 24px 28px 0;
+  padding: 5px 12px;
   border-radius: var(--radius-full, 9999px);
   background: var(--energy-surface);
   color: var(--energy-primary);
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 /* ── Title ──────────────────────────────────────────────── */
 .joyride-tooltip__title {
   font-family: 'Poppins', sans-serif;
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -0.02em;
-  line-height: 1.3;
-  padding: 12px 24px 0;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  padding: 16px 28px 0;
+  margin: 0;
   position: relative;
   z-index: 1;
 }
 
 /* ── Content ────────────────────────────────────────────── */
 .joyride-tooltip__content {
-  font-size: 0.81rem;
-  line-height: 1.65;
+  font-size: 0.85rem;
+  line-height: 1.7;
   color: var(--text-secondary);
-  padding: 8px 24px 0;
+  padding: 10px 28px 0;
+  margin: 0;
   position: relative;
   z-index: 1;
 }
@@ -116,8 +118,8 @@
 /* ── Energy pills (step 1 only) ─────────────────────────── */
 .joyride-tooltip__energy-pills {
   display: flex;
-  gap: 6px;
-  padding: 12px 24px 0;
+  gap: 8px;
+  padding: 16px 28px 0;
   flex-wrap: wrap;
   position: relative;
   z-index: 1;
@@ -165,7 +167,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px 20px;
+  padding: 24px 28px 24px;
   gap: 12px;
   position: relative;
   z-index: 1;
