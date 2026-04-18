@@ -184,8 +184,7 @@ export default function OnboardingTour({ onFinish }) {
       }}
       styles={{
         overlay: {
-          backdropFilter: 'blur(6px)',
-          WebkitBackdropFilter: 'blur(6px)',
+          // removed backdropFilter because it blurs the spotlight cutout area
         },
         spotlight: {},
         beacon: {
