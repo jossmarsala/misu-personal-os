@@ -70,8 +70,8 @@ export function AuthProvider({ children }) {
       email,
       password,
       options: {
-        // Always redirect to the production URL after email verification
-        emailRedirectTo: PRODUCTION_URL,
+        // Redirect dynamically to support local development hashes
+        emailRedirectTo: typeof window !== 'undefined' ? window.location.origin : PRODUCTION_URL,
       },
     });
     if (error) throw error;
@@ -80,8 +80,12 @@ export function AuthProvider({ children }) {
 
   const forgotPassword = async (email) => {
     if (!supabase) throw new Error('Supabase not configured');
+    
+    // Determine the base URL dynamically so local testing doesn't drop the #access_token fragment
+    const redirectBase = typeof window !== 'undefined' ? window.location.origin : PRODUCTION_URL;
+
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${PRODUCTION_URL}?reset=1`,
+      redirectTo: `${redirectBase}?reset=1`,
     });
     if (error) throw error;
   };
