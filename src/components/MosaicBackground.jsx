@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useMemo } from 'react';
 
 // ─── Math helpers ───
 // Normalized trig: input 0-1, output 0-1
@@ -32,7 +32,7 @@ function hexToRgb01(hex) {
  *   tileSize – pixel size of each tile (default 20)
  *   speed   – animation speed multiplier (default 0.35 = very slow)
  */
-export default function MosaicBackground({
+const MosaicBackground = React.memo(function MosaicBackground({
   colorA = '#4F67FF',
   colorB = '#FF99E2',
   colorC,
@@ -44,10 +44,10 @@ export default function MosaicBackground({
   const timeRef = useRef(Math.random() * 60000);
   const lastFrameRef = useRef(performance.now());
 
-  // Parse theme colors into 0-1 RGB
-  const cA = hexToRgb01(colorA);
-  const cB = hexToRgb01(colorB);
-  const cC_custom = colorC ? hexToRgb01(colorC) : null;
+  // Parse theme colors into 0-1 RGB, memoized so draw loop doesn't reset on unrelated renders
+  const cA = useMemo(() => hexToRgb01(colorA), [colorA]);
+  const cB = useMemo(() => hexToRgb01(colorB), [colorB]);
+  const cC_custom = useMemo(() => colorC ? hexToRgb01(colorC) : null, [colorC]);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -179,4 +179,6 @@ export default function MosaicBackground({
       }}
     />
   );
-}
+});
+
+export default MosaicBackground;
