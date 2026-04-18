@@ -255,89 +255,98 @@ export default function AuthPage() {
     );
   }
 
-  // ── Sign-up success screen ───────────────────────────────────────────────────
-  if (signupSuccess) {
+  // ── Sign-up success screen (Overlay) ─────────────────────────────────────────
+  const renderSuccessOverlay = () => {
+    if (!signupSuccess) return null;
     return (
-      <div className="auth-page auth-page--center">
+      <AnimatePresence>
         <motion.div
-          className="auth-success-card"
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
+          className="auth-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
         >
-          <div className="auth-success-header">
-            <motion.div
-              className="auth-success-icon-wrap"
-              initial={{ scale: 0, rotate: -15 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 20 }}
-            >
-              <div className="auth-success-icon-glow" />
-              <div className="auth-success-icon-inner">
-                <Inbox size={26} className="auth-success-icon" />
-              </div>
-            </motion.div>
-
-            <h2 className="auth-success-title">{t('auth.successTitle')}</h2>
-            <p className="auth-success-desc">{t('auth.successMsg')}</p>
-          </div>
-          {/* Step-by-step premium guide */}
-          <div className="auth-success-steps">
-            <div className="auth-success-step">
-              <div className="auth-success-step__ring">1</div>
-              <div className="auth-success-step__text">
-                {language === 'es' ? <>Abre el correo que enviamos a <strong>{email}</strong></> 
-                 : language === 'it' ? <>Apri l'email che abbiamo inviato a <strong>{email}</strong></>
-                 : <>Open the email we sent to <strong>{email}</strong></>}
-              </div>
-            </div>
-            
-            <div className="auth-success-step-connector" />
-
-            <div className="auth-success-step">
-              <div className="auth-success-step__ring">2</div>
-              <div className="auth-success-step__text">
-                {language === 'es' ? <>Haz clic en <strong>"Confirm your email"</strong></> 
-                 : language === 'it' ? <>Clicca sul link <strong>"Confirm your email"</strong></>
-                 : <>Click the <strong>"Confirm your email"</strong> link</>}
-              </div>
-            </div>
-
-            <div className="auth-success-step-connector" />
-
-            <div className="auth-success-step">
-              <div className="auth-success-step__ring">
-                <CheckCircle2 size={12} strokeWidth={3} />
-              </div>
-              <div className="auth-success-step__text">
-                {language === 'es' ? 'Se te redirigirá aquí y entrarás automáticamente'
-                 : language === 'it' ? 'Tornerai qui e accederai automaticamente'
-                 : 'You\'ll be redirected here and signed in securely'}
-              </div>
-            </div>
-          </div>
-
-          <p className="auth-success-spam">
-            {language === 'es' ? 'Revisa tu carpeta de spam si no llega en unos minutos.'
-             : language === 'it' ? 'Controlla lo spam se non arriva entro pochi minuti.'
-             : 'Check your spam folder if it doesn\'t arrive in a few minutes.'}
-          </p>
-
-          <button
-            className="auth-success-btn-ghost"
-            onClick={() => { setSignupSuccess(false); setIsLogin(true); setPassword(''); }}
+          <motion.div
+            className="auth-success-card"
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
           >
-            <RotateCcw size={14} />
-            <span>
-              {language === 'es' ? 'Ya lo verifiqué, iniciar sesión' 
-               : language === 'it' ? 'Ho già verificato, accedi' 
-               : 'I already verified — Sign In'}
-            </span>
-          </button>
+            <div className="auth-success-header">
+              <motion.div
+                className="auth-success-icon-wrap"
+                initial={{ scale: 0, rotate: -15 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 20 }}
+              >
+                <div className="auth-success-icon-glow" />
+                <div className="auth-success-icon-inner">
+                  <Inbox size={26} className="auth-success-icon" />
+                </div>
+              </motion.div>
+
+              <h2 className="auth-success-title">{t('auth.successTitle')}</h2>
+              <p className="auth-success-desc">{t('auth.successMsg')}</p>
+            </div>
+            {/* Step-by-step premium guide */}
+            <div className="auth-success-steps">
+              <div className="auth-success-step">
+                <div className="auth-success-step__ring">1</div>
+                <div className="auth-success-step__text">
+                  {language === 'es' ? <>Abre el correo que enviamos a <strong>{email}</strong></> 
+                   : language === 'it' ? <>Apri l'email che abbiamo inviato a <strong>{email}</strong></>
+                   : <>Open the email we sent to <strong>{email}</strong></>}
+                </div>
+              </div>
+              
+              <div className="auth-success-step-connector" />
+
+              <div className="auth-success-step">
+                <div className="auth-success-step__ring">2</div>
+                <div className="auth-success-step__text">
+                  {language === 'es' ? <>Haz clic en <strong>"Confirm your email"</strong></> 
+                   : language === 'it' ? <>Clicca sul link <strong>"Confirm your email"</strong></>
+                   : <>Click the <strong>"Confirm your email"</strong> link</>}
+                </div>
+              </div>
+
+              <div className="auth-success-step-connector" />
+
+              <div className="auth-success-step">
+                <div className="auth-success-step__ring">
+                  <CheckCircle2 size={12} strokeWidth={3} />
+                </div>
+                <div className="auth-success-step__text">
+                  {language === 'es' ? 'Se te redirigirá aquí y entrarás automáticamente'
+                   : language === 'it' ? 'Tornerai qui e accederai automaticamente'
+                   : 'You\'ll be redirected here and signed in securely'}
+                </div>
+              </div>
+            </div>
+
+            <p className="auth-success-spam">
+              {language === 'es' ? 'Revisa tu carpeta de spam si no llega en unos minutos.'
+               : language === 'it' ? 'Controlla lo spam se non arriva entro pochi minuti.'
+               : 'Check your spam folder if it doesn\'t arrive in a few minutes.'}
+            </p>
+
+            <button
+              className="auth-success-btn-ghost"
+              onClick={() => { setSignupSuccess(false); setIsLogin(true); setPassword(''); }}
+            >
+              <RotateCcw size={14} />
+              <span>
+                {language === 'es' ? 'Ya lo verifiqué, iniciar sesión' 
+                 : language === 'it' ? 'Ho già verificato, accedi' 
+                 : 'I already verified — Sign In'}
+              </span>
+            </button>
+          </motion.div>
         </motion.div>
-      </div>
+      </AnimatePresence>
     );
-  }
+  };
 
   // ── Main Layout ──────────────────────────────────────────────────────────────
   return (
@@ -579,6 +588,8 @@ export default function AuthPage() {
           </p>
         </motion.div>
       </div>
+
+      {renderSuccessOverlay()}
     </div>
   );
 }
