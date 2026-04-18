@@ -43,7 +43,7 @@ function App() {
   const energyDef = getEnergyDef(currentEnergy);
 
   const { advice, helperVisible, helperType, setHelperVisible } = useMindfulness(showDND, showMusic, showPomodoro);
-  const { showOnboarding, finishOnboarding, replayOnboarding } = useOnboarding();
+  const { showOnboarding, tourKey, finishOnboarding, replayOnboarding } = useOnboarding();
 
   // ── Shared DnD setup (spans task list + weekly planner) ──
   const sensors = useSensors(
@@ -326,7 +326,7 @@ function App() {
 
       {/* First-time onboarding tour */}
       <Suspense fallback={null}>
-        {showOnboarding && <OnboardingTour onFinish={finishOnboarding} />}
+        {showOnboarding && <OnboardingTour key={tourKey} onFinish={finishOnboarding} />}
       </Suspense>
 
       {/* Global SVG Filters for Gradient Orbs */}
