@@ -43,7 +43,7 @@ function App() {
   const energyDef = getEnergyDef(currentEnergy);
 
   const { advice, helperVisible, helperType, setHelperVisible } = useMindfulness(showDND, showMusic, showPomodoro);
-  const { showOnboarding, finishOnboarding } = useOnboarding();
+  const { showOnboarding, finishOnboarding, replayOnboarding } = useOnboarding();
 
   // ── Shared DnD setup (spans task list + weekly planner) ──
   const sensors = useSensors(
@@ -305,7 +305,7 @@ function App() {
 
       {settingsOpen && (
         <Suspense fallback={null}>
-          <SettingsModal onClose={() => setSettingsOpen(false)} />
+          <SettingsModal onClose={() => setSettingsOpen(false)} onReplayTour={() => { setSettingsOpen(false); replayOnboarding(); }} />
         </Suspense>
       )}
 

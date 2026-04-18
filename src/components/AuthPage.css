@@ -9,6 +9,13 @@
   background: var(--bg-body);
 }
 
+/* Centered variant for modals (forgot pw / success) */
+.auth-page--center {
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+}
+
 /* ─────────────────────────────────────────
    LEFT — Visual Mosaic Pane
 ───────────────────────────────────────── */
@@ -93,6 +100,18 @@
 .auth-visual__energy-dots {
   display: flex;
   gap: 8px;
+}
+
+/* Security trust badge */
+.auth-visual__trust {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 20px;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .auth-dot {
@@ -291,6 +310,47 @@
 }
 
 /* ─────────────────────────────────────────
+   Password Strength Bar
+───────────────────────────────────────── */
+.auth-strength {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.auth-strength__bar {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.auth-strength__seg {
+  flex: 1;
+  height: 3px;
+  border-radius: 4px;
+  background: var(--border-primary);
+  transition: background 0.3s ease;
+}
+
+.auth-strength__seg--1 { background: #ef4444; }
+.auth-strength__seg--2 { background: #f59e0b; }
+.auth-strength__seg--3 { background: #22c55e; }
+
+.auth-strength__label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  min-width: 40px;
+  text-align: right;
+}
+
+.auth-strength__label--1 { color: #ef4444; }
+.auth-strength__label--2 { color: #f59e0b; }
+.auth-strength__label--3 { color: #22c55e; }
+
+/* ─────────────────────────────────────────
    Options Row (Remember / Forgot)
 ───────────────────────────────────────── */
 .auth-options {
@@ -310,9 +370,13 @@
 }
 
 .auth-forgot {
+  background: none;
+  border: none;
   color: var(--energy-primary);
-  text-decoration: none;
+  font-size: 0.75rem;
   font-weight: 600;
+  cursor: pointer;
+  padding: 0;
   transition: opacity 0.15s;
 }
 
@@ -399,6 +463,66 @@
   color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.6;
+}
+
+/* ─────────────────────────────────────────
+   Email-sent steps list
+───────────────────────────────────────── */
+.auth-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.auth-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.auth-step__num {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--energy-primary, #6366f1) 15%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--energy-primary, #6366f1) 35%, transparent);
+  color: var(--energy-primary, #6366f1);
+  font-size: 0.72rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+/* Outline variant button */
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--border-primary);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: var(--radius-lg);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-outline:hover {
+  background: var(--bg-secondary);
+  border-color: var(--energy-primary);
 }
 
 /* ─────────────────────────────────────────

@@ -1,290 +1,225 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import Joyride, { ACTIONS, EVENTS, STATUS } from 'react-joyride';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Zap, CheckSquare, Sparkles, LayoutGrid, Calendar, 
-  GripVertical, ArrowRight, X, ChevronLeft, ChevronRight 
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowRight, X, Sparkles } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { ENERGY_LEVELS } from '../utils/energy';
 import './OnboardingTour.css';
 
-const STEPS = [
-  {
-    id: 'welcome',
-    icon: Sparkles,
-    color: 'var(--energy-vivid-a, #7c8fff)',
-    illustrationKey: 'welcome',
-  },
-  {
-    id: 'energy',
-    icon: Zap,
-    color: 'var(--energy-primary)',
-    illustrationKey: 'energy',
-  },
-  {
-    id: 'tasks',
-    icon: CheckSquare,
-    color: 'var(--energy-primary)',
-    illustrationKey: 'tasks',
-  },
-  {
-    id: 'recommendations',
-    icon: LayoutGrid,
-    color: 'var(--energy-primary)',
-    illustrationKey: 'recommendations',
-  },
-  {
-    id: 'widgets',
-    icon: LayoutGrid,
-    color: 'var(--energy-primary)',
-    illustrationKey: 'widgets',
-  },
-  {
-    id: 'planner',
-    icon: Calendar,
-    color: 'var(--energy-primary)',
-    illustrationKey: 'planner',
-  },
-  {
-    id: 'dnd',
-    icon: GripVertical,
-    color: 'var(--energy-primary)',
-    illustrationKey: 'dnd',
-  },
-];
+// ── Step definitions ─────────────────────────────────────────
+// Each step targets a DOM element by CSS selector.
+// The 4 steps cover the core value pillars of Misu OS.
+const STEP_KEYS = ['energy', 'tasks', 'widgets', 'planner'];
 
-function WelcomeIllustration() {
-  return (
-    <div className="ob-illustration ob-illustration--welcome">
-      <div className="ob-orb ob-orb--a" />
-      <div className="ob-orb ob-orb--b" />
-      <div className="ob-orb ob-orb--c" />
-      <span className="ob-logo-text">misu</span>
-    </div>
-  );
-}
-
-function EnergyIllustration() {
-  const colors = ['#B9D6C5', '#D770F3', '#4F67FF', '#FF5E3A'];
-  const labels = ['1', '2', '3', '4'];
-  return (
-    <div className="ob-illustration ob-illustration--energy">
-      {ENERGY_LEVELS.map((e, i) => (
-        <div
-          key={e.level}
-          className="ob-energy-pill"
-          style={{
-            background: `linear-gradient(135deg, ${e.colorA}, ${e.vividColorA})`,
-            animationDelay: `${i * 0.12}s`,
-          }}
-        >
-          <span className="ob-energy-pill__num">{e.level}</span>
-          <span className="ob-energy-pill__name">{e.name}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function TaskIllustration() {
-  return (
-    <div className="ob-illustration ob-illustration--tasks">
-      {[
-        { w: '80%', label: 'Design mockups', bar: '60%' },
-        { w: '65%', label: 'Write report', bar: '30%' },
-        { w: '90%', label: 'Review PR', bar: '85%' },
-      ].map((t, i) => (
-        <div key={i} className="ob-task-row" style={{ animationDelay: `${i * 0.1}s` }}>
-          <div className="ob-task-check" />
-          <div className="ob-task-body">
-            <div className="ob-task-name" style={{ width: t.w }}>{t.label}</div>
-            <div className="ob-task-bar">
-              <div className="ob-task-bar__fill" style={{ width: t.bar }} />
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function RecommendationsIllustration() {
-  return (
-    <div className="ob-illustration ob-illustration--reco">
-      <div className="ob-reco-card">
-        <div className="ob-reco-icon">⚡</div>
-        <div>
-          <div className="ob-reco-title">Quick review</div>
-          <div className="ob-reco-sub">~30 min · Energy 2</div>
-        </div>
-      </div>
-      <div className="ob-reco-card" style={{ animationDelay: '0.1s' }}>
-        <div className="ob-reco-icon">🎨</div>
-        <div>
-          <div className="ob-reco-title">Design mood board</div>
-          <div className="ob-reco-sub">~1h · Energy 4</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function WidgetsIllustration() {
-  const chips = [
-    { emoji: '⏱', label: 'Pomodoro' },
-    { emoji: '🎵', label: 'Music' },
-    { emoji: '🛡', label: 'Focus Shield' },
-    { emoji: '📅', label: 'Calendar' },
+function getSteps(t) {
+  return [
+    {
+      // Step 1 — Energy-aware recommendations
+      target: '.reco-card',
+      content: t('tour.energy.content'),
+      title: t('tour.energy.title'),
+      placement: 'left',
+      disableBeacon: true,
+      spotlightPadding: 8,
+    },
+    {
+      // Step 2 — Task creation (quick add)
+      target: '#add-task-btn',
+      content: t('tour.tasks.content'),
+      title: t('tour.tasks.title'),
+      placement: 'bottom',
+      disableBeacon: true,
+      spotlightPadding: 12,
+    },
+    {
+      // Step 3 — Widget toolbar (Pomodoro, Music, Focus Shield, Calendar)
+      target: '.widget-glass-container',
+      content: t('tour.widgets.content'),
+      title: t('tour.widgets.title'),
+      placement: 'bottom',
+      disableBeacon: true,
+      spotlightPadding: 10,
+    },
+    {
+      // Step 4 — Weekly planner
+      target: '#weekly-planner',
+      content: t('tour.planner.content'),
+      title: t('tour.planner.title'),
+      placement: 'top',
+      disableBeacon: true,
+      spotlightPadding: 8,
+    },
   ];
+}
+
+// ── Custom Tooltip Component ─────────────────────────────────
+// Matches Misu's glassmorphism / rounded-card aesthetic.
+function MisuTooltip({
+  continuous,
+  index,
+  step,
+  backProps,
+  closeProps,
+  primaryProps,
+  tooltipProps,
+  size,
+  isLastStep,
+}) {
+  const progress = ((index + 1) / size) * 100;
+
   return (
-    <div className="ob-illustration ob-illustration--widgets">
-      {chips.map((w, i) => (
-        <div key={i} className="ob-widget-chip" style={{ animationDelay: `${i * 0.08}s` }}>
-          <span>{w.emoji}</span>
-          <span className="ob-widget-chip__label">{w.label}</span>
+    <AnimatePresence mode="wait">
+      <motion.div
+        {...tooltipProps}
+        className="joyride-tooltip"
+        initial={{ opacity: 0, y: 10, scale: 0.96 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -8, scale: 0.96 }}
+        transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+        key={index}
+      >
+        {/* Glow accent */}
+        <div className="joyride-tooltip__glow" />
+
+        {/* Skip / Close */}
+        <button className="joyride-tooltip__close" {...closeProps} aria-label="Close tour">
+          <X size={14} />
+        </button>
+
+        {/* Progress bar */}
+        <div className="joyride-tooltip__progress-track">
+          <motion.div
+            className="joyride-tooltip__progress-fill"
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+          />
         </div>
-      ))}
-    </div>
-  );
-}
 
-function PlannerIllustration() {
-  const days = ['M', 'T', 'W', 'T', 'F'];
-  const heights = [60, 85, 40, 70, 50];
-  return (
-    <div className="ob-illustration ob-illustration--planner">
-      {days.map((d, i) => (
-        <div key={i} className="ob-plan-col" style={{ animationDelay: `${i * 0.08}s` }}>
-          <div className="ob-plan-bar" style={{ height: `${heights[i]}%` }} />
-          <div className="ob-plan-day">{d}</div>
+        {/* Step counter chip */}
+        <div className="joyride-tooltip__step-chip">
+          <Sparkles size={10} />
+          <span>{index + 1} / {size}</span>
         </div>
-      ))}
-    </div>
+
+        {/* Title */}
+        {step.title && (
+          <h3 className="joyride-tooltip__title">{step.title}</h3>
+        )}
+
+        {/* Content */}
+        <p className="joyride-tooltip__content">{step.content}</p>
+
+        {/* Navigation */}
+        <div className="joyride-tooltip__nav">
+          {index > 0 ? (
+            <button className="joyride-tooltip__btn joyride-tooltip__btn--ghost" {...backProps}>
+              <ChevronLeft size={14} />
+              <span>{backProps.title}</span>
+            </button>
+          ) : (
+            <div />
+          )}
+
+          {continuous && (
+            <button
+              className="joyride-tooltip__btn joyride-tooltip__btn--primary"
+              {...primaryProps}
+            >
+              <span>{isLastStep ? primaryProps['data-finish'] || primaryProps.title : primaryProps.title}</span>
+              {isLastStep ? <ArrowRight size={14} /> : <ChevronRight size={14} />}
+            </button>
+          )}
+        </div>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
-function DragIllustration() {
-  return (
-    <div className="ob-illustration ob-illustration--dnd">
-      <div className="ob-drag-card ob-drag-card--lifted">
-        <GripVertical size={14} style={{ opacity: 0.5 }} />
-        <span>Finish report draft</span>
-      </div>
-      <div className="ob-drag-arrow">↓</div>
-      <div className="ob-drag-target">
-        <span>Drop here</span>
-      </div>
-    </div>
-  );
-}
-
-const ILLUSTRATIONS = {
-  welcome:         <WelcomeIllustration />,
-  energy:          <EnergyIllustration />,
-  tasks:           <TaskIllustration />,
-  recommendations: <RecommendationsIllustration />,
-  widgets:         <WidgetsIllustration />,
-  planner:         <PlannerIllustration />,
-  dnd:             <DragIllustration />,
-};
-
+// ── Main Tour Component ──────────────────────────────────────
 export default function OnboardingTour({ onFinish }) {
   const { t } = useLanguage();
-  const [step, setStep] = useState(0);
-  const [direction, setDirection] = useState(1);
+  const [stepIndex, setStepIndex] = useState(0);
+  const [run, setRun] = useState(true);
 
-  const total = STEPS.length;
-  const current = STEPS[step];
-  const Icon = current.icon;
+  const steps = getSteps(t);
 
-  const go = (delta) => {
-    setDirection(delta);
-    setStep(s => s + delta);
-  };
+  const handleCallback = useCallback((data) => {
+    const { action, index, status, type } = data;
+
+    // Tour finished or skipped
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+      setRun(false);
+      onFinish();
+      return;
+    }
+
+    // Navigate steps
+    if (type === EVENTS.STEP_AFTER) {
+      if (action === ACTIONS.NEXT) {
+        setStepIndex(prev => prev + 1);
+      } else if (action === ACTIONS.PREV) {
+        setStepIndex(prev => prev - 1);
+      }
+    }
+
+    // Close button clicked
+    if (action === ACTIONS.CLOSE) {
+      setRun(false);
+      onFinish();
+    }
+  }, [onFinish]);
 
   return (
-    <div className="ob-overlay" role="dialog" aria-modal="true" aria-label="Onboarding tour">
-      {/* Backdrop */}
-      <div className="ob-backdrop" onClick={onFinish} />
-
-      <AnimatePresence mode="wait" custom={direction}>
-        <motion.div
-          key={step}
-          className="ob-card"
-          custom={direction}
-          variants={{
-            enter: d => ({ x: d > 0 ? 60 : -60, opacity: 0, scale: 0.97 }),
-            center: { x: 0, opacity: 1, scale: 1 },
-            exit:  d => ({ x: d > 0 ? -60 : 60, opacity: 0, scale: 0.97 }),
-          }}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{ type: 'spring', stiffness: 280, damping: 28 }}
-        >
-          {/* Glow */}
-          <div className="ob-glow" />
-
-          {/* Skip */}
-          <button className="ob-skip" onClick={onFinish} aria-label="Skip tour">
-            <X size={16} />
-          </button>
-
-          {/* Illustration */}
-          <div className="ob-illustration-wrap">
-            {ILLUSTRATIONS[current.illustrationKey]}
-          </div>
-
-          {/* Icon badge */}
-          <div className="ob-icon-badge">
-            <Icon size={18} />
-          </div>
-
-          {/* Text */}
-          <div className="ob-text">
-            <h2 className="ob-title">{t(`onboarding.${current.id}.title`)}</h2>
-            <p className="ob-desc">{t(`onboarding.${current.id}.desc`)}</p>
-          </div>
-
-          {/* Progress dots */}
-          <div className="ob-dots" role="tablist" aria-label="Step progress">
-            {STEPS.map((_, i) => (
-              <button
-                key={i}
-                role="tab"
-                aria-selected={i === step}
-                className={`ob-dot ${i === step ? 'ob-dot--active' : ''}`}
-                onClick={() => { setDirection(i > step ? 1 : -1); setStep(i); }}
-                aria-label={`Step ${i + 1}`}
-              />
-            ))}
-          </div>
-
-          {/* Nav */}
-          <div className="ob-nav">
-            {step > 0 ? (
-              <button className="ob-btn ob-btn--ghost" onClick={() => go(-1)}>
-                <ChevronLeft size={16} />
-                {t('onboarding.back')}
-              </button>
-            ) : (
-              <div />
-            )}
-
-            {step < total - 1 ? (
-              <button className="ob-btn ob-btn--primary" onClick={() => go(1)}>
-                {t('onboarding.next')}
-                <ChevronRight size={16} />
-              </button>
-            ) : (
-              <button className="ob-btn ob-btn--primary" onClick={onFinish}>
-                {t('onboarding.finish')}
-                <ArrowRight size={16} />
-              </button>
-            )}
-          </div>
-        </motion.div>
-      </AnimatePresence>
-    </div>
+    <Joyride
+      steps={steps}
+      stepIndex={stepIndex}
+      run={run}
+      continuous
+      showSkipButton={false}
+      showProgress={false}
+      disableOverlayClose={false}
+      disableScrolling={false}
+      scrollOffset={80}
+      callback={handleCallback}
+      tooltipComponent={MisuTooltip}
+      locale={{
+        back: t('tour.back'),
+        close: t('tour.skip'),
+        last: t('tour.finish'),
+        next: t('tour.next'),
+        skip: t('tour.skip'),
+      }}
+      styles={{
+        options: {
+          zIndex: 400,
+          arrowColor: 'transparent',
+        },
+        overlay: {
+          backgroundColor: 'rgba(0, 0, 0, 0.45)',
+          backdropFilter: 'blur(6px)',
+          WebkitBackdropFilter: 'blur(6px)',
+        },
+        spotlight: {
+          borderRadius: 'var(--card-radius, 28px)',
+          boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.45), 0 0 40px rgba(0, 0, 0, 0.3)',
+        },
+        // Hide default beacon entirely
+        beacon: {
+          display: 'none',
+        },
+        // Hide the default arrow
+        tooltipContainer: {
+          textAlign: 'left',
+        },
+      }}
+      floaterProps={{
+        disableAnimation: true,
+        hideArrow: true,
+        styles: {
+          arrow: { display: 'none' },
+          floater: { filter: 'none' },
+        },
+      }}
+    />
   );
 }

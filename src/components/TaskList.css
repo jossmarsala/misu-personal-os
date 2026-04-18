@@ -1,9 +1,9 @@
 .task-list__header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   margin-bottom: var(--space-3);
-  gap: var(--space-3);
+  gap: var(--space-2);
   flex-wrap: wrap;
 }
 
@@ -77,4 +77,41 @@
 .task-list__empty-text {
   font-size: 0.85rem;
   font-weight: 300;
+}
+
+@media (max-width: 768px) {
+  .task-list__header {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .task-list__filters,
+  .task-list__sort {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap !important;
+    width: 100%;
+    padding-bottom: 2px;
+  }
+
+  .task-list__filters::-webkit-scrollbar,
+  .task-list__sort::-webkit-scrollbar {
+    display: none;
+  }
+
+  .task-list__items {
+    max-height: 280px;
+    padding-right: 0;
+    gap: 6px;
+  }
+
+  /* Hide scrollbar on touch — native momentum scroll handles it */
+  .task-list__items::-webkit-scrollbar {
+    display: none;
+  }
+
+  .task-list__items {
+    scrollbar-width: none;
+  }
 }

@@ -10,7 +10,6 @@ const FLAGS = {
   MUSIC_INTRO:       'misu_seen_music_intro',
   POMODORO_INTRO:    'misu_seen_pomodoro_intro',
   MORNING_GREETED:   'misu_morning_greeted', // resets daily
-  WHISPER_HINT:      'misu_seen_whisper_hint',
 };
 
 function hasSeenToday(key) {
@@ -127,12 +126,8 @@ export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ─── Energy level changed to Whisper (1) ──────────────────
+  // ─── Energy level changed ───────────────────────────────────
   useEffect(() => {
-    if (currentEnergy === 1 && prevEnergyRef.current !== 1 && !hasSeen(FLAGS.WHISPER_HINT)) {
-      markSeen(FLAGS.WHISPER_HINT);
-      showTip('tips.whisperMode', 'mindfulness');
-    }
     // Heavy workload warning when switching to peak energy (4) with many tasks
     if (currentEnergy === 4 && prevEnergyRef.current !== 4) {
       const heavyTasks = tasks.filter(t => !t.completed && (t.estimatedHours || 0) > 3);

@@ -4,9 +4,16 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useEnergy } from '../context/EnergyContext';
 import { getEnergyDef } from '../utils/energy';
-import { Mail, Lock, ArrowRight, Loader2, CheckCircle2, Eye, EyeOff } from 'lucide-react';
+import {
+  Mail, Lock, ArrowRight, Loader2, CheckCircle2,
+  Eye, EyeOff, RotateCcw, ShieldCheck, Inbox,
+} from 'lucide-react';
 import MosaicBackground from './MosaicBackground';
 import './AuthPage.css';
+
+// ─── Constants ───────────────────────────────────────────────────────────────
+
+const MIN_PASSWORD_LEN = 8; // 8+ avoids browser "compromised password" heuristics
 
 const ERROR_MAP = {
   'Invalid login credentials': {
@@ -15,9 +22,9 @@ const ERROR_MAP = {
     it: 'Email o password errati. Riprova.',
   },
   'Email not confirmed': {
-    en: 'Check your inbox for the confirmation email first.',
-    es: 'Primero revisá tu correo y confirmá tu cuenta.',
-    it: 'Controlla la tua casella e conferma il tuo account.',
+    en: 'Please check your inbox and click the confirmation link first.',
+    es: 'Revisá tu correo y hacé clic en el enlace de confirmación primero.',
+    it: 'Controlla la tua casella e clicca il link di conferma prima.',
   },
   'User already registered': {
     en: 'This email is already registered. Try signing in.',
@@ -25,18 +32,48 @@ const ERROR_MAP = {
     it: 'Questa email è già registrata. Prova ad accedere.',
   },
   'Password should be at least 6 characters': {
-    en: 'Password must be at least 6 characters.',
-    es: 'La contraseña debe tener al menos 6 caracteres.',
-    it: 'La password deve avere almeno 6 caratteri.',
+    en: 'Password must be at least 8 characters.',
+    es: 'La contraseña debe tener al menos 8 caracteres.',
+    it: 'La password deve avere almeno 8 caratteri.',
+  },
+  'over_email_send_rate_limit': {
+    en: 'Too many requests. Please wait a minute and try again.',
+    es: 'Demasiados intentos. Esperá un minuto e intentá de nuevo.',
+    it: 'Troppi tentativi. Aspetta un minuto e riprova.',
+  },
+  'rate limit': {
+    en: 'Too many requests. Please wait a minute and try again.',
+    es: 'Demasiados intentos. Esperá un minuto e intentá de nuevo.',
+    it: 'Troppi tentativi. Aspetta un minuto e riprova.',
   },
 };
 
 function friendlyError(message, lang) {
+  if (!message) return 'An unexpected error occurred.';
   for (const [key, translations] of Object.entries(ERROR_MAP)) {
-    if (message?.includes(key)) return translations[lang] || translations.en;
+    if (message.toLowerCase().includes(key.toLowerCase())) {
+      return translations[lang] || translations.en;
+    }
   }
   return message;
 }
+
+// ─── Password strength helper ─────────────────────────────────────────────────
+
+function getPasswordStrength(pw) {
+  if (!pw) return null;
+  let score = 0;
+  if (pw.length >= MIN_PASSWORD_LEN) score++;
+  if (pw.length >= 12) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  if (score <= 1) return { label: 'Weak', level: 1 };
+  if (score <= 3) return { label: 'Fair', level: 2 };
+  return { label: 'Strong', level: 3 };
+}
+
+// ─── Motion variants ──────────────────────────────────────────────────────────
 
 const formVariants = {
   hidden: { opacity: 0, x: 24 },
@@ -46,8 +83,13 @@ const formVariants = {
 
 const fieldVariants = {
   hidden: { opacity: 0, y: 12 },
-  visible: (i) => ({ opacity: 1, y: 0, transition: { delay: i * 0.07, duration: 0.35, ease: [0.16, 1, 0.3, 1] } }),
+  visible: (i) => ({
+    opacity: 1, y: 0,
+    transition: { delay: i * 0.07, duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+  }),
 };
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -57,21 +99,48 @@ export default function AuthPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
-  const { login, signup } = useAuth();
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotSent, setForgotSent] = useState(false);
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotError, setForgotError] = useState('');
+
+  const { login, signup, forgotPassword } = useAuth();
   const { t, language } = useLanguage();
   const { currentEnergy } = useEnergy();
   const energyDef = getEnergyDef(currentEnergy || 3);
 
+  const passwordStrength = !isLogin ? getPasswordStrength(password) : null;
+
+  // ── Form validation ──────────────────────────────────────────────────────────
+  const validateSignup = () => {
+    if (password.length < MIN_PASSWORD_LEN) {
+      setError(
+        language === 'es' ? `La contraseña debe tener al menos ${MIN_PASSWORD_LEN} caracteres.`
+        : language === 'it' ? `La password deve avere almeno ${MIN_PASSWORD_LEN} caratteri.`
+        : `Password must be at least ${MIN_PASSWORD_LEN} characters.`
+      );
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    if (!isLogin && !validateSignup()) return;
     setLoading(true);
     try {
       if (isLogin) {
         await login(email, password);
       } else {
         const result = await signup(email, password);
-        if (result?.user && !result?.session) setSignupSuccess(true);
+        // session is null if email confirmation is required
+        if (result?.user && !result?.session) {
+          setSignupSuccess(true);
+        }
+        // If session exists (email confirmation disabled in Supabase),
+        // onAuthStateChange handles the redirect automatically.
       }
     } catch (err) {
       setError(friendlyError(err.message, language));
@@ -80,12 +149,116 @@ export default function AuthPage() {
     }
   };
 
-  const switchMode = () => { setIsLogin(!isLogin); setError(''); };
+  const handleForgotSubmit = async (e) => {
+    e.preventDefault();
+    setForgotError('');
+    setForgotLoading(true);
+    try {
+      await forgotPassword(forgotEmail);
+      setForgotSent(true);
+    } catch (err) {
+      setForgotError(friendlyError(err.message, language));
+    } finally {
+      setForgotLoading(false);
+    }
+  };
 
-  // ─── Success Screen ───
+  const switchMode = () => {
+    setIsLogin(!isLogin);
+    setError('');
+    setPassword('');
+  };
+
+  // ── Forgot Password modal ────────────────────────────────────────────────────
+  if (showForgot) {
+    return (
+      <div className="auth-page auth-page--center">
+        <motion.div
+          className="auth-success-card"
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {forgotSent ? (
+            <>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.15, duration: 0.45, ease: [0.34, 1.56, 0.64, 1] }}
+              >
+                <Inbox size={48} className="auth-success-icon" />
+              </motion.div>
+              <h2>Check your inbox</h2>
+              <p style={{ marginBottom: 'var(--space-3)' }}>
+                We sent a password-reset link to <strong>{forgotEmail}</strong>.
+                Check your spam folder if it doesn't arrive within a few minutes.
+              </p>
+              <button
+                className="btn btn-primary btn-full"
+                style={{ marginTop: 'var(--space-5)' }}
+                onClick={() => { setShowForgot(false); setForgotSent(false); setForgotEmail(''); }}
+              >
+                Back to Sign In <ArrowRight size={16} />
+              </button>
+            </>
+          ) : (
+            <>
+              <h2 style={{ marginBottom: 'var(--space-2)' }}>Reset Password</h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginBottom: 'var(--space-5)' }}>
+                Enter your email and we'll send a secure reset link.
+              </p>
+              <form onSubmit={handleForgotSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div className="auth-field">
+                  <label className="auth-label" htmlFor="forgot-email">
+                    <Mail size={13} /> Email
+                  </label>
+                  <input
+                    id="forgot-email"
+                    type="email"
+                    className="auth-input"
+                    value={forgotEmail}
+                    onChange={e => setForgotEmail(e.target.value)}
+                    required
+                    placeholder="hello@misu.app"
+                    autoComplete="email"
+                    autoFocus
+                  />
+                </div>
+                {forgotError && (
+                  <div className="auth-error">{forgotError}</div>
+                )}
+                <motion.button
+                  type="submit"
+                  disabled={forgotLoading}
+                  className="btn btn-primary btn-full auth-submit"
+                  whileHover={{ scale: forgotLoading ? 1 : 1.02 }}
+                  whileTap={{ scale: forgotLoading ? 1 : 0.98 }}
+                >
+                  {forgotLoading
+                    ? <Loader2 className="spin" size={18} />
+                    : <>Send Reset Link <ArrowRight size={16} /></>
+                  }
+                </motion.button>
+                <button
+                  type="button"
+                  className="auth-switch-btn"
+                  style={{ textAlign: 'center' }}
+                  onClick={() => { setShowForgot(false); setForgotError(''); }}
+                >
+                  ← Cancel
+                </button>
+              </form>
+            </>
+          )}
+        </motion.div>
+      </div>
+    );
+  }
+
+  // ── Sign-up success screen ───────────────────────────────────────────────────
   if (signupSuccess) {
     return (
-      <div className="auth-page">
+      <div className="auth-page auth-page--center">
         <motion.div
           className="auth-success-card"
           initial={{ scale: 0.9, opacity: 0 }}
@@ -99,25 +272,50 @@ export default function AuthPage() {
           >
             <CheckCircle2 size={52} className="auth-success-icon" />
           </motion.div>
+
           <h2>{t('auth.successTitle')}</h2>
-          <p>{t('auth.successMsg')}</p>
+          <p style={{ marginBottom: 'var(--space-5)' }}>{t('auth.successMsg')}</p>
+
+          {/* Step-by-step guide */}
+          <ol className="auth-steps">
+            <li className="auth-step">
+              <span className="auth-step__num">1</span>
+              <span>
+                Open the email we sent to <strong>{email}</strong>
+              </span>
+            </li>
+            <li className="auth-step">
+              <span className="auth-step__num">2</span>
+              <span>Click the <strong>"Confirm your email"</strong> link</span>
+            </li>
+            <li className="auth-step">
+              <span className="auth-step__num">3</span>
+              <span>You'll land back here and be signed in automatically ✓</span>
+            </li>
+          </ol>
+
+          <p className="auth-hint" style={{ marginTop: 'var(--space-4)', textAlign: 'center' }}>
+            Check your spam folder if the email doesn't arrive in a few minutes.
+          </p>
+
           <button
-            className="btn btn-primary btn-full"
-            style={{ marginTop: 'var(--space-6)' }}
-            onClick={() => { setSignupSuccess(false); setIsLogin(true); }}
+            className="btn btn-outline btn-full"
+            style={{ marginTop: 'var(--space-5)' }}
+            onClick={() => { setSignupSuccess(false); setIsLogin(true); setPassword(''); }}
           >
-            {t('auth.loginBtn')} <ArrowRight size={16} />
+            <RotateCcw size={15} />
+            {language === 'es' ? 'Ya lo verifiqué, iniciar sesión' : language === 'it' ? 'Ho già verificato, accedi' : 'I already verified — Sign In'}
           </button>
         </motion.div>
       </div>
     );
   }
 
-  // ─── Main Layout ───
+  // ── Main Layout ──────────────────────────────────────────────────────────────
   return (
     <div className="auth-page">
 
-      {/* Left visual pane — full mosaic */}
+      {/* Left visual pane */}
       <div className="auth-visual">
         <MosaicBackground
           colorA={energyDef.vividColorA}
@@ -125,8 +323,6 @@ export default function AuthPage() {
           tileSize={22}
           speed={0.28}
         />
-
-        {/* Overlaid branding */}
         <motion.div
           className="auth-visual__content"
           initial={{ opacity: 0, y: 20 }}
@@ -144,15 +340,18 @@ export default function AuthPage() {
           <p className="auth-visual__tagline">
             Energy-aware tasks,<br />focus, and planning — all in one place.
           </p>
-
-          {/* Energy level dots */}
           <div className="auth-visual__energy-dots">
-            {[1,2,3,4].map(i => (
+            {[1, 2, 3, 4].map(i => (
               <div
                 key={i}
                 className={`auth-dot ${i <= (currentEnergy || 3) ? 'active' : ''}`}
               />
             ))}
+          </div>
+          {/* Security badge */}
+          <div className="auth-visual__trust">
+            <ShieldCheck size={13} />
+            <span>Secure · Encrypted · Private</span>
           </div>
         </motion.div>
       </div>
@@ -169,14 +368,14 @@ export default function AuthPage() {
           <div className="auth-mode-toggle">
             <button
               className={`auth-mode-btn ${isLogin ? 'active' : ''}`}
-              onClick={() => { setIsLogin(true); setError(''); }}
+              onClick={() => { setIsLogin(true); setError(''); setPassword(''); }}
               type="button"
             >
               {t('auth.loginBtn') || 'Sign In'}
             </button>
             <button
               className={`auth-mode-btn ${!isLogin ? 'active' : ''}`}
-              onClick={() => { setIsLogin(false); setError(''); }}
+              onClick={() => { setIsLogin(false); setError(''); setPassword(''); }}
               type="button"
             >
               {t('auth.signupLink') || 'Create Account'}
@@ -255,9 +454,9 @@ export default function AuthPage() {
                     type={showPassword ? 'text' : 'password'}
                     className="auth-input"
                     value={password}
-                    onChange={e => setPassword(e.target.value)}
+                    onChange={e => { setPassword(e.target.value); setError(''); }}
                     required
-                    minLength={6}
+                    minLength={isLogin ? 1 : MIN_PASSWORD_LEN}
                     placeholder="••••••••"
                     autoComplete={isLogin ? 'current-password' : 'new-password'}
                   />
@@ -270,8 +469,30 @@ export default function AuthPage() {
                     {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
+
+                {/* Password strength bar (signup only) */}
+                {!isLogin && password.length > 0 && passwordStrength && (
+                  <div className="auth-strength">
+                    <div className="auth-strength__bar">
+                      {[1, 2, 3].map(lvl => (
+                        <div
+                          key={lvl}
+                          className={`auth-strength__seg ${lvl <= passwordStrength.level ? `auth-strength__seg--${passwordStrength.level}` : ''}`}
+                        />
+                      ))}
+                    </div>
+                    <span className={`auth-strength__label auth-strength__label--${passwordStrength.level}`}>
+                      {passwordStrength.label}
+                    </span>
+                  </div>
+                )}
+
                 {!isLogin && (
-                  <span className="auth-hint">{t('auth.passwordHint')}</span>
+                  <span className="auth-hint">
+                    {language === 'es' ? `Mínimo ${MIN_PASSWORD_LEN} caracteres. Usa mayúsculas y símbolos para mayor seguridad.`
+                    : language === 'it' ? `Minimo ${MIN_PASSWORD_LEN} caratteri. Usa maiuscole e simboli per maggiore sicurezza.`
+                    : `At least ${MIN_PASSWORD_LEN} characters. Mix uppercase and symbols for a stronger password.`}
+                  </span>
                 )}
               </motion.div>
 
@@ -288,7 +509,16 @@ export default function AuthPage() {
                     <input type="checkbox" style={{ accentColor: 'var(--energy-primary)' }} />
                     {t('auth.rememberMe')}
                   </label>
-                  <a href="#" className="auth-forgot">{t('auth.forgotPassword')}</a>
+                  <button
+                    type="button"
+                    className="auth-forgot"
+                    onClick={() => {
+                      setForgotEmail(email); // pre-fill with whatever is in the email field
+                      setShowForgot(true);
+                    }}
+                  >
+                    {t('auth.forgotPassword')}
+                  </button>
                 </motion.div>
               )}
 

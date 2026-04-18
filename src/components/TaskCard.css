@@ -1,6 +1,6 @@
 .task-card {
   position: relative;
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-4) var(--space-5);
   border-radius: var(--card-radius);
   background: var(--card-bg);
   backdrop-filter: var(--glass-blur);
@@ -8,7 +8,7 @@
   border: var(--glass-border);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
-  gap: var(--space-5);
+  gap: var(--space-3);
   align-items: center;
   box-shadow: var(--card-shadow);
   overflow: hidden;
@@ -76,6 +76,7 @@
 .task-card__content {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 
 .task-card__title {
@@ -83,7 +84,9 @@
   font-weight: 400;
   color: var(--text-primary);
   transition: all var(--transition-base);
-  word-break: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .task-card__meta {
@@ -115,6 +118,7 @@
   display: flex;
   gap: 2px;
   opacity: 0;
+  flex-shrink: 0;
   transition: opacity var(--transition-fast);
 }
 
@@ -136,7 +140,42 @@
 }
 
 @media (max-width: 768px) {
-  .task-card__actions { opacity: 1; }
+  .task-card {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .task-card__title {
+    font-size: 0.9rem;
+    /* Allow wrapping but cap at 2 lines on mobile */
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .task-card__meta {
+    gap: 4px;
+    margin-top: 4px;
+  }
+
+  .task-card__actions {
+    opacity: 1;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .task-card__drag-handle {
+    display: none; /* Hide drag handle on mobile — tap-to-plan instead */
+  }
+
+  .task-card__checkbox {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+  }
 }
 
 /* ── Drag Handle ─────────────────────────────────────────── */

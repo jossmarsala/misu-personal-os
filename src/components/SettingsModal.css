@@ -187,6 +187,24 @@
   gap: 6px;
 }
 
+@media (max-width: 768px) {
+  .settings-account {
+    flex-wrap: wrap;
+  }
+
+  .settings-account__info {
+    /* Take up remaining width next to avatar */
+    flex: 1;
+  }
+
+  .settings-logout {
+    /* Push to its own full-width row */
+    width: 100%;
+    justify-content: center;
+    margin-top: 2px;
+  }
+}
+
 /* ─────────────────────────────────────────
    API Key Row
 ───────────────────────────────────────── */

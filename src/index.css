@@ -835,4 +835,21 @@ textarea.input {
   .section-title {
     font-size: 1.15rem;
   }
+
+  /* Tighten bento card padding on mobile */
+  .bento-card {
+    padding: var(--space-4) var(--space-4);
+    border-radius: 20px;
+  }
+
+  /* btn-sm slightly more compact on mobile */
+  .btn-sm {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+
+  .btn-icon {
+    width: 30px;
+    height: 30px;
+  }
 }

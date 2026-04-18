@@ -78,6 +78,8 @@ export const translations = {
       clearAllHelp: "Permanently deletes all tasks from your local storage. Exported backups are unaffected.",
       confirmClear: "Click again to confirm",
       signedInAs: "Currently signed in as:",
+      replayTour: "Replay Tour",
+      replayTourDesc: "Watch the quick walkthrough again",
     },
     auth: {
       loginTitle: "Welcome Back",
@@ -89,8 +91,8 @@ export const translations = {
       switchToSignup: "New here? Get started.",
       switchToLogin: "Already have an account? Sign in.",
       successTitle: "Check your inbox 📧",
-      successMsg: "We sent a confirmation link to your email. Click it to activate your account, then come back here to sign in.",
-      passwordHint: "Minimum 6 characters",
+      successMsg: "We sent a confirmation link to your email. Click it to activate your account — you'll be signed in automatically.",
+      passwordHint: "At least 8 characters. Mix uppercase & symbols for a stronger password.",
       email: "Email",
       password: "Password",
       rememberMe: "Remember me",
@@ -168,6 +170,16 @@ export const translations = {
       widgets:         { title: "Widgets",                   desc: "Toggle Pomodoro, Music, Focus Shield, or Calendar from the top bar. All widgets are draggable — position them wherever suits you." },
       planner:         { title: "AI Weekly Plan",            desc: "Hit 'Generate Weekly Plan' and Misu uses Gemini AI to spread your tasks across the week based on deadlines and energy needs." },
       dnd:             { title: "Drag to Reorganize",        desc: "Your generated plan is fully interactive. Drag task blocks between days to fine-tune your schedule after the AI generates it." }
+    },
+    tour: {
+      back: "Back",
+      next: "Next",
+      skip: "Skip",
+      finish: "Let's go!",
+      energy:  { title: "Your Energy, Your Tasks",   content: "This panel reads your current mood and suggests only the tasks that match it. No decision fatigue — just pick one and flow." },
+      tasks:   { title: "Capture Ideas Instantly",   content: "Tap here to add a task in seconds. Set a deadline, estimated hours, and energy level — Misu handles the rest." },
+      widgets: { title: "Your Focus Toolkit",        content: "Pomodoro timer, ambient music, focus shield, and calendar — all draggable and built to keep you in flow state." },
+      planner: { title: "AI Plans Your Week",        content: "Hit Generate and Misu's AI spreads your tasks across the week based on deadlines and energy. Drag blocks to fine-tune." },
     }
   },
   es: {
@@ -249,6 +261,8 @@ export const translations = {
       clearAllHelp: "Elimina permanentemente todas las tareas del almacenamiento local. Las copias de seguridad exportadas no se ven afectadas.",
       confirmClear: "Haz clic de nuevo para confirmar",
       signedInAs: "Sesión iniciada como:",
+      replayTour: "Repetir Tour",
+      replayTourDesc: "Ver el recorrido rápido de nuevo",
     },
     auth: {
       loginTitle: "¡Hola de nuevo!",
@@ -260,8 +274,8 @@ export const translations = {
       switchToSignup: "¿Eres nuevo? Empieza hoy.",
       switchToLogin: "¿Ya tienes cuenta? Inicia sesión.",
       successTitle: "Revisa tu bandeja 📧",
-      successMsg: "Te enviamos un enlace de confirmación a tu correo. Haz clic para activar tu cuenta y vuelve aquí para iniciar sesión.",
-      passwordHint: "Mínimo 6 caracteres",
+      successMsg: "Te enviamos un enlace de confirmación a tu correo. Haz clic para activar tu cuenta — ingresarás automáticamente.",
+      passwordHint: "Mínimo 8 caracteres. Combina mayúsculas y símbolos para mayor seguridad.",
       email: "Correo electrónico",
       password: "Contraseña",
       rememberMe: "Recordarme",
@@ -339,6 +353,16 @@ export const translations = {
       widgets:         { title: "Widgets",                       desc: "Activa Pomodoro, Música, Escudo de Enfoque o Calendario desde la barra superior. Todos son arrastrables." },
       planner:         { title: "Plan Semanal con IA",           desc: "Pulsa 'Generar Plan Semanal' y Misu usa Gemini AI para distribuir tus tareas a lo largo de la semana según plazos y energía." },
       dnd:             { title: "Arrastra para Reorganizar",    desc: "Tu plan generado es totalmente interactivo. Arrastra bloques de tareas entre días para ajustar tu horario después de la generación." }
+    },
+    tour: {
+      back: "Atrás",
+      next: "Siguiente",
+      skip: "Saltar",
+      finish: "¡Empezar!",
+      energy:  { title: "Tu Energía, Tus Tareas",       content: "Este panel lee tu estado actual y sugiere solo las tareas que se ajustan a él. Sin fatiga de decisión — elige una y fluye." },
+      tasks:   { title: "Captura Ideas al Instante",    content: "Toca aquí para añadir una tarea en segundos. Establece fecha, horas estimadas y nivel de energía — Misu se encarga del resto." },
+      widgets: { title: "Tu Kit de Enfoque",            content: "Pomodoro, música ambiental, escudo de enfoque y calendario — todos arrastrables y diseñados para mantenerte en estado de flujo." },
+      planner: { title: "La IA Planifica tu Semana",    content: "Pulsa Generar y la IA de Misu distribuye tus tareas en la semana según plazos y energía. Arrastra bloques para ajustar." },
     }
   },
   it: {
@@ -420,6 +444,8 @@ export const translations = {
       clearAllHelp: "Elimina definitivamente tutte le attività dalla memoria locale. I backup esportati non sono interessati.",
       confirmClear: "Clicca di nuovo per confermare",
       signedInAs: "Accesso effettuato come:",
+      replayTour: "Ripeti Tour",
+      replayTourDesc: "Rivedi la guida rapida",
     },
     auth: {
       loginTitle: "Bentornato!",
@@ -431,8 +457,8 @@ export const translations = {
       switchToSignup: "Nuovo qui? Inizia ora.",
       switchToLogin: "Hai già un account? Accedi.",
       successTitle: "Controlla la tua casella 📧",
-      successMsg: "Ti abbiamo inviato un link di conferma. Cliccalo per attivare il tuo account, poi torna qui per accedere.",
-      passwordHint: "Minimo 6 caratteri",
+      successMsg: "Ti abbiamo inviato un link di conferma. Cliccalo per attivare il tuo account — verrai autenticato automaticamente.",
+      passwordHint: "Minimo 8 caratteri. Usa maiuscole e simboli per una password più sicura.",
       email: "Email",
       password: "Password",
       rememberMe: "Ricordami",
@@ -510,6 +536,16 @@ export const translations = {
       widgets:         { title: "Widget",                      desc: "Attiva Pomodoro, Musica, Scudo Focus o Calendario dalla barra superiore. Tutti i widget sono trascinabili." },
       planner:         { title: "Piano Settimanale con IA",    desc: "Premi 'Genera Piano Settimanale' e Misu usa Gemini AI per distribuire le tue attività durante la settimana in base a scadenze ed energia." },
       dnd:             { title: "Trascina per Riorganizzare",  desc: "Il tuo piano generato è completamente interattivo. Trascina i blocchi attività tra i giorni per ottimizzare il programma dopo la generazione." }
+    },
+    tour: {
+      back: "Indietro",
+      next: "Avanti",
+      skip: "Salta",
+      finish: "Iniziamo!",
+      energy:  { title: "La Tua Energia, Le Tue Attività",  content: "Questo pannello legge il tuo stato attuale e suggerisce solo le attività adatte. Niente affaticamento decisionale — scegli una e fluisci." },
+      tasks:   { title: "Cattura Idee all'Istante",         content: "Tocca qui per aggiungere un'attività in pochi secondi. Imposta scadenza, ore stimate e livello di energia — Misu fa il resto." },
+      widgets: { title: "Il Tuo Kit di Focus",              content: "Pomodoro, musica d'ambiente, scudo focus e calendario — tutti trascinabili e progettati per mantenerti in stato di flusso." },
+      planner: { title: "L'IA Pianifica la Tua Settimana",  content: "Premi Genera e l'IA di Misu distribuisce le tue attività nella settimana in base a scadenze ed energia. Trascina i blocchi per aggiustare." },
     }
   }
 };

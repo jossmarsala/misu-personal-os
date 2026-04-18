@@ -3,7 +3,7 @@ import { useTasks } from '../context/TaskContext';
 import { loadSettings, saveSettings, exportToJSON, importFromJSON } from '../services/storage';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-import { X, Download, Upload, Trash2, Key, LogOut, Check, User, Database, AlertTriangle, HelpCircle } from 'lucide-react';
+import { X, Download, Upload, Trash2, Key, LogOut, Check, User, Database, AlertTriangle, HelpCircle, RotateCcw } from 'lucide-react';
 import './SettingsModal.css';
 
 /** Minimal inline help tooltip — no extra deps needed */
@@ -28,7 +28,7 @@ function HelpTip({ text }) {
   );
 }
 
-export default function SettingsModal({ onClose }) {
+export default function SettingsModal({ onClose, onReplayTour }) {
   const { tasks, importTasksFromJSON, clearAll } = useTasks();
   const { user, logout } = useAuth();
   const { t } = useLanguage();
@@ -125,6 +125,27 @@ export default function SettingsModal({ onClose }) {
               </div>
             </div>
           </section>
+
+          {/* ─── Replay Tour Section ─── */}
+          {onReplayTour && (
+            <section className="settings-section">
+              <div className="settings-section__label">
+                <HelpCircle size={12} />
+                {t('settings.replayTour')}
+              </div>
+              <div className="settings-section__card">
+                <button className="settings-data-btn" onClick={onReplayTour}>
+                  <div className="settings-data-btn__icon">
+                    <RotateCcw size={16} />
+                  </div>
+                  <div>
+                    <span className="settings-data-btn__title">{t('settings.replayTour')}</span>
+                    <span className="settings-data-btn__hint">{t('settings.replayTourDesc')}</span>
+                  </div>
+                </button>
+              </div>
+            </section>
+          )}
 
           {/* ─── API Key Section ─── */}
           <section className="settings-section">
