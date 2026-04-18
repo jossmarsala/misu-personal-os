@@ -154,6 +154,64 @@
 }
 
 /* ─────────────────────────────────────────
+   Mobile Visual Banner
+───────────────────────────────────────── */
+.auth-mobile-hero {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 84px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 24px;
+  border: 1px solid var(--border-primary);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12), inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+@media (min-width: 768px) {
+  .auth-mobile-hero {
+    display: none;
+  }
+}
+
+.auth-mobile-hero__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+}
+
+.auth-mobile-hero__logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.auth-mobile-hero__brand {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.03em;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+
+/* ─────────────────────────────────────────
    Mode Toggle Pill
 ───────────────────────────────────────── */
 .auth-mode-toggle {

@@ -432,6 +432,20 @@ export default function AuthPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         >
+          {/* Mobile visual banner */}
+          <div className="auth-mobile-hero">
+            <MosaicBackground
+              colorA={energyDef.vividColorA}
+              colorB={energyDef.vividColorB}
+              tileSize={18}
+              speed={0.25}
+            />
+            <div className="auth-mobile-hero__overlay">
+              <span className="auth-mobile-hero__logo">M</span>
+              <span className="auth-mobile-hero__brand">misu</span>
+            </div>
+          </div>
+
           {/* Mode toggle pill */}
           <div className="auth-mode-toggle">
             <button
