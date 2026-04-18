@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { Joyride, ACTIONS, EVENTS, STATUS } from 'react-joyride';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ArrowRight, X, Sparkles } from 'lucide-react';
@@ -18,7 +18,7 @@ function getSteps(t) {
       content: t('tour.energy.content'),
       title: t('tour.energy.title'),
       placement: 'left',
-      disableBeacon: true,
+      skipBeacon: true,
       spotlightPadding: 8,
     },
     {
@@ -27,7 +27,7 @@ function getSteps(t) {
       content: t('tour.tasks.content'),
       title: t('tour.tasks.title'),
       placement: 'bottom',
-      disableBeacon: true,
+      skipBeacon: true,
       spotlightPadding: 12,
     },
     {
@@ -36,7 +36,7 @@ function getSteps(t) {
       content: t('tour.widgets.content'),
       title: t('tour.widgets.title'),
       placement: 'bottom',
-      disableBeacon: true,
+      skipBeacon: true,
       spotlightPadding: 10,
     },
     {
@@ -45,7 +45,7 @@ function getSteps(t) {
       content: t('tour.planner.content'),
       title: t('tour.planner.title'),
       placement: 'top',
-      disableBeacon: true,
+      skipBeacon: true,
       spotlightPadding: 8,
     },
   ];
@@ -138,33 +138,21 @@ function MisuTooltip({
 // ── Main Tour Component ──────────────────────────────────────
 export default function OnboardingTour({ onFinish }) {
   const { t } = useLanguage();
-  const [stepIndex, setStepIndex] = useState(0);
-  const [run, setRun] = useState(true);
 
   const steps = getSteps(t);
 
-  const handleCallback = useCallback((data) => {
-    const { action, index, status, type } = data;
+  const handleEvent = useCallback((data, controls) => {
+    const { action, status, type } = data;
 
     // Tour finished or skipped
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
-      setRun(false);
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status) && type === EVENTS.TOUR_END) {
       onFinish();
       return;
     }
 
-    // Navigate steps
-    if (type === EVENTS.STEP_AFTER) {
-      if (action === ACTIONS.NEXT) {
-        setStepIndex(prev => prev + 1);
-      } else if (action === ACTIONS.PREV) {
-        setStepIndex(prev => prev - 1);
-      }
-    }
-
-    // Close button clicked
-    if (action === ACTIONS.CLOSE) {
-      setRun(false);
+    // Close button clicked — end the tour
+    if (action === ACTIONS.CLOSE && type === EVENTS.STEP_AFTER) {
+      controls.stop();
       onFinish();
     }
   }, [onFinish]);
@@ -172,16 +160,10 @@ export default function OnboardingTour({ onFinish }) {
   return (
     <Joyride
       steps={steps}
-      stepIndex={stepIndex}
-      run={run}
+      run
       continuous
-      showSkipButton={false}
-      showProgress={false}
-      disableOverlayClose={false}
-      disableScrolling={false}
-      scrollOffset={80}
-      callback={handleCallback}
       tooltipComponent={MisuTooltip}
+      onEvent={handleEvent}
       locale={{
         back: t('tour.back'),
         close: t('tour.skip'),
@@ -189,35 +171,28 @@ export default function OnboardingTour({ onFinish }) {
         next: t('tour.next'),
         skip: t('tour.skip'),
       }}
+      options={{
+        zIndex: 400,
+        overlayColor: 'rgba(0, 0, 0, 0.45)',
+        spotlightRadius: 28,
+        scrollOffset: 80,
+        overlayClickAction: false,
+        closeButtonAction: 'skip',
+      }}
+      floatingOptions={{
+        hideArrow: true,
+      }}
       styles={{
-        options: {
-          zIndex: 400,
-          arrowColor: 'transparent',
-        },
         overlay: {
-          backgroundColor: 'rgba(0, 0, 0, 0.45)',
           backdropFilter: 'blur(6px)',
           WebkitBackdropFilter: 'blur(6px)',
         },
-        spotlight: {
-          borderRadius: 'var(--card-radius, 28px)',
-          boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.45), 0 0 40px rgba(0, 0, 0, 0.3)',
-        },
-        // Hide default beacon entirely
+        spotlight: {},
         beacon: {
           display: 'none',
         },
-        // Hide the default arrow
         tooltipContainer: {
           textAlign: 'left',
-        },
-      }}
-      floaterProps={{
-        disableAnimation: true,
-        hideArrow: true,
-        styles: {
-          arrow: { display: 'none' },
-          floater: { filter: 'none' },
         },
       }}
     />
