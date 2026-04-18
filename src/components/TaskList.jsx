@@ -7,6 +7,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useEnergy } from '../context/EnergyContext';
 import { getEnergyDef } from '../utils/energy';
 import GradientOrb from './GradientOrb';
+import { PixelLoaderMini } from './PixelLoader';
 import './TaskList.css';
 
 export default function TaskList() {
@@ -48,11 +49,8 @@ export default function TaskList() {
   // X6: Show skeleton while data is loading from Supabase
   if (loading) {
     return (
-      <div id="task-list">
-        <div style={{ height: '44px', borderRadius: 'var(--radius-lg)', background: 'var(--bg-input)', marginBottom: 'var(--space-4)' }} className="shimmer" />
-        {[1, 2, 3].map(i => (
-          <div key={i} style={{ height: '64px', borderRadius: 'var(--card-radius)', background: 'var(--bg-input)', marginBottom: '8px', animationDelay: `${i * 0.1}s` }} className="shimmer" />
-        ))}
+      <div id="task-list" className="animate-fade-in" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
+        <PixelLoaderMini height={88} />
       </div>
     );
   }
