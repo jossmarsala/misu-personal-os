@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import Joyride, { ACTIONS, EVENTS, STATUS } from 'react-joyride';
+import { Joyride, ACTIONS, EVENTS, STATUS } from 'react-joyride';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ArrowRight, X, Sparkles } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
