@@ -38,7 +38,7 @@ export default function Header({ onOpenSettings }) {
       <div className="container">
         <div className="header__inner">
           <div className="header__brand" style={{ display: 'flex', alignItems: 'center' }}>
-            <span className="header__logo">MISU</span>
+            <span className="header__logo"></span>
           </div>
 
           <div className="header__center" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center' }}>

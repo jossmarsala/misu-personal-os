@@ -43,15 +43,12 @@
 }
 
 .header__logo {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.85rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-primary);
+  display: inline-block;
+  height: 32px;
+  aspect-ratio: 1277.94 / 1661.25;
   background: var(--energy-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-mask: url('/misu-logo.svg') no-repeat center / contain;
+  mask: url('/misu-logo.svg') no-repeat center / contain;
   transition: all 0.5s ease;
 }
 
