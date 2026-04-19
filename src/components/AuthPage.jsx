@@ -595,6 +595,12 @@ export default function AuthPage() {
         <MosaicBackground
           colorA={energyDef.vividColorA}
           colorB={energyDef.vividColorB}
+          colorC={
+            currentEnergy === 1 ? '#5BC9F5' :
+            currentEnergy === 2 ? '#DC143C' :
+            currentEnergy === 4 ? '#8A2BE2' :
+            undefined
+          }
           tileSize={22}
           speed={0.28}
         />
@@ -644,6 +650,12 @@ export default function AuthPage() {
             <MosaicBackground
               colorA={energyDef.vividColorA}
               colorB={energyDef.vividColorB}
+              colorC={
+                currentEnergy === 1 ? '#5BC9F5' :
+                currentEnergy === 2 ? '#DC143C' :
+                currentEnergy === 4 ? '#8A2BE2' :
+                undefined
+              }
               tileSize={18}
               speed={0.25}
             />
