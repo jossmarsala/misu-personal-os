@@ -89,3 +89,67 @@ export const playChime = () => {
     // Ignore audio errors silently
   }
 };
+
+// Sound for Focus end (Achievement) - Warm upward chime
+export const playFocusEnd = () => {
+  try {
+    const ctx = initAudio();
+    const freqs = [440, 554.37, 659.25, 880]; // A4, C#5, E5, A5
+    freqs.forEach((f, i) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = f;
+      const start = ctx.currentTime + (i * 0.1);
+      g.gain.setValueAtTime(0, start);
+      g.gain.linearRampToValueAtTime(0.1, start + 0.05);
+      g.gain.exponentialRampToValueAtTime(0.001, start + 0.5);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + 0.6);
+    });
+  } catch (e) {}
+};
+
+// Sound for Break end (Notification) - Double beep
+export const playBreakEnd = () => {
+  try {
+    const ctx = initAudio();
+    [0, 0.15].forEach(delay => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, ctx.currentTime + delay);
+      const start = ctx.currentTime + delay;
+      g.gain.setValueAtTime(0, start);
+      g.gain.linearRampToValueAtTime(0.05, start + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, start + 0.15);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + 0.2);
+    });
+  } catch (e) {}
+};
+
+// Sound for Long Break end (Elaborate notification) - Triple chime
+export const playLongBreakEnd = () => {
+  try {
+    const ctx = initAudio();
+    [0, 0.15, 0.3].forEach((delay, i) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(660 + (i * 110), ctx.currentTime + delay);
+      const start = ctx.currentTime + delay;
+      g.gain.setValueAtTime(0, start);
+      g.gain.linearRampToValueAtTime(0.05, start + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, start + 0.25);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + 0.35);
+    });
+  } catch (e) {}
+};

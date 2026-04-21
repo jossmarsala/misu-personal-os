@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Timer, Play, Pause, SkipForward, RotateCcw } from 'lucide-react';
-import { playChime, playPop } from '../utils/audio';
+import { playFocusEnd, playBreakEnd, playLongBreakEnd, playPop } from '../utils/audio';
 import { useLanguage } from '../context/LanguageContext';
 import DraggableWidget from './DraggableWidget';
 import './PomodoroWidget.css';
@@ -34,14 +34,19 @@ export default function PomodoroWidget({ visible, onClose }) {
       interval = setInterval(() => setTimeLeft(t => t - 1), 1000);
     } else if (timeLeft === 0 && isActive) {
       setIsActive(false);
-      playChime();
+      
+      // Play specific sound based on the mode that just finished
       if (mode === 'focus') {
+        playFocusEnd();
         const newSessions = sessions + 1;
         setSessions(newSessions);
         const nextMode = newSessions % 4 === 0 ? 'longBreak' : 'shortBreak';
         setMode(nextMode);
         setTimeLeft(MODES[nextMode].duration);
       } else {
+        if (mode === 'shortBreak') playBreakEnd();
+        else if (mode === 'longBreak') playLongBreakEnd();
+        
         setMode('focus');
         setTimeLeft(MODES.focus.duration);
       }
