@@ -105,13 +105,13 @@ export default function WeeklyPlanner() {
       if (!sourceDay || !targetDay) return prev;
 
       if (sourceDay === targetDay) {
-        const list = [...newPlan[sourceDay]];
+        const list = [...(newPlan[sourceDay] || [])];
         const oldIndex = list.findIndex(t => t.dndId === activeId);
         const newIndex = list.findIndex(t => t.dndId === overId);
         newPlan[sourceDay] = arrayMove(list, oldIndex, newIndex);
       } else {
-        const sourceList = [...newPlan[sourceDay]];
-        const targetList = [...newPlan[targetDay]];
+        const sourceList = [...(newPlan[sourceDay] || [])];
+        const targetList = [...(newPlan[targetDay] || [])];
         const activeItemIndex = sourceList.findIndex(t => t.dndId === activeId);
         const [movedTask] = sourceList.splice(activeItemIndex, 1);
         if (dayKeys.includes(overId)) {
