@@ -1,6 +1,7 @@
 let audioCtx = null;
 
-const initAudio = () => {
+export const getAudioContext = () => {
+  if (typeof window === 'undefined') return null;
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
@@ -9,6 +10,8 @@ const initAudio = () => {
   }
   return audioCtx;
 };
+
+const initAudio = getAudioContext;
 
 // A soft organic "pop" sound for completing tasks
 export const playPop = () => {

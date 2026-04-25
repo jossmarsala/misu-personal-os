@@ -4,6 +4,7 @@ import { useEnergy } from '../context/EnergyContext';
 import DraggableWidget from './DraggableWidget';
 import './DNDWidget.css';
 import { useLanguage } from '../context/LanguageContext';
+import { getAudioContext } from '../utils/audio';
 
 export default function DNDWidget({ visible }) {
   const { dndActive, setDndActive } = useEnergy();
@@ -12,22 +13,23 @@ export default function DNDWidget({ visible }) {
   const [volume, setVolume] = useState(0.15);
   const [isPlaying, setIsPlaying] = useState(false);
   
-  const audioCtxRef = useRef(null);
   const noiseNodeRef = useRef(null);
   const gainNodeRef = useRef(null);
 
   const initAudio = () => {
-    if (!audioCtxRef.current) {
-      audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
-      gainNodeRef.current = audioCtxRef.current.createGain();
+    const ctx = getAudioContext();
+    if (!ctx) return null;
+    
+    if (!gainNodeRef.current) {
+      gainNodeRef.current = ctx.createGain();
       gainNodeRef.current.gain.value = volume;
-      gainNodeRef.current.connect(audioCtxRef.current.destination);
+      gainNodeRef.current.connect(ctx.destination);
     }
+    return ctx;
   };
 
   const createNoise = (type) => {
-    initAudio();
-    const ctx = audioCtxRef.current;
+    const ctx = initAudio();
     if (!ctx) return;
     
     // Stop and cleanup previous node
@@ -42,19 +44,32 @@ export default function DNDWidget({ visible }) {
     const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const output = noiseBuffer.getChannelData(0);
 
-    let lastOut = 0.0;
-    for (let i = 0; i < bufferSize; i++) {
-      const white = (Math.random() * 2 - 1) * 0.4; // Soften raw white input
-      if (type === 'white') {
-        output[i] = white;
-      } else if (type === 'brown') {
+    if (type === 'white') {
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = (Math.random() * 2 - 1) * 0.3;
+      }
+    } else if (type === 'brown') {
+      let lastOut = 0.0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
         output[i] = (lastOut + (0.02 * white)) / 1.02;
         lastOut = output[i];
-        output[i] *= 1.5; // Reduced from 3.5
-      } else { // pink
-        output[i] = (lastOut + (0.1 * white)) / 1.1;
-        lastOut = output[i];
-        output[i] *= 1.2; // Reduced from 2.5
+        output[i] *= 4.5; // Gain compensation
+      }
+    } else { // pink noise - Voss algorithm approximation
+      let b0, b1, b2, b3, b4, b5, b6;
+      b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+        output[i] *= 0.11; // Gain compensation
+        b6 = white * 0.115926;
       }
     }
 
@@ -65,7 +80,9 @@ export default function DNDWidget({ visible }) {
     noiseNodeRef.current = source;
 
     if (ctx.state === 'suspended') {
-      ctx.resume().then(() => source.start());
+      ctx.resume().then(() => {
+        if (isPlaying || true) source.start(); // Ensure it starts if we just called start
+      });
     } else {
       source.start();
     }
@@ -81,7 +98,9 @@ export default function DNDWidget({ visible }) {
     if (noiseNodeRef.current) {
       try {
         noiseNodeRef.current.stop();
+        noiseNodeRef.current.disconnect();
       } catch (e) {}
+      noiseNodeRef.current = null;
     }
     setIsPlaying(false);
   };
@@ -96,7 +115,8 @@ export default function DNDWidget({ visible }) {
 
   useEffect(() => {
     if (gainNodeRef.current) {
-      gainNodeRef.current.gain.setTargetAtTime(volume, audioCtxRef.current.currentTime, 0.05);
+      const ctx = getAudioContext();
+      gainNodeRef.current.gain.setTargetAtTime(volume, ctx.currentTime, 0.05);
     }
   }, [volume]);
 
@@ -106,10 +126,21 @@ export default function DNDWidget({ visible }) {
     startNoise(type);
   };
 
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (noiseNodeRef.current) {
+        try {
+          noiseNodeRef.current.stop();
+        } catch (e) {}
+      }
+    };
+  }, []);
+
   // Handle DND Muting logic
   useEffect(() => {
     if (dndActive) {
-        // We could play a transition sound here if we wanted
+        // Optional: transition logic
     }
   }, [dndActive]);
 

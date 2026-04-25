@@ -1,11 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useTasks } from '../context/TaskContext';
 import { generateWeeklyPlan } from '../services/gemini';
-import { getWeekDays, formatDayShort, toInputDate } from '../utils/dateUtils';
+import { getWeekDays, formatDayShort, toInputDate, getStartOfWeek } from '../utils/dateUtils';
 import { loadSettings } from '../services/storage';
 import { useLanguage } from '../context/LanguageContext';
 import { playChime, playPop } from '../utils/audio';
-import { Calendar, Sparkles, RefreshCw } from 'lucide-react';
+import { Calendar, Sparkles, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { PixelLoaderMini } from './PixelLoader';
 import { SortableContext, sortableKeyboardCoordinates, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import DroppableColumn from './DroppableColumn';
@@ -22,9 +22,27 @@ export default function WeeklyPlanner() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const weekDays = getWeekDays();
+  const [baseDate, setBaseDate] = useState(() => getStartOfWeek(new Date()));
+  const weekDays = getWeekDays(baseDate);
   const dayKeys = weekDays.map(d => toInputDate(d));
   const today = toInputDate(new Date());
+
+  const handlePrevWeek = () => {
+    setBaseDate(prev => {
+      const d = new Date(prev);
+      d.setDate(d.getDate() - 7);
+      return d;
+    });
+  };
+
+  const handleNextWeek = () => {
+    setBaseDate(prev => {
+      const d = new Date(prev);
+      d.setDate(d.getDate() + 7);
+      return d;
+    });
+  };
+
 
   const handleGenerate = async () => {
     const settings = loadSettings();
@@ -39,7 +57,7 @@ export default function WeeklyPlanner() {
     setError(null);
 
     try {
-      const result = await generateWeeklyPlan(tasks, apiKey, language);
+      const result = await generateWeeklyPlan(tasks, apiKey, language, baseDate);
       
       for (const day of Object.keys(result)) {
         if (Array.isArray(result[day])) {
@@ -126,7 +144,15 @@ export default function WeeklyPlanner() {
           </h2>
           <p className="section-subtitle">{t('planner.subtitle')}</p>
         </div>
-        <div className="planner__actions">
+        <div className="planner__actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="planner__nav" style={{ display: 'flex', gap: '4px', marginRight: '8px' }}>
+            <button onClick={handlePrevWeek} className="btn btn-icon" style={{ padding: '8px' }}>
+              <ChevronLeft size={16} />
+            </button>
+            <button onClick={handleNextWeek} className="btn btn-icon" style={{ padding: '8px' }}>
+              <ChevronRight size={16} />
+            </button>
+          </div>
           <button
             className="btn btn-primary"
             onClick={handleGenerate}

@@ -15,10 +15,10 @@ export function getStartOfWeek(date = new Date()) {
 }
 
 /**
- * Get array of 7 rolling days starting from today
+ * Get array of 7 days starting from a given date (defaults to Monday of current week)
  */
-export function getWeekDays(date = new Date()) {
-  const startDay = new Date(date);
+export function getWeekDays(date = null) {
+  const startDay = date ? new Date(date) : getStartOfWeek(new Date());
   startDay.setHours(0, 0, 0, 0);
   return Array.from({ length: 7 }, (_, i) => {
     const d = new Date(startDay);

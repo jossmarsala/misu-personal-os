@@ -7,7 +7,7 @@ import { GoogleGenAI } from '@google/genai';
 /**
  * Generate a weekly plan using Gemini AI
  */
-export async function generateWeeklyPlan(tasks, apiKey, language = 'en') {
+export async function generateWeeklyPlan(tasks, apiKey, language = 'en', startDate = new Date()) {
   if (!apiKey) {
     throw new Error('Gemini API key is required. Please add it in Settings.');
   }
@@ -21,13 +21,22 @@ export async function generateWeeklyPlan(tasks, apiKey, language = 'en') {
 
   const todayDate = new Date();
   todayDate.setHours(0, 0, 0, 0);
-  const todayStr = todayDate.toISOString().split('T')[0];
+  const startDay = new Date(startDate);
+  startDay.setHours(0, 0, 0, 0);
+
+  const yearT = todayDate.getFullYear();
+  const monthT = String(todayDate.getMonth() + 1).padStart(2, '0');
+  const dayT = String(todayDate.getDate()).padStart(2, '0');
+  const todayStr = `${yearT}-${monthT}-${dayT}`;
 
   const rollingDays = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(todayDate);
+    const d = new Date(startDay);
     d.setDate(d.getDate() + i);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
     return {
-      dateStr: d.toISOString().split('T')[0],
+      dateStr: `${year}-${month}-${day}`,
       dayName: d.toLocaleDateString('en-US', { weekday: 'long' })
     };
   });
