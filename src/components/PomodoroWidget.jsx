@@ -38,15 +38,23 @@ export default function PomodoroWidget({ visible, onClose }) {
       // Play specific sound based on the mode that just finished
       if (mode === 'focus') {
         playFocusEnd();
+        // 🔔 Dispatch notification event for focus session end
+        window.dispatchEvent(new CustomEvent('misu:pomodoro-focus-end'));
         const newSessions = sessions + 1;
         setSessions(newSessions);
         const nextMode = newSessions % 4 === 0 ? 'longBreak' : 'shortBreak';
         setMode(nextMode);
         setTimeLeft(MODES[nextMode].duration);
       } else {
-        if (mode === 'shortBreak') playBreakEnd();
-        else if (mode === 'longBreak') playLongBreakEnd();
-        
+        if (mode === 'shortBreak') {
+          playBreakEnd();
+          // 🔔 Dispatch notification event for short break end
+          window.dispatchEvent(new CustomEvent('misu:pomodoro-break-end'));
+        } else if (mode === 'longBreak') {
+          playLongBreakEnd();
+          // 🔔 Dispatch notification event for long break end
+          window.dispatchEvent(new CustomEvent('misu:pomodoro-long-break-end'));
+        }
         setMode('focus');
         setTimeLeft(MODES.focus.duration);
       }
@@ -55,8 +63,15 @@ export default function PomodoroWidget({ visible, onClose }) {
   }, [isActive, timeLeft, mode, sessions]);
 
   const toggle = () => {
+    const starting = !isActive;
     setIsActive(a => !a);
-    if (!isActive) playPop();
+    if (starting) {
+      playPop();
+      // 🔔 Dispatch notification event for session start
+      if (mode === 'focus') {
+        window.dispatchEvent(new CustomEvent('misu:pomodoro-start', { detail: { taskTitle: null } }));
+      }
+    }
   };
 
   const reset = () => {

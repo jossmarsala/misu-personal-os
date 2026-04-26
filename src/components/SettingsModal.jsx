@@ -3,7 +3,8 @@ import { useTasks } from '../context/TaskContext';
 import { loadSettings, saveSettings, exportToJSON, importFromJSON } from '../services/storage';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-import { X, Download, Upload, Trash2, Key, LogOut, Check, User, Database, AlertTriangle, HelpCircle, RotateCcw } from 'lucide-react';
+import { useNotifications } from '../hooks/useNotifications';
+import { X, Download, Upload, Trash2, Key, LogOut, Check, User, Database, AlertTriangle, HelpCircle, RotateCcw, Bell, BellOff, BellRing } from 'lucide-react';
 import './SettingsModal.css';
 
 /** Minimal inline help tooltip — no extra deps needed */
@@ -32,10 +33,12 @@ export default function SettingsModal({ onClose, onReplayTour }) {
   const { tasks, importTasksFromJSON, clearAll } = useTasks();
   const { user, logout } = useAuth();
   const { t } = useLanguage();
+  const { permission, prefs, updatePrefs, askPermission } = useNotifications();
   const [apiKey, setApiKey] = useState('');
   const [confirmClear, setConfirmClear] = useState(false);
   const [importStatus, setImportStatus] = useState(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [requestingPermission, setRequestingPermission] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -81,6 +84,12 @@ export default function SettingsModal({ onClose, onReplayTour }) {
     if (e.target === e.currentTarget) onClose();
   };
 
+  const handleAskPermission = async () => {
+    setRequestingPermission(true);
+    await askPermission();
+    setRequestingPermission(false);
+  };
+
   return (
     <div className="settings-overlay" onClick={handleOverlayClick} id="settings-modal">
       <div className="settings-modal scale-in">
@@ -123,6 +132,90 @@ export default function SettingsModal({ onClose, onReplayTour }) {
                   {t('common.logout')}
                 </button>
               </div>
+            </div>
+          </section>
+
+          {/* ─── Notifications Section ─── */}
+          <section className="settings-section">
+            <div className="settings-section__label">
+              <Bell size={12} />
+              {t('settings.notifications') || 'Notifications'}
+            </div>
+            <div className="settings-section__card">
+
+              {/* Permission banner */}
+              {permission === 'unsupported' && (
+                <p className="settings-notif-banner settings-notif-banner--warn">
+                  <BellOff size={14} />
+                  {t('settings.notifUnsupported') || 'Desktop notifications are not supported in your browser.'}
+                </p>
+              )}
+              {permission === 'denied' && (
+                <p className="settings-notif-banner settings-notif-banner--error">
+                  <BellOff size={14} />
+                  {t('settings.notifDenied') || 'Notifications are blocked. Please enable them in your browser settings.'}
+                </p>
+              )}
+              {permission === 'default' && (
+                <div className="settings-notif-banner settings-notif-banner--prompt">
+                  <BellRing size={14} />
+                  <span>{t('settings.notifPrompt') || 'Enable desktop notifications to stay on top of deadlines and Pomodoro sessions.'}</span>
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={handleAskPermission}
+                    disabled={requestingPermission}
+                  >
+                    {requestingPermission ? '...' : (t('settings.notifEnable') || 'Enable')}
+                  </button>
+                </div>
+              )}
+              {permission === 'granted' && (
+                <p className="settings-notif-banner settings-notif-banner--success">
+                  <Bell size={14} />
+                  {t('settings.notifGranted') || 'Desktop notifications are active.'}
+                </p>
+              )}
+
+              {/* Master toggle */}
+              <div className="settings-notif-row">
+                <div>
+                  <span className="settings-notif-row__title">{t('settings.notifEnabledLabel') || 'Enable notifications'}</span>
+                  <span className="settings-notif-row__hint">{t('settings.notifEnabledDesc') || 'Master switch for all Misu notifications'}</span>
+                </div>
+                <label className="settings-toggle">
+                  <input
+                    type="checkbox"
+                    checked={prefs.enabled}
+                    onChange={e => updatePrefs({ enabled: e.target.checked })}
+                  />
+                  <span className="settings-toggle__track" />
+                </label>
+              </div>
+
+              {/* Per-category toggles */}
+              {prefs.enabled && [
+                { key: 'pomodoro',       labelKey: 'settings.notifPomodoro',        descKey: 'settings.notifPomodoroDesc',       defaultLabel: 'Pomodoro sessions',      defaultDesc: 'Start and end of every focus or break session' },
+                { key: 'deadlines',      labelKey: 'settings.notifDeadlines',       descKey: 'settings.notifDeadlinesDesc',      defaultLabel: 'Task deadlines',         defaultDesc: '24h before and on the day tasks are due' },
+                { key: 'taskUpcoming',   labelKey: 'settings.notifTaskUpcoming',    descKey: 'settings.notifTaskUpcomingDesc',   defaultLabel: 'Morning summary',        defaultDesc: "Tasks due today, shown at 8–10 AM" },
+                { key: 'weeklyReminder', labelKey: 'settings.notifWeeklyReminder',  descKey: 'settings.notifWeeklyReminderDesc', defaultLabel: 'Weekly reminder',        defaultDesc: 'Monday morning nudge to plan your week' },
+                { key: 'energyCheck',    labelKey: 'settings.notifEnergyCheck',     descKey: 'settings.notifEnergyCheckDesc',    defaultLabel: 'Afternoon energy check', defaultDesc: 'Reminder to update your energy level at 3 PM' },
+                { key: 'inactivity',     labelKey: 'settings.notifInactivity',      descKey: 'settings.notifInactivityDesc',     defaultLabel: 'Inactivity nudge',       defaultDesc: 'Gentle reminder when you\'ve been away 15+ min' },
+              ].map(({ key, labelKey, descKey, defaultLabel, defaultDesc }) => (
+                <div key={key} className="settings-notif-row">
+                  <div>
+                    <span className="settings-notif-row__title">{t(labelKey) || defaultLabel}</span>
+                    <span className="settings-notif-row__hint">{t(descKey) || defaultDesc}</span>
+                  </div>
+                  <label className="settings-toggle">
+                    <input
+                      type="checkbox"
+                      checked={prefs[key]}
+                      onChange={e => updatePrefs({ [key]: e.target.checked })}
+                    />
+                    <span className="settings-toggle__track" />
+                  </label>
+                </div>
+              ))}
             </div>
           </section>
 

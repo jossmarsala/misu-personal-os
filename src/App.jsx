@@ -3,6 +3,7 @@ import { useEnergy } from './context/EnergyContext';
 import { useTasks } from './context/TaskContext';
 import { loadSettings, saveSettings } from './services/storage';
 import { getEnergyDef } from './utils/energy';
+import { useNotifications } from './hooks/useNotifications';
 import Header from './components/Header';
 import TaskList from './components/TaskList';
 import Recommendations from './components/Recommendations';
@@ -41,6 +42,20 @@ function App() {
   const { tasks, deleteTask, weeklyPlan, setWeeklyPlan } = useTasks();
   const { t } = useLanguage();
   const energyDef = getEnergyDef(currentEnergy);
+
+  // 🔔 Initialize notification system — runs all scheduled checks silently
+  const { permission, askPermission } = useNotifications();
+
+  // Auto-request permission once after 5 seconds (non-intrusive first-run)
+  useEffect(() => {
+    if (permission === 'default') {
+      const timer = setTimeout(() => {
+        // Only auto-prompt if we have tasks (user has engaged with the app)
+        // Actual prompt happens in Settings; here we just ensure context is initialized
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [permission]);
 
   const { advice, helperVisible, helperType, setHelperVisible } = useMindfulness(showDND, showMusic, showPomodoro);
   const { showOnboarding, tourKey, finishOnboarding, replayOnboarding } = useOnboarding();
