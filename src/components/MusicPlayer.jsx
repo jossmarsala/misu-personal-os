@@ -6,8 +6,22 @@ import DraggableWidget from './DraggableWidget';
 import { useLanguage } from '../context/LanguageContext';
 import './MusicPlayer.css';
 
-// Discover all mp3 files at compile time.
-const moodTracksImport = import.meta.glob('/public/audio/moods/**/*.mp3', { query: '?url', import: 'default', eager: true });
+// Google Drive Audio Tracks Configuration
+const GOOGLE_DRIVE_TRACKS = {
+  "1": [
+    { name: "Rainy library ambience", url: "https://drive.google.com/uc?export=download&id=1O1cknsyr0u6n6DLO83VsYjc50W2Q_wwN" }
+  ],
+  "2": [
+    { name: "Rain & light piano", url: "https://drive.google.com/uc?export=download&id=1l3qiCh1yZ5xW4v9vaIUW0wJLVPST_NL6" }
+  ],
+  "3": [
+    { name: "Cozy oldies night", url: "https://drive.google.com/uc?export=download&id=1mC0Mjb6yGIpEc-GO4rKALv0lKSPtGf4I" }
+  ],
+  "4": [
+    { name: "Happy lo-fi beats", url: "https://drive.google.com/uc?export=download&id=1wM6MgNlJ6je40SlG8VhFEExWJ7f_Ey3y" },
+    { name: "Peaceful shiny morning", url: "https://drive.google.com/uc?export=download&id=1z9N8Gz-zXD9Ahv4upWeI8JvptaU6Uoql" }
+  ]
+};
 
 import { motion, AnimatePresence } from 'framer-motion';
 import GradientOrb from './GradientOrb';
@@ -30,20 +44,13 @@ export default function MusicPlayer({ visible }) {
 
   useEffect(() => {
     const levelParam = String(currentEnergy);
-    const tracks = Object.keys(moodTracksImport).filter(path => {
-      return path.includes(`/audio/moods/${levelParam}/`);
-    }).map(path => {
-      const url = moodTracksImport[path];
-      return url.startsWith('/public/') ? url.replace('/public', '') : url;
-    });
+    const tracks = GOOGLE_DRIVE_TRACKS[levelParam] || [];
     
     setPlaylist(tracks);
     setCurrentTrackIndex(0);
     
     if (tracks.length > 0) {
-      const firstPath = tracks[0] || '';
-      const filename = firstPath.split('/').pop()?.replace('.mp3', '').replaceAll('_', ' ').replaceAll('-', ' ') || '';
-      setCurrentTrackName(decodeURIComponent(filename));
+      setCurrentTrackName(tracks[0].name);
       
       if (isPlaying && audioRef.current) {
         setTimeout(() => {
@@ -73,9 +80,7 @@ export default function MusicPlayer({ visible }) {
     const nextIdx = (currentTrackIndex + 1) % playlist.length;
     setCurrentTrackIndex(nextIdx);
     
-    const urlStr = playlist[nextIdx] || '';
-    const filename = urlStr.split('/').pop()?.replace('.mp3', '').replaceAll('_', ' ').replaceAll('-', ' ') || '';
-    setCurrentTrackName(decodeURIComponent(filename));
+    setCurrentTrackName(playlist[nextIdx].name);
     
     if (isPlaying) {
       setTimeout(() => {
@@ -126,7 +131,7 @@ export default function MusicPlayer({ visible }) {
         {playlist.length > 0 && (
           <audio 
             ref={audioRef} 
-            src={playlist[currentTrackIndex]} 
+            src={playlist[currentTrackIndex]?.url} 
             onEnded={() => nextTrack()} 
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
