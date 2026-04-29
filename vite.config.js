@@ -4,6 +4,18 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    proxy: {
+      '/gdrive-proxy': {
+        target: 'https://drive.google.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/gdrive-proxy/, ''),
+        headers: {
+          'Origin': 'https://drive.google.com',
+        },
+      },
+    },
+  },
   plugins: [
     react(),
     VitePWA({
