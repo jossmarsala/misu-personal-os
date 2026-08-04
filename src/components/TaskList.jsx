@@ -79,7 +79,7 @@ export default function TaskList() {
           {[
             { key: 'deadline', label: t('tasks.fieldDeadline') },
             { key: 'energy', label: t('tasks.fieldEnergy') },
-            { key: 'duration', label: t('common.hours') },
+            { key: 'duration', label: t('common.hoursCapitalized') },
           ].map(s => (
             <button
               key={s.key}
