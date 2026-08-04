@@ -13,23 +13,23 @@ import './MusicPlayer.css';
 // YouTube Audio Tracks mapped to energy levels
 const YOUTUBE_TRACKS = {
   "1": [
-    { name: "Lofi Girl - chill beats", id: "n61ULEU7CO0" }, 
-    { name: "Forest sounds", id: "xNN7iTA57jM&t" },
-    { name: "Cafe with music ambience", id: "Syuj5aMpiFs&t" },
-    { name: "Relaxing affirmations playlist", id: "JYdfoZReAW8&t" }
+    { name: "Lofi Girl - chill beats", id: "n61ULEU7CO0" },
+    { name: "Forest sounds", id: "xNN7iTA57jM" },
+    { name: "Cafe with music ambience", id: "Syuj5aMpiFs" },
+    { name: "Relaxing affirmations playlist", id: "JYdfoZReAW8" }
   ],
   "2": [
-    { name: "Coffee Shop Jazz", id: "pfx4r7_WdP8" }, 
-    { name: "Chill playlist", id: "4QXVSfCI7m0&t" },
-    { name: "Soft vintage oldies", id: "7xBdtvLx9UE&t" },
-    { name: "Minecraft songs", id: "ANkxRGvl1VY&t" }
+    { name: "Coffee Shop Jazz", id: "pfx4r7_WdP8" },
+    { name: "Chill playlist", id: "4QXVSfCI7m0" },
+    { name: "Soft vintage oldies", id: "7xBdtvLx9UE" },
+    { name: "Minecraft songs", id: "ANkxRGvl1VY" }
   ],
   "3": [
-    { name: "Cozy oldies night", id: "iWuNnm-VUzY&t" }
+    { name: "Cozy oldies night", id: "iWuNnm-VUzY" }
   ],
   "4": [
-    { name: "Peaceful shiny morning",  id: "T9dp6PAsNJs&t" },
-    { name: "Sunshine jazz", id: "OtpBe_HqL0A&t" }
+    { name: "Peaceful shiny morning",  id: "T9dp6PAsNJs" },
+    { name: "Sunshine jazz", id: "OtpBe_HqL0A" }
   ]
 };
 
@@ -210,10 +210,11 @@ export default function MusicPlayer({ visible }) {
           </div>
         </div>
 
-        {/* Hidden YouTube player */}
+        {/* Hidden YouTube player — key forces remount on track change so onReady fires */}
         {videoId && (
           <div style={{ display: 'none' }}>
             <YouTube
+              key={videoId}
               videoId={videoId}
               opts={youtubeOpts}
               onReady={onPlayerReady}
