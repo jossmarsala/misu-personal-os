@@ -7,7 +7,7 @@ import YouTube from 'react-youtube';
 import DraggableWidget from './DraggableWidget';
 import { useLanguage } from '../context/LanguageContext';
 import GradientOrb from './GradientOrb';
-import Aurora from './Aurora';
+import PixelWave from './PixelWave';
 import './MusicPlayer.css';
 
 // YouTube Audio Tracks mapped to energy levels
@@ -235,13 +235,7 @@ export default function MusicPlayer({ visible }) {
 
           {/* Sound wave visualizer */}
           <div className="music-player__aurora-wrap">
-            <Aurora
-              colorStops={[energyDef.colorB, energyDef.vividColorA, energyDef.colorA]}
-              blend={0.5}
-              amplitude={isPlaying ? 1.2 : 0.1}
-              speed={isPlaying ? 8.0 : 0.2}
-              isPlaying={isPlaying}
-            />
+            <PixelWave isPlaying={isPlaying} />
           </div>
 
           {/* Controls row */}

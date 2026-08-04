@@ -180,13 +180,13 @@ function usePixelCanvas({ canvasRef, colors, gap, maxTicker = 360 }) {
 }
 
 // ─── Color palette builder from CSS variables ──────────
-function buildEnergyColors(energyDef) {
+export function buildEnergyColors(energyDef) {
   const { colorA, colorB, vividColorA, vividColorB } = energyDef;
   // Pull 5 hues from the energy palette: two vivid, two soft, one mid blend
   return [vividColorA, vividColorB, colorA, colorB, blendHex(vividColorA, vividColorB, 0.5)];
 }
 
-function blendHex(hex1, hex2, t) {
+export function blendHex(hex1, hex2, t) {
   const parse = h => {
     h = h.replace('#', '');
     return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];

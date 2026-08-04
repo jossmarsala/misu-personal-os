@@ -420,7 +420,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  padding: var(--space-3) var(--space-4);
+  padding: 6px var(--space-4);
   border-bottom: 1px solid var(--border-primary);
   transition: background 0.15s ease;
 }
@@ -435,8 +435,8 @@
 
 .settings-notif-row__title {
   display: block;
-  font-size: 0.84rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 500;
   color: var(--text-primary);
 }
 
@@ -490,7 +490,8 @@
 }
 
 .settings-toggle input:checked + .settings-toggle__track {
-  background: var(--energy-primary);
+  background: #2EE89A;
+  box-shadow: 0 0 8px rgba(46, 232, 154, 0.45);
 }
 
 .settings-toggle input:checked + .settings-toggle__track::after {
@@ -498,12 +499,58 @@
 }
 
 .settings-toggle:hover .settings-toggle__track::after {
-  box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.35);
+}
+
+/* ─────────────────────────────────────────
+   Collapsible Section Label
+───────────────────────────────────────── */
+.settings-section__label--collapsible {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  gap: 6px;
+}
+
+.settings-section__label-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.settings-section__chevron {
+  color: var(--text-tertiary);
+  transition: transform 0.22s ease;
+  flex-shrink: 0;
+}
+
+.settings-section__label--collapsible.open .settings-section__chevron {
+  transform: rotate(180deg);
+}
+
+.settings-section__label--collapsible:hover {
+  color: var(--text-secondary);
+}
+
+.settings-section__card--notif {
+  padding: 0;
 }
 
 /* Focus ring for accessibility */
 .settings-toggle input:focus-visible + .settings-toggle__track {
-  outline: 2px solid var(--energy-primary);
+  outline: 2px solid #2EE89A;
   outline-offset: 2px;
 }
 
