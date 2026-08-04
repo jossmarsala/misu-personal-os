@@ -13,7 +13,7 @@ export default function DNDWidget({ visible }) {
   const { dndActive, setDndActive } = useEnergy();
   const { t } = useLanguage();
   const [noiseType, setNoiseType] = useState('white'); // white, pink, brown
-  const [volume, setVolume] = useState(0.009);
+  const [volume, setVolume] = useState(0.01);
   const [isPlaying, setIsPlaying] = useState(false);
 
   // ── Countdown ring ──────────────────────────────────────────
@@ -37,65 +37,33 @@ export default function DNDWidget({ visible }) {
 
   // ─── Listen to Pomodoro events ─────────────────────────────
   useEffect(() => {
-    const onStart = () => {
-      setPomodoroRunning(true);
-      if (dndActive) {
-        // Sync shield countdown to pomodoro focus duration
-        setSessionDuration(POMODORO_FOCUS_DURATION);
-        setTimeLeft(POMODORO_FOCUS_DURATION);
-      }
-    };
-
-    const onEnd = () => {
-      setPomodoroRunning(false);
-      // Pomodoro focus ended — auto-deactivate shield gracefully
-      if (dndActive) {
-        setDndActive(false);
-        setTimeLeft(null);
+    const onPomodoroUpdate = (e) => {
+      const { timeLeft: pTime, isActive: pActive, mode: pMode, duration: pDuration } = e.detail;
+      
+      if (pMode === 'focus') {
+        setSessionDuration(pDuration);
+        setTimeLeft(pTime);
+        setPomodoroRunning(pActive);
+        
+        // Auto-deactivate shield when pomodoro hits 0
+        if (pTime === 0 && dndActive) {
+          setDndActive(false);
+        }
+      } else {
+        // Not in focus mode
         setSessionDuration(null);
+        setTimeLeft(null);
+        setPomodoroRunning(false);
       }
     };
 
-    const onBreakEnd = () => {
-      setPomodoroRunning(false);
-    };
-
-    window.addEventListener('misu:pomodoro-start', onStart);
-    window.addEventListener('misu:pomodoro-focus-end', onEnd);
-    window.addEventListener('misu:pomodoro-break-end', onBreakEnd);
-    window.addEventListener('misu:pomodoro-long-break-end', onBreakEnd);
-
-    return () => {
-      window.removeEventListener('misu:pomodoro-start', onStart);
-      window.removeEventListener('misu:pomodoro-focus-end', onEnd);
-      window.removeEventListener('misu:pomodoro-break-end', onBreakEnd);
-      window.removeEventListener('misu:pomodoro-long-break-end', onBreakEnd);
-    };
+    window.addEventListener('misu:pomodoro-update', onPomodoroUpdate);
+    return () => window.removeEventListener('misu:pomodoro-update', onPomodoroUpdate);
   }, [dndActive, setDndActive]);
-
-  // ─── Countdown tick ────────────────────────────────────────
-  useEffect(() => {
-    if (timeLeft == null || timeLeft <= 0) {
-      clearInterval(countdownRef.current);
-      if (timeLeft === 0 && dndActive) {
-        setDndActive(false);
-        setTimeLeft(null);
-        setSessionDuration(null);
-      }
-      return;
-    }
-
-    countdownRef.current = setInterval(() => {
-      setTimeLeft(prev => prev != null ? prev - 1 : null);
-    }, 1000);
-
-    return () => clearInterval(countdownRef.current);
-  }, [timeLeft, dndActive, setDndActive]);
 
   // Clear countdown when shield is manually turned off
   useEffect(() => {
     if (!dndActive) {
-      clearInterval(countdownRef.current);
       setTimeLeft(null);
       setSessionDuration(null);
     }
@@ -321,7 +289,7 @@ export default function DNDWidget({ visible }) {
             <input 
               type="range" 
               className="dnd-volume-slider" 
-              min="0" max="1" step="0.05" 
+              min="0.001" max="0.01" step="0.001" 
               value={volume} 
               onChange={(e) => setVolume(parseFloat(e.target.value))} 
             />

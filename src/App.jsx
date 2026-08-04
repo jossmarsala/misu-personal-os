@@ -112,7 +112,6 @@ function App() {
     }
   }, [weeklyPlan, setWeeklyPlan]);
 
-  // Handle commands emitted by CommandPalette via custom events
   useEffect(() => {
     const handler = (e) => {
       const { action } = e.detail;
@@ -128,6 +127,15 @@ function App() {
     window.addEventListener('misu:command', handler);
     return () => window.removeEventListener('misu:command', handler);
   }, [tasks, deleteTask]);
+
+  // Close other widgets when Shield activates
+  useEffect(() => {
+    if (dndActive) {
+      setShowMusic(false);
+      setShowCalendar(false);
+    }
+  }, [dndActive]);
+
 
   const stats = useMemo(() => {
     const active = tasks.filter(t => !t.completed);

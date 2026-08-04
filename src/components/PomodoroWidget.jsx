@@ -29,6 +29,17 @@ export default function PomodoroWidget({ visible, onClose }) {
   const strokeDashoffset = circumference * (1 - progress);
 
   useEffect(() => {
+    window.dispatchEvent(new CustomEvent('misu:pomodoro-update', { 
+      detail: { 
+        timeLeft, 
+        isActive, 
+        mode, 
+        duration: currentMode.duration 
+      } 
+    }));
+  }, [timeLeft, isActive, mode, currentMode.duration]);
+
+  useEffect(() => {
     let interval = null;
     if (isActive && timeLeft > 0) {
       interval = setInterval(() => setTimeLeft(t => t - 1), 1000);

@@ -13,23 +13,23 @@ import './MusicPlayer.css';
 // YouTube Audio Tracks mapped to energy levels
 const YOUTUBE_TRACKS = {
   "1": [
-    { name: "Lofi Girl - chill beats", id: "n61ULEU7CO0" }, // Lofi Girl Radio
-    { name: "Forest sounds", id: "hdlx6Lvam7b7rRhs" },
-    { name: "Cafe with music ambience", id: "_6wlJnFPh5ctH8qV" },
-    { name: "Relaxing affirmations playlist", id: "tf10JcDWWnxKS0lo" }
+    { name: "Lofi Girl - chill beats", id: "n61ULEU7CO0" }, 
+    { name: "Forest sounds", id: "xNN7iTA57jM&t" },
+    { name: "Cafe with music ambience", id: "Syuj5aMpiFs&t" },
+    { name: "Relaxing affirmations playlist", id: "JYdfoZReAW8&t" }
   ],
   "2": [
-    { name: "Coffee Shop Jazz", id: "pfx4r7_WdP8" }, // Jazz vibes
-    { name: "chill playlist", id: "tvwXdPz8Y3S_EVwV" },
-    { name: "soft vintage oldies", id: "zWRIYweg_Qke-a21" },
-    { name: "minecraft songs", id: "gVwvADSZmPZhLxOU" }
+    { name: "Coffee Shop Jazz", id: "pfx4r7_WdP8" }, 
+    { name: "Chill playlist", id: "4QXVSfCI7m0&t" },
+    { name: "Soft vintage oldies", id: "7xBdtvLx9UE&t" },
+    { name: "Minecraft songs", id: "ANkxRGvl1VY&t" }
   ],
   "3": [
-    { name: "Cozy oldies night", id: "C_qU7TxAfhFRqSz6" } // Oldies
+    { name: "Cozy oldies night", id: "iWuNnm-VUzY&t" }
   ],
   "4": [
-    { name: "Peaceful shiny morning",  id: "2Y991nOJuR2IHG_G" }, // Morning beats
-    { name: "Sunshine jazz", id: "PzIbHJmTRlzSvlGC" }
+    { name: "Peaceful shiny morning",  id: "T9dp6PAsNJs&t" },
+    { name: "Sunshine jazz", id: "OtpBe_HqL0A&t" }
   ]
 };
 
