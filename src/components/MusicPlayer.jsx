@@ -96,6 +96,12 @@ export default function MusicPlayer({ visible }) {
     loadTrack(playlist, next, isPlaying);
   };
 
+  const jumpToTrack = (idx) => {
+    if (idx === trackIndex) return;
+    setTrackIndex(idx);
+    loadTrack(playlist, idx, isPlaying);
+  };
+
   // Sync volume / mute — and smooth-fade on Shield activate / deactivate
   useEffect(() => {
     const player = playerRef.current;
@@ -183,99 +189,137 @@ export default function MusicPlayer({ visible }) {
       id="music"
       title={t('music.title')}
       icon={<Music size={14} />}
-      defaultPosition={{ x: Math.max(20, window.innerWidth - 340), y: 120 }}
+      defaultPosition={{ x: Math.max(20, window.innerWidth - 470), y: 120 }}
+      customWidth={450}
     >
-      <div className="music-player">
+      <div className="music-player-layout">
 
-        {/* Header: mode name + track name + orb */}
-        <div className="music-player__header">
-          <div className="music-player__now-playing">
-            <span className="music-player__mode-name">{energyDef.name}</span>
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={trackName}
-                className="music-player__track-name"
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 8 }}
-                transition={{ duration: 0.2 }}
-                title={trackName}
-              >
-                {isLoading ? '⏳ Loading…' : trackName}
-              </motion.span>
-            </AnimatePresence>
-          </div>
-          <div className="music-player__orb-container">
-            <GradientOrb color={energyDef.vividColorA} size="100%" />
-          </div>
-        </div>
+        {/* ── Existing player (untouched) ── */}
+        <div className="music-player">
 
-        {/* Hidden YouTube player — key forces remount on track change so onReady fires */}
-        {videoId && (
-          <div style={{ display: 'none' }}>
-            <YouTube
-              key={videoId}
-              videoId={videoId}
-              opts={youtubeOpts}
-              onReady={onPlayerReady}
-              onStateChange={onPlayerStateChange}
-            />
-          </div>
-        )}
-
-        {/* Sound wave visualizer */}
-        <div className="music-player__aurora-wrap">
-          <Aurora
-            colorStops={[energyDef.colorB, energyDef.vividColorA, energyDef.colorA]}
-            blend={0.5}
-            amplitude={isPlaying ? 1.2 : 0.1}
-            speed={isPlaying ? 8.0 : 0.2}
-            isPlaying={isPlaying}
-          />
-        </div>
-
-        {/* Controls row */}
-        <div className="music-player__controls">
-          <motion.button
-            whileHover={{ scale: 1.06 }}
-            whileTap={{ scale: 0.94 }}
-            className={`music-player__play-btn ${isPlaying ? 'active' : ''} ${isLoading ? 'loading' : ''}`}
-            onClick={togglePlay}
-            disabled={playlist.length === 0 || isLoading}
-          >
-            {isLoading
-              ? <span className="music-player__spinner" />
-              : isPlaying
-                ? <Pause size={18} fill="currentColor" />
-                : <Play  size={18} fill="currentColor" style={{ marginLeft: '2px' }} />
-            }
-          </motion.button>
-
-          <div className="music-player__side-controls">
-            <div className="music-player__btn-row">
-              <button
-                className="btn-ghost btn-icon btn-sm"
-                onClick={nextTrack}
-                disabled={playlist.length <= 1 || isLoading}
-                title={t('music.next')}
-              >
-                <SkipForward size={14} />
-              </button>
-
-              <button className="btn-ghost btn-icon btn-sm" onClick={() => setIsMuted(!isMuted)}>
-                {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-              </button>
-
-              <input
-                type="range"
-                min="0" max="1" step="0.05"
-                value={isMuted ? 0 : volume}
-                onChange={e => { setVolume(parseFloat(e.target.value)); setIsMuted(false); }}
-                className="music-player__volume"
-              />
+          {/* Header: mode name + track name + orb */}
+          <div className="music-player__header">
+            <div className="music-player__now-playing">
+              <span className="music-player__mode-name">{energyDef.name}</span>
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={trackName}
+                  className="music-player__track-name"
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 8 }}
+                  transition={{ duration: 0.2 }}
+                  title={trackName}
+                >
+                  {isLoading ? '⏳ Loading…' : trackName}
+                </motion.span>
+              </AnimatePresence>
+            </div>
+            <div className="music-player__orb-container">
+              <GradientOrb color={energyDef.vividColorA} size="100%" />
             </div>
           </div>
+
+          {/* Hidden YouTube player — key forces remount on track change so onReady fires */}
+          {videoId && (
+            <div style={{ display: 'none' }}>
+              <YouTube
+                key={videoId}
+                videoId={videoId}
+                opts={youtubeOpts}
+                onReady={onPlayerReady}
+                onStateChange={onPlayerStateChange}
+              />
+            </div>
+          )}
+
+          {/* Sound wave visualizer */}
+          <div className="music-player__aurora-wrap">
+            <Aurora
+              colorStops={[energyDef.colorB, energyDef.vividColorA, energyDef.colorA]}
+              blend={0.5}
+              amplitude={isPlaying ? 1.2 : 0.1}
+              speed={isPlaying ? 8.0 : 0.2}
+              isPlaying={isPlaying}
+            />
+          </div>
+
+          {/* Controls row */}
+          <div className="music-player__controls">
+            <motion.button
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.94 }}
+              className={`music-player__play-btn ${isPlaying ? 'active' : ''} ${isLoading ? 'loading' : ''}`}
+              onClick={togglePlay}
+              disabled={playlist.length === 0 || isLoading}
+            >
+              {isLoading
+                ? <span className="music-player__spinner" />
+                : isPlaying
+                  ? <Pause size={18} fill="currentColor" />
+                  : <Play  size={18} fill="currentColor" style={{ marginLeft: '2px' }} />
+              }
+            </motion.button>
+
+            <div className="music-player__side-controls">
+              <div className="music-player__btn-row">
+                <button
+                  className="btn-ghost btn-icon btn-sm"
+                  onClick={nextTrack}
+                  disabled={playlist.length <= 1 || isLoading}
+                  title={t('music.next')}
+                >
+                  <SkipForward size={14} />
+                </button>
+
+                <button className="btn-ghost btn-icon btn-sm" onClick={() => setIsMuted(!isMuted)}>
+                  {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                </button>
+
+                <input
+                  type="range"
+                  min="0" max="1" step="0.05"
+                  value={isMuted ? 0 : volume}
+                  onChange={e => { setVolume(parseFloat(e.target.value)); setIsMuted(false); }}
+                  className="music-player__volume"
+                />
+              </div>
+            </div>
+          </div>
+
         </div>
+
+        {/* ── Compact track-list panel ── */}
+        {playlist.length > 0 && (
+          <div className="music-tracklist">
+            <div className="music-tracklist__header">
+              <span className="music-tracklist__label">QUEUE</span>
+              <span className="music-tracklist__count">{playlist.length}</span>
+            </div>
+            <ul className="music-tracklist__list">
+              {playlist.map((track, idx) => (
+                <motion.li
+                  key={track.id}
+                  className={`music-tracklist__item${
+                    idx === trackIndex ? ' music-tracklist__item--active' : ''
+                  }`}
+                  onClick={() => jumpToTrack(idx)}
+                  whileHover={{ x: 2 }}
+                  transition={{ duration: 0.12 }}
+                  title={track.name}
+                >
+                  <span className="music-tracklist__num">
+                    {idx === trackIndex
+                      ? <span className="music-tracklist__playing-dot" />
+                      : idx + 1
+                    }
+                  </span>
+                  <span className="music-tracklist__name">{track.name}</span>
+                </motion.li>
+              ))}
+            </ul>
+          </div>
+        )}
 
       </div>
     </DraggableWidget>
