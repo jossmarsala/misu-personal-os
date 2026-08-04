@@ -13,7 +13,7 @@ import './MusicPlayer.css';
 // YouTube Audio Tracks mapped to energy levels
 const YOUTUBE_TRACKS = {
   "1": [
-    { name: "Lofi Girl - chill beats", id: "jfKfPfyJRdk" } // Lofi Girl Radio
+    { name: "Lofi Girl - chill beats", id: "n61ULEU7CO0" } // Lofi Girl Radio
   ],
   "2": [
     { name: "Coffee Shop Jazz", id: "e3L1PIY1gw8" } // Jazz vibes
