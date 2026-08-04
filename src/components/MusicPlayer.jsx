@@ -199,7 +199,19 @@ export default function MusicPlayer({ visible }) {
     },
   };
 
-  if (!visible) return null;
+  const youtubePlayer = videoId ? (
+    <div style={{ display: 'none' }}>
+      <YouTube
+        key={videoId}
+        videoId={videoId}
+        opts={youtubeOpts}
+        onReady={onPlayerReady}
+        onStateChange={onPlayerStateChange}
+      />
+    </div>
+  ) : null;
+
+  if (!visible) return youtubePlayer;
 
   return (
     <DraggableWidget
@@ -235,17 +247,7 @@ export default function MusicPlayer({ visible }) {
           </div>
 
           {/* Hidden YouTube player — key forces remount on track change so onReady fires */}
-          {videoId && (
-            <div style={{ display: 'none' }}>
-              <YouTube
-                key={videoId}
-                videoId={videoId}
-                opts={youtubeOpts}
-                onReady={onPlayerReady}
-                onStateChange={onPlayerStateChange}
-              />
-            </div>
-          )}
+          {youtubePlayer}
 
           {/* Sound wave visualizer */}
           <div className="music-player__aurora-wrap">
@@ -302,7 +304,6 @@ export default function MusicPlayer({ visible }) {
           <div className="music-tracklist">
             <div className="music-tracklist__header">
               <span className="music-tracklist__label">{t('music.queue')}</span>
-              <span className="music-tracklist__count">{playlist.length}</span>
             </div>
             <ul className="music-tracklist__list">
               {playlist.map((track, idx) => (
