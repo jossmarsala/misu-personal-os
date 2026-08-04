@@ -420,7 +420,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  padding: 6px var(--space-4);
+  padding: 9px var(--space-4);
   border-bottom: 1px solid var(--border-primary);
   transition: background 0.15s ease;
 }
@@ -490,8 +490,8 @@
 }
 
 .settings-toggle input:checked + .settings-toggle__track {
-  background: #2EE89A;
-  box-shadow: 0 0 8px rgba(46, 232, 154, 0.45);
+  background: #5aa87a;
+  box-shadow: 0 0 6px rgba(90, 168, 122, 0.28);
 }
 
 .settings-toggle input:checked + .settings-toggle__track::after {

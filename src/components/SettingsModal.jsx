@@ -40,6 +40,7 @@ export default function SettingsModal({ onClose, onReplayTour }) {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [requestingPermission, setRequestingPermission] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [notifCatsOpen, setNotifCatsOpen] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -193,90 +194,93 @@ export default function SettingsModal({ onClose, onReplayTour }) {
 
           {/* ─── Notifications Section ─── */}
           <section className="settings-section">
-            <button
-              className={`settings-section__label settings-section__label--collapsible${notifOpen ? ' open' : ''}`}
-              onClick={() => setNotifOpen(o => !o)}
-              type="button"
-              aria-expanded={notifOpen}
-            >
-              <span className="settings-section__label-left">
-                <Bell size={12} />
-                {t('settings.notifications') || 'Notifications'}
-              </span>
-              <ChevronDown size={12} className="settings-section__chevron" />
-            </button>
-            {notifOpen && (
-              <div className="settings-section__card settings-section__card--notif">
+            <div className="settings-section__label">
+              <Bell size={12} />
+              {t('settings.notifications') || 'Notifications'}
+            </div>
+            <div className="settings-section__card settings-section__card--notif">
 
-                {/* Permission banner */}
-                {permission === 'unsupported' && (
-                  <p className="settings-notif-banner settings-notif-banner--warn">
-                    <BellOff size={13} />
-                    {t('settings.notifUnsupported') || 'Not supported in your browser.'}
-                  </p>
-                )}
-                {permission === 'denied' && (
-                  <p className="settings-notif-banner settings-notif-banner--error">
-                    <BellOff size={13} />
-                    {t('settings.notifDenied') || 'Blocked — enable in browser settings.'}
-                  </p>
-                )}
-                {permission === 'default' && (
-                  <div className="settings-notif-banner settings-notif-banner--prompt">
-                    <BellRing size={13} />
-                    <span>{t('settings.notifEnable') || 'Enable desktop notifications'}</span>
-                    <button
-                      className="btn btn-sm btn-primary"
-                      onClick={handleAskPermission}
-                      disabled={requestingPermission}
-                    >
-                      {requestingPermission ? '…' : 'Allow'}
-                    </button>
-                  </div>
-                )}
-                {permission === 'granted' && (
-                  <p className="settings-notif-banner settings-notif-banner--success">
-                    <Bell size={13} />
-                    {t('settings.notifGranted') || 'Notifications active'}
-                  </p>
-                )}
-
-                {/* Master toggle */}
-                <div className="settings-notif-row">
-                  <span className="settings-notif-row__title">{t('settings.notifEnabledLabel') || 'Enable all'}</span>
-                  <label className="settings-toggle">
-                    <input
-                      type="checkbox"
-                      checked={prefs.enabled}
-                      onChange={e => updatePrefs({ enabled: e.target.checked })}
-                    />
-                    <span className="settings-toggle__track" />
-                  </label>
+              {/* Permission banner */}
+              {permission === 'unsupported' && (
+                <p className="settings-notif-banner settings-notif-banner--warn">
+                  <BellOff size={13} />
+                  {t('settings.notifUnsupported') || 'Not supported in your browser.'}
+                </p>
+              )}
+              {permission === 'denied' && (
+                <p className="settings-notif-banner settings-notif-banner--error">
+                  <BellOff size={13} />
+                  {t('settings.notifDenied') || 'Blocked — enable in browser settings.'}
+                </p>
+              )}
+              {permission === 'default' && (
+                <div className="settings-notif-banner settings-notif-banner--prompt">
+                  <BellRing size={13} />
+                  <span>{t('settings.notifEnable') || 'Enable desktop notifications'}</span>
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={handleAskPermission}
+                    disabled={requestingPermission}
+                  >
+                    {requestingPermission ? '…' : 'Allow'}
+                  </button>
                 </div>
+              )}
+              {permission === 'granted' && (
+                <p className="settings-notif-banner settings-notif-banner--success">
+                  <Bell size={13} />
+                  {t('settings.notifGranted') || 'Notifications active'}
+                </p>
+              )}
 
-                {/* Per-category toggles */}
-                {prefs.enabled && [
-                  { key: 'pomodoro',       labelKey: 'settings.notifPomodoro',       defaultLabel: 'Pomodoro' },
-                  { key: 'deadlines',      labelKey: 'settings.notifDeadlines',      defaultLabel: 'Deadlines' },
-                  { key: 'taskUpcoming',   labelKey: 'settings.notifTaskUpcoming',   defaultLabel: 'Morning summary' },
-                  { key: 'weeklyReminder', labelKey: 'settings.notifWeeklyReminder', defaultLabel: 'Weekly reminder' },
-                  { key: 'energyCheck',    labelKey: 'settings.notifEnergyCheck',    defaultLabel: 'Energy check-in' },
-                  { key: 'inactivity',     labelKey: 'settings.notifInactivity',     defaultLabel: 'Inactivity nudge' },
-                ].map(({ key, labelKey, defaultLabel }) => (
-                  <div key={key} className="settings-notif-row">
-                    <span className="settings-notif-row__title">{t(labelKey) || defaultLabel}</span>
-                    <label className="settings-toggle">
-                      <input
-                        type="checkbox"
-                        checked={prefs[key]}
-                        onChange={e => updatePrefs({ [key]: e.target.checked })}
-                      />
-                      <span className="settings-toggle__track" />
-                    </label>
-                  </div>
-                ))}
+              {/* Master toggle */}
+              <div className="settings-notif-row">
+                <span className="settings-notif-row__title">{t('settings.notifEnabledLabel') || 'Enable all'}</span>
+                <label className="settings-toggle">
+                  <input
+                    type="checkbox"
+                    checked={prefs.enabled}
+                    onChange={e => updatePrefs({ enabled: e.target.checked })}
+                  />
+                  <span className="settings-toggle__track" />
+                </label>
               </div>
-            )}
+
+              {/* Per-category toggles — collapsible sub-section */}
+              {prefs.enabled && (
+                <div className="settings-notif-subcategories">
+                  <button
+                    className={`settings-notif-subcategories__header${notifCatsOpen ? ' open' : ''}`}
+                    onClick={() => setNotifCatsOpen(o => !o)}
+                    type="button"
+                    aria-expanded={notifCatsOpen}
+                  >
+                    <span>Notification types</span>
+                    <ChevronDown size={11} className="settings-section__chevron" />
+                  </button>
+                  {notifCatsOpen && [
+                    { key: 'pomodoro',       labelKey: 'settings.notifPomodoro',       defaultLabel: 'Pomodoro sessions' },
+                    { key: 'deadlines',      labelKey: 'settings.notifDeadlines',      defaultLabel: 'Task deadlines' },
+                    { key: 'taskUpcoming',   labelKey: 'settings.notifTaskUpcoming',   defaultLabel: 'Morning summary' },
+                    { key: 'weeklyReminder', labelKey: 'settings.notifWeeklyReminder', defaultLabel: 'Weekly reminder' },
+                    { key: 'energyCheck',    labelKey: 'settings.notifEnergyCheck',    defaultLabel: 'Afternoon energy check' },
+                    { key: 'inactivity',     labelKey: 'settings.notifInactivity',     defaultLabel: 'Inactivity nudge' },
+                  ].map(({ key, labelKey, defaultLabel }) => (
+                    <div key={key} className="settings-notif-row settings-notif-row--sub">
+                      <span className="settings-notif-row__title">{t(labelKey) || defaultLabel}</span>
+                      <label className="settings-toggle">
+                        <input
+                          type="checkbox"
+                          checked={prefs[key]}
+                          onChange={e => updatePrefs({ [key]: e.target.checked })}
+                        />
+                        <span className="settings-toggle__track" />
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </section>
 
           {/* ─── Data Management Section ─── */}
