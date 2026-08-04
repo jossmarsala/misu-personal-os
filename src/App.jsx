@@ -1,9 +1,11 @@
 import { useState, useEffect, useMemo, lazy, Suspense, useCallback } from 'react';
 import { useEnergy } from './context/EnergyContext';
 import { useTasks } from './context/TaskContext';
-import { loadSettings, saveSettings } from './services/storage';
+import { loadSettings } from './services/storage';
 import { getEnergyDef } from './utils/energy';
 import { useNotifications } from './hooks/useNotifications';
+import { useMindfulness } from './hooks/useMindfulness';
+import { useOnboarding } from './hooks/useOnboarding';
 import Header from './components/Header';
 import TaskList from './components/TaskList';
 import Recommendations from './components/Recommendations';
@@ -12,16 +14,15 @@ import MosaicBackground from './components/MosaicBackground';
 import CommandPalette from './components/CommandPalette';
 import GlassIcons from './components/GlassIcons';
 import MisuHelper from './components/MisuHelper';
-import { useMindfulness } from './hooks/useMindfulness';
-import { Clock, CheckCircle2, Timer, Music, Wind, Shield, Calendar, Command } from 'lucide-react';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { Clock, CheckCircle2, Timer, Music, Shield, Calendar, Command } from 'lucide-react';
 import { useLanguage } from './context/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
-import { sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { playPop } from './utils/audio';
-import { toInputDate, getWeekDays } from './utils/dateUtils';
 
-// C3: Lazy-load heavy widgets to reduce initial bundle chunk size
+// H5: All lazy() declarations come after static imports
 const WeeklyPlanner = lazy(() => import('./components/WeeklyPlanner'));
 const SettingsModal = lazy(() => import('./components/SettingsModal'));
 const PomodoroWidget = lazy(() => import('./components/PomodoroWidget'));
@@ -29,9 +30,13 @@ const MusicPlayer = lazy(() => import('./components/MusicPlayer'));
 const DNDWidget = lazy(() => import('./components/DNDWidget'));
 const CalendarView = lazy(() => import('./components/CalendarView'));
 const OnboardingTour = lazy(() => import('./components/OnboardingTour'));
-import { useOnboarding } from './hooks/useOnboarding';
 
 import './App.css';
+
+// L6: Module-level constants ensure useSensors gets stable object references each render
+const POINTER_SENSOR_OPTIONS = { activationConstraint: { distance: 8 } };
+const KEYBOARD_SENSOR_OPTIONS = { coordinateGetter: sortableKeyboardCoordinates };
+
 function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [showPomodoro, setShowPomodoro] = useState(false);
@@ -46,24 +51,14 @@ function App() {
   // 🔔 Initialize notification system — runs all scheduled checks silently
   const { permission, askPermission } = useNotifications();
 
-  // Auto-request permission once after 5 seconds (non-intrusive first-run)
-  useEffect(() => {
-    if (permission === 'default') {
-      const timer = setTimeout(() => {
-        // Only auto-prompt if we have tasks (user has engaged with the app)
-        // Actual prompt happens in Settings; here we just ensure context is initialized
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [permission]);
-
   const { advice, helperVisible, helperType, setHelperVisible } = useMindfulness(showDND, showMusic, showPomodoro);
   const { showOnboarding, tourKey, finishOnboarding, replayOnboarding } = useOnboarding();
 
-  // ── Shared DnD setup (spans task list + weekly planner) ──
+  // L6: useSensors is a hook — must be called at the top level, not inside useMemo.
+  // Stability is achieved by passing stable option objects (defined as module constants).
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(PointerSensor, POINTER_SENSOR_OPTIONS),
+    useSensor(KeyboardSensor, KEYBOARD_SENSOR_OPTIONS)
   );
 
   const [activeDragTask, setActiveDragTask] = useState(null); // for DragOverlay
@@ -332,12 +327,26 @@ function App() {
         </Suspense>
       )}
 
-      {/* C3: Lazy-loaded Draggable Widgets */}
+      {/* M3: Each lazy widget gets its own ErrorBoundary so one failure doesn’t crash all */}
       <Suspense fallback={null}>
-        <PomodoroWidget visible={showPomodoro} onClose={() => setShowPomodoro(false)} />
-        <MusicPlayer visible={showMusic} />
-        <DNDWidget visible={showDND} />
-        <CalendarView visible={showCalendar} onClose={() => setShowCalendar(false)} />
+        <ErrorBoundary>
+          <PomodoroWidget visible={showPomodoro} onClose={() => setShowPomodoro(false)} />
+        </ErrorBoundary>
+      </Suspense>
+      <Suspense fallback={null}>
+        <ErrorBoundary>
+          <MusicPlayer visible={showMusic} />
+        </ErrorBoundary>
+      </Suspense>
+      <Suspense fallback={null}>
+        <ErrorBoundary>
+          <DNDWidget visible={showDND} />
+        </ErrorBoundary>
+      </Suspense>
+      <Suspense fallback={null}>
+        <ErrorBoundary>
+          <CalendarView visible={showCalendar} onClose={() => setShowCalendar(false)} />
+        </ErrorBoundary>
       </Suspense>
 
       <MisuHelper

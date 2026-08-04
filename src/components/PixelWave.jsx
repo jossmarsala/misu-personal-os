@@ -38,12 +38,12 @@ export default function PixelWave({ isPlaying = false }) {
 
     return Array.from({ length: cols }, (_, i) => ({
       col:       i * (BAR_WIDTH + BAR_GAP),          // column index in cell units
-      height:    Math.random() * maxRows * 0.5 + 1,  // current rendered height (cells)
+      height:    Math.random() * maxRows * 0.5 + 0.9,  // current rendered height (cells)
       target:    Math.random() * maxRows * 0.6 + 1,  // target height we're easing toward
       maxRows,
       color:     colors[i % colors.length],
       phase:     Math.random() * Math.PI * 2,        // offset for sine wave
-      speed:     0.5 + Math.random() * 1.0,          // how fast this bar oscillates
+      speed:     0.2 + Math.random() * 0.8,          // how fast this bar oscillates
     }));
   }, []);
 

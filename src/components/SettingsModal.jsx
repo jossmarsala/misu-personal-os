@@ -104,7 +104,7 @@ export default function SettingsModal({ onClose, onReplayTour }) {
             </div>
             <div>
               <h2 className="settings-modal__title">{t('common.settings')}</h2>
-              <p className="settings-modal__subtitle">Manage your preferences</p>
+              <p className="settings-modal__subtitle">{t('settings.subtitle')}</p>
             </div>
           </div>
           <button className="btn btn-ghost btn-icon" onClick={onClose} aria-label="Close settings">
@@ -189,6 +189,10 @@ export default function SettingsModal({ onClose, onReplayTour }) {
                   {saveSuccess ? <Check size={16} /> : t('common.save')}
                 </button>
               </div>
+              {/* H4: Security notice — key is stored in plain localStorage */}
+              <p className="settings-api-security-note">
+                ⚠️ {t('settings.apiKeyStorageWarning')}
+              </p>
             </div>
           </section>
 

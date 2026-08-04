@@ -79,6 +79,8 @@ export const translations = {
       clearAllHelp: "Permanently deletes all tasks from your local storage. Exported backups are unaffected.",
       confirmClear: "Click again to confirm",
       signedInAs: "Currently signed in as:",
+      subtitle: "Manage your preferences",
+      apiKeyStorageWarning: "This key is stored in plain browser storage. Anyone with access to your device can read it.",
       replayTour: "Replay Tour",
       replayTourDesc: "Watch the quick walkthrough again",
       notifications: "Notifications",
@@ -168,6 +170,7 @@ export const translations = {
     music: {
       title: "Music",
       next: "Next Track",
+      queue: "QUEUE",
       noTracks: "No tracks",
       noTracksFolder: "No tracks in folder"
     },
@@ -305,6 +308,8 @@ export const translations = {
       clearAllHelp: "Elimina permanentemente todas las tareas del almacenamiento local. Las copias de seguridad exportadas no se ven afectadas.",
       confirmClear: "Haz clic de nuevo para confirmar",
       signedInAs: "Sesión iniciada como:",
+      subtitle: "Gestiona tus preferencias",
+      apiKeyStorageWarning: "Esta clave se guarda en el almacenamiento del navegador sin cifrar. Cualquier persona con acceso a tu dispositivo puede leerla.",
       replayTour: "Repetir Tour",
       replayTourDesc: "Ver el recorrido rápido de nuevo",
       notifications: "Notificaciones",
@@ -394,6 +399,7 @@ export const translations = {
     music: {
       title: "Música",
       next: "Siguiente pista",
+      queue: "COLA",
       noTracks: "Sin pistas",
       noTracksFolder: "No hay pistas en la carpeta"
     },
@@ -531,6 +537,8 @@ export const translations = {
       clearAllHelp: "Elimina definitivamente tutte le attività dalla memoria locale. I backup esportati non sono interessati.",
       confirmClear: "Clicca di nuovo per confermare",
       signedInAs: "Accesso effettuato come:",
+      subtitle: "Gestisci le tue preferenze",
+      apiKeyStorageWarning: "Questa chiave viene salvata nel browser senza cifratura. Chiunque abbia accesso al tuo dispositivo può leggerla.",
       replayTour: "Ripeti Tour",
       replayTourDesc: "Rivedi la guida rapida",
       notifications: "Notifiche",
@@ -620,6 +628,7 @@ export const translations = {
     music: {
       title: "Musica",
       next: "Traccia successiva",
+      queue: "CODA",
       noTracks: "Nessuna traccia",
       noTracksFolder: "Nessuna traccia nella cartella"
     },

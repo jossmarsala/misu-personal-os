@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useEnergy } from '../context/EnergyContext';
 import { getEnergyDef } from '../utils/energy';
 import { Music, Play, Pause, Volume2, VolumeX, SkipForward } from 'lucide-react';
@@ -45,9 +45,23 @@ export default function MusicPlayer({ visible }) {
   const [playlist,       setPlaylist]       = useState([]);
   const [trackIndex,     setTrackIndex]     = useState(0);
   const [trackName,      setTrackName]      = useState(t('music.noTracks'));
-  
+
   const [videoId,        setVideoId]        = useState(null);
   const playerRef = useRef(null);
+
+  // H1: Refs for values read inside effects/callbacks without being deps
+  const isPlayingRef = useRef(isPlaying);
+  const volumeRef    = useRef(volume);
+  const isMutedRef   = useRef(isMuted);
+  useEffect(() => { isPlayingRef.current = isPlaying; }, [isPlaying]);
+  useEffect(() => { volumeRef.current   = volume;     }, [volume]);
+  useEffect(() => { isMutedRef.current  = isMuted;    }, [isMuted]);
+
+  // H3: Compute initial position safely (not directly in JSX)
+  const defaultWidgetPosition = useMemo(() => ({
+    x: typeof window !== 'undefined' ? Math.max(20, window.innerWidth - 470) : 20,
+    y: 120,
+  }), []);
 
   /** Load a track by index from `tracks`, optionally auto-playing once ready. */
   const loadTrack = (tracks, idx, autoPlay = false) => {
@@ -67,13 +81,14 @@ export default function MusicPlayer({ visible }) {
     setTrackIndex(0);
 
     if (tracks.length > 0) {
-      loadTrack(tracks, 0, isPlaying);
+      // H1: read isPlaying from ref so this effect doesn't need it as a dep
+      loadTrack(tracks, 0, isPlayingRef.current);
     } else {
       setTrackName(t('music.noTracksFolder') + ' /' + currentEnergy);
       setIsPlaying(false);
       setVideoId(null);
     }
-  }, [currentEnergy]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentEnergy, t]);
 
   const togglePlay = () => {
     if (playlist.length === 0) return;
@@ -108,9 +123,9 @@ export default function MusicPlayer({ visible }) {
     if (!player) return;
 
     if (dndActive) {
-      // Smooth fade down to near-zero over ~400ms (20 steps × 20ms)
-      let current = isMuted ? 0 : volume * 100;
-      const target = 5; // whisper level — not fully silent so it can recover
+      // H1: read volume/isMuted from refs to avoid stale closure
+      let current = isMutedRef.current ? 0 : volumeRef.current * 100;
+      const target = 5;
       const steps = 20;
       const delta = (current - target) / steps;
       let step = 0;
@@ -120,9 +135,9 @@ export default function MusicPlayer({ visible }) {
         try { player.setVolume(current); } catch (_) {}
         if (step >= steps) clearInterval(fade);
       }, 20);
+      return () => clearInterval(fade);
     } else {
-      // Fade back up to the user's volume
-      const target = isMuted ? 0 : volume * 100;
+      const target = isMutedRef.current ? 0 : volumeRef.current * 100;
       let current = 5;
       const steps = 20;
       const delta = (target - current) / steps;
@@ -133,16 +148,18 @@ export default function MusicPlayer({ visible }) {
         try { player.setVolume(current); } catch (_) {}
         if (step >= steps) clearInterval(fade);
       }, 20);
+      return () => clearInterval(fade);
     }
-  }, [dndActive]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [dndActive]);
 
   // Sync volume / mute when user changes them manually (shield-unrelated)
   useEffect(() => {
     const player = playerRef.current;
     if (player && !dndActive) {
+      // H1: volume/isMuted are the actual deps here — no suppress needed
       player.setVolume(isMuted ? 0 : volume * 100);
     }
-  }, [volume, isMuted]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [volume, isMuted, dndActive]);
 
 
   const onPlayerReady = (event) => {
@@ -189,7 +206,7 @@ export default function MusicPlayer({ visible }) {
       id="music"
       title={t('music.title')}
       icon={<Music size={14} />}
-      defaultPosition={{ x: Math.max(20, window.innerWidth - 470), y: 120 }}
+      defaultPosition={defaultWidgetPosition}
       customWidth={450}
     >
       <div className="music-player-layout">
@@ -284,7 +301,7 @@ export default function MusicPlayer({ visible }) {
         {playlist.length > 0 && (
           <div className="music-tracklist">
             <div className="music-tracklist__header">
-              <span className="music-tracklist__label">QUEUE</span>
+              <span className="music-tracklist__label">{t('music.queue')}</span>
               <span className="music-tracklist__count">{playlist.length}</span>
             </div>
             <ul className="music-tracklist__list">

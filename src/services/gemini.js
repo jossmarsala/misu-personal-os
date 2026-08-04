@@ -85,6 +85,10 @@ export async function generateWeeklyPlan(tasks, apiKey, language = 'en', startDa
     es: 'Spanish',
     it: 'Italian'
   };
+  // M7: Warn if a new language was added to the app but not to this map
+  if (!langMap[language]) {
+    console.warn(`[Gemini] Unsupported language "${language}" — defaulting to English. Add it to langMap in gemini.js.`);
+  }
   const langName = langMap[language] || 'English';
 
   const prompt = `You are an expert productivity planner. Your job is to produce a realistic, balanced 7-day work schedule.
