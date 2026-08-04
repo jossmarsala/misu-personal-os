@@ -10,7 +10,7 @@ export default function DNDWidget({ visible }) {
   const { dndActive, setDndActive } = useEnergy();
   const { t } = useLanguage();
   const [noiseType, setNoiseType] = useState('white'); // white, pink, brown
-  const [volume, setVolume] = useState(0.15);
+  const [volume, setVolume] = useState(0.05);
   const [isPlaying, setIsPlaying] = useState(false);
   
   const noiseNodeRef = useRef(null);
