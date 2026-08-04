@@ -196,7 +196,7 @@ export default function TaskCard({ task }) {
             {energy.name}
           </span>
           {task.estimatedHours && (
-            <span className="task-card__duration">{task.estimatedHours}{t('common.hours').substring(0,1)}</span>
+            <span className="task-card__duration">{task.estimatedHours}{t('common.hoursCapitalized').substring(0,1)}</span>
           )}
         </div>
       </div>

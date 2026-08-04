@@ -3,54 +3,29 @@ import { useEnergy } from '../context/EnergyContext';
 import { getEnergyDef } from '../utils/energy';
 import { Music, Play, Pause, Volume2, VolumeX, SkipForward } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import YouTube from 'react-youtube';
 import DraggableWidget from './DraggableWidget';
 import { useLanguage } from '../context/LanguageContext';
 import GradientOrb from './GradientOrb';
 import Aurora from './Aurora';
 import './MusicPlayer.css';
 
-// Google Drive Audio Tracks — stored as file IDs only (URLs are built at load time)
-const GOOGLE_DRIVE_TRACKS = {
+// YouTube Audio Tracks mapped to energy levels
+const YOUTUBE_TRACKS = {
   "1": [
-    { name: "Rainy library ambience", id: "1O1cknsyr0u6n6DLO83VsYjc50W2Q_wwN" }
+    { name: "Lofi Girl - chill beats", id: "jfKfPfyJRdk" } // Lofi Girl Radio
   ],
   "2": [
-    { name: "Rain & light piano", id: "1l3qiCh1yZ5xW4v9vaIUW0wJLVPST_NL6" }
+    { name: "Coffee Shop Jazz", id: "e3L1PIY1gw8" } // Jazz vibes
   ],
   "3": [
-    { name: "Cozy oldies night", id: "1mC0Mjb6yGIpEc-GO4rKALv0lKSPtGf4I" }
+    { name: "Cozy oldies night", id: "H-qEwXlT9hM" } // Oldies
   ],
   "4": [
-    { name: "Happy lo-fi beats",       id: "1wM6MgNlJ6je40SlG8VhFEExWJ7f_Ey3y" },
-    { name: "Peaceful shiny morning",  id: "1z9N8Gz-zXD9Ahv4upWeI8JvptaU6Uoql" }
+    { name: "Happy lo-fi beats",       id: "5qap5aO4i9A" }, // Lofi Girl Synthwave
+    { name: "Peaceful shiny morning",  id: "21qNxnCS8WU" } // Morning beats
   ]
 };
-
-/**
- * Fetches a Google Drive audio file as a Blob and returns an objectURL.
- *
- * Why Blob URL instead of direct Drive src?
- *  - Google Drive does NOT include CORS headers on uc?export=download responses,
- *    so browsers refuse to load them as <audio src>.
- *  - By fetching through a proxy (Vite dev server proxy in dev, allorigins in prod)
- *    and converting to a Blob URL we sidestep CORS entirely — the browser treats
- *    the blob:// URL as a same-origin resource.
- */
-async function fetchDriveBlob(fileId) {
-  const path = `/uc?id=${fileId}&export=download&confirm=t`;
-
-  // Vite injects import.meta.env.DEV as true in dev mode
-  const fetchUrl = import.meta.env.DEV
-    ? `/gdrive-proxy${path}`                                                          // Vite proxy → drive.google.com (no CORS)
-    : `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://drive.google.com${path}`)}`; // production fallback
-
-  const res = await fetch(fetchUrl, { cache: 'force-cache' });
-
-  if (!res.ok) throw new Error(`Drive fetch failed: HTTP ${res.status}`);
-
-  const blob = await res.blob();
-  return URL.createObjectURL(blob);
-}
 
 export default function MusicPlayer({ visible }) {
   const { currentEnergy, dndActive } = useEnergy();
@@ -64,87 +39,46 @@ export default function MusicPlayer({ visible }) {
   const [playlist,       setPlaylist]       = useState([]);
   const [trackIndex,     setTrackIndex]     = useState(0);
   const [trackName,      setTrackName]      = useState(t('music.noTracks'));
-  const [blobUrl,        setBlobUrl]        = useState(null);
-
-  const audioRef    = useRef(null);
-  const prevBlob    = useRef(null); // reference to the previous blob URL so we can revoke it
+  
+  const [videoId,        setVideoId]        = useState(null);
+  const playerRef = useRef(null);
 
   /** Load a track by index from `tracks`, optionally auto-playing once ready. */
-  const loadTrack = async (tracks, idx, autoPlay = false) => {
+  const loadTrack = (tracks, idx, autoPlay = false) => {
     if (!tracks[idx]) return;
 
-    // Revoke the old blob URL to free memory
-    if (prevBlob.current) {
-      URL.revokeObjectURL(prevBlob.current);
-      prevBlob.current = null;
-    }
-
-    setBlobUrl(null);
     setIsLoading(true);
     setTrackName(tracks[idx].name);
-
-    try {
-      const url = await fetchDriveBlob(tracks[idx].id);
-      prevBlob.current = url;
-      setBlobUrl(url);
-
-      if (autoPlay) {
-        // audio element won't have the new src yet — wait for canplaythrough
-        setTimeout(() => {
-          const el = audioRef.current;
-          if (!el) return;
-          const tryPlay = () => {
-            el.play().catch(e => console.error('Autoplay blocked:', e));
-            el.removeEventListener('canplaythrough', tryPlay);
-          };
-          el.addEventListener('canplaythrough', tryPlay, { once: true });
-        }, 0);
-      }
-    } catch (err) {
-      console.error('Failed to load Drive track:', err);
-      setTrackName(`${tracks[idx].name} — load error`);
-    } finally {
-      setIsLoading(false);
-    }
+    setVideoId(tracks[idx].id);
+    
+    // Autoplay will be handled by onPlayerReady if isPlaying is true
   };
 
   // Re-load playlist whenever the energy level changes
   useEffect(() => {
-    const tracks = GOOGLE_DRIVE_TRACKS[String(currentEnergy)] || [];
+    const tracks = YOUTUBE_TRACKS[String(currentEnergy)] || [];
     setPlaylist(tracks);
     setTrackIndex(0);
 
     if (tracks.length > 0) {
-      loadTrack(tracks, 0, /* autoPlay= */ isPlaying);
+      loadTrack(tracks, 0, isPlaying);
     } else {
       setTrackName(t('music.noTracksFolder') + ' /' + currentEnergy);
       setIsPlaying(false);
-      setBlobUrl(null);
+      setVideoId(null);
     }
-
-    return () => {
-      if (prevBlob.current) {
-        URL.revokeObjectURL(prevBlob.current);
-        prevBlob.current = null;
-      }
-    };
   }, [currentEnergy]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const togglePlay = () => {
-    if (playlist.length === 0 || isLoading) return;
-
-    if (!blobUrl) {
-      // Blob not yet fetched — trigger load with autoPlay
-      loadTrack(playlist, trackIndex, true);
-      setIsPlaying(true);
-      return;
-    }
+    if (playlist.length === 0) return;
+    const player = playerRef.current;
+    if (!player) return;
 
     if (isPlaying) {
-      audioRef.current?.pause();
+      player.pauseVideo();
       setIsPlaying(false);
     } else {
-      audioRef.current?.play().catch(e => console.error('Play blocked:', e));
+      player.playVideo();
       setIsPlaying(true);
     }
   };
@@ -158,10 +92,47 @@ export default function MusicPlayer({ visible }) {
 
   // Sync volume / mute
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = (isMuted || dndActive) ? 0 : volume;
+    const player = playerRef.current;
+    if (player) {
+      const vol = (isMuted || dndActive) ? 0 : volume * 100;
+      player.setVolume(vol);
     }
   }, [volume, isMuted, dndActive]);
+
+  const onPlayerReady = (event) => {
+    playerRef.current = event.target;
+    const vol = (isMuted || dndActive) ? 0 : volume * 100;
+    event.target.setVolume(vol);
+    setIsLoading(false);
+    
+    if (isPlaying) {
+      event.target.playVideo();
+    }
+  };
+
+  const onPlayerStateChange = (event) => {
+    // 1 is playing, 2 is paused, 0 is ended, 3 is buffering
+    if (event.data === 1) {
+      setIsPlaying(true);
+      setIsLoading(false);
+    } else if (event.data === 2) {
+      setIsPlaying(false);
+    } else if (event.data === 0) {
+      nextTrack();
+    } else if (event.data === 3) {
+      setIsLoading(true);
+    }
+  };
+
+  const youtubeOpts = {
+    height: '0',
+    width: '0',
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      disablekb: 1,
+    },
+  };
 
   if (!visible) return null;
 
@@ -197,15 +168,16 @@ export default function MusicPlayer({ visible }) {
           </div>
         </div>
 
-        {/* Hidden audio element — src is a local blob:// URL, no CORS issues */}
-        {blobUrl && (
-          <audio
-            ref={audioRef}
-            src={blobUrl}
-            onEnded={nextTrack}
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-          />
+        {/* Hidden YouTube player */}
+        {videoId && (
+          <div style={{ display: 'none' }}>
+            <YouTube
+              videoId={videoId}
+              opts={youtubeOpts}
+              onReady={onPlayerReady}
+              onStateChange={onPlayerStateChange}
+            />
+          </div>
         )}
 
         {/* Sound wave visualizer */}
