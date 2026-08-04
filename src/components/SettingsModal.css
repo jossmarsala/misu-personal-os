@@ -448,6 +448,49 @@
   line-height: 1.4;
 }
 
+/* Sub-category rows indented slightly */
+.settings-notif-row--sub {
+  padding-left: calc(var(--space-4) + 8px);
+}
+
+/* ─────────────────────────────────────────
+   Notification Types Sub-section
+───────────────────────────────────────── */
+.settings-notif-subcategories {
+  border-top: 1px solid var(--border-primary);
+}
+
+.settings-notif-subcategories__header {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px var(--space-4);
+  cursor: pointer;
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.settings-notif-subcategories__header:hover {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.settings-notif-subcategories__header .settings-section__chevron {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.settings-notif-subcategories__header.open .settings-section__chevron {
+  transform: rotate(180deg);
+}
+
 /* ─────────────────────────────────────────
    Toggle Switch
 ───────────────────────────────────────── */

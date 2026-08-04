@@ -2,24 +2,11 @@
    localStorage persistence + JSON import/export
    ═══════════════════════════════════════ */
 
-const TASKS_KEY = 'misu:tasks';
+// NOTE: Tasks are persisted by TaskContext directly using 'misu-offline-tasks'.
+// loadTasks/saveTasks were removed (C2) — they used a conflicting key 'misu:tasks'.
 const SETTINGS_KEY = 'misu:settings';
 const ENERGY_KEY = 'misu:energy';
 const THEME_KEY = 'misu:theme';
-
-// ─── Tasks ───
-export function loadTasks() {
-  try {
-    const raw = localStorage.getItem(TASKS_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-export function saveTasks(tasks) {
-  localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
-}
 
 // ─── Settings ───
 export function loadSettings() {
@@ -76,7 +63,8 @@ export function exportToJSON(tasks) {
   a.href = url;
   a.download = `misu-tasks-${new Date().toISOString().split('T')[0]}.json`;
   a.click();
-  URL.revokeObjectURL(url);
+  // L2: Delay revocation so the download can start (Safari needs a tick to process)
+  setTimeout(() => URL.revokeObjectURL(url), 100);
 }
 
 // ─── Import ───

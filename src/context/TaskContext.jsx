@@ -88,7 +88,10 @@ export function TaskProvider({ children }) {
       localStorage.removeItem('misu-offline-tasks');
       setLoading(false);
     }
-  }, [user, isOffline]); // trigger mount fetch when user or online status resolves
+  // H2: isOffline removed from deps — re-fetching on reconnect would overwrite
+  // any offline edits. The reconnect sync effect (below) handles pushing local
+  // changes back to Supabase instead.
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Consolidated, debounced sync (fixes L1 double-write + L7 no-debounce) ──
   const syncToSupabase = useCallback(async (currentTasks, currentPlan) => {
@@ -177,7 +180,8 @@ export function TaskProvider({ children }) {
     });
   }, []);
 
-  const [focusedTaskId, setFocusedTaskId] = useState(null);
+  // M1: focusedTaskId is owned by EnergyContext (which also clears it on shield off).
+  // Removed duplicate state here to avoid two sources of truth.
 
   const clearAll = useCallback(() => {
     setTasks([]);
@@ -207,8 +211,6 @@ export function TaskProvider({ children }) {
       importTasksFromJSON,
       clearAll,
       reorderTasks,
-      focusedTaskId,
-      setFocusedTaskId,
       weeklyPlan,
       setWeeklyPlan,
     }}>

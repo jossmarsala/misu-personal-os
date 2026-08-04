@@ -83,11 +83,14 @@ export function useNotifications() {
     document.addEventListener('visibilitychange', onVisible);
     document.addEventListener('mousemove', onMove);
     document.addEventListener('keydown', onMove);
+    // M4: touch events so mobile users don't appear permanently "idle"
+    document.addEventListener('touchstart', onMove, { passive: true });
 
     return () => {
       document.removeEventListener('visibilitychange', onVisible);
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('keydown', onMove);
+      document.removeEventListener('touchstart', onMove);
     };
   }, []);
 

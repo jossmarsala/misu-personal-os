@@ -168,6 +168,7 @@ function usePixelCanvas({ canvasRef, colors, gap, maxTicker = 360 }) {
       startAnimation(canvas, colors);
     };
 
+    if (!canvas.parentElement) return;
     const observer = new ResizeObserver(resize);
     observer.observe(canvas.parentElement);
     resize();

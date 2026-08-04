@@ -215,9 +215,6 @@ export default function MusicPlayer({ visible }) {
                 </motion.span>
               </AnimatePresence>
             </div>
-            <div className="music-player__orb-container">
-              <GradientOrb color={energyDef.vividColorA} size="100%" />
-            </div>
           </div>
 
           {/* Hidden YouTube player — key forces remount on track change so onReady fires */}

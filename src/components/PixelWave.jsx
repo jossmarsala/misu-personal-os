@@ -7,7 +7,7 @@ import { buildEnergyColors } from './PixelLoader';
 const PIXEL_SIZE  = 3;   // px square per pixel block
 const GAP         = 1;   // gap between pixel blocks
 const CELL        = PIXEL_SIZE + GAP;
-const BAR_GAP     = 2;   // gap between bars (in cells)
+const BAR_GAP     = .5;   // gap between bars (in cells)
 const BAR_WIDTH   = 2;   // cells wide per bar
 
 // ─── PixelWave ───────────────────────────────────────────

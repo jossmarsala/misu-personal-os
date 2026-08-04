@@ -18,6 +18,8 @@ export function LanguageProvider({ children }) {
     const keys = path.split('.');
     let result = translations[language];
     for (const key of keys) {
+      // Guard: if result is null/primitive mid-path, avoid crash and return the key
+      if (result == null || typeof result !== 'object') return path;
       if (result[key] === undefined) return path;
       result = result[key];
     }
