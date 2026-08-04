@@ -422,13 +422,40 @@
 }
 
 /* ─── DND MODE OVERRIDES ─── */
+
+/* 1. Vignette overlay — tunnel-vision effect */
+.app--dnd-active::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+  animation: dnd-vignette-in 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes dnd-vignette-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 2. Hide Recommendations sidebar */
 .app--dnd-active .bento-grid__reco {
   display: none !important;
 }
 
+/* 3. Hide Weekly Planner — big visual distractor */
+.app--dnd-active .bento-grid__planner {
+  display: none !important;
+}
+
+/* 4. Refill grid with just hero + tasks */
 .app--dnd-active .bento-grid {
   grid-template-columns: 1fr 1fr;
-  /* Fill space left by recommendations */
 }
 
 @media (min-width: 1025px) {
@@ -441,13 +468,14 @@
   }
 }
 
-/* A5 fix: DND mode blurs recommendations but keeps tasks and planner accessible */
+/* 5. Subtle blur on any remaining non-task bento cards */
 .app--dnd-active .bento-card:not(.hero-card):not(.bento-grid__tasks):not(.bento-grid__planner) {
   opacity: 0.4;
   filter: grayscale(0.5) blur(2px);
   pointer-events: none;
 }
 
+/* 6. Hero card glows softly */
 .app--dnd-active .hero-card {
   box-shadow: 0 0 50px var(--energy-glow);
 }
@@ -460,4 +488,18 @@
 .app--dnd-active .prismatic-burst-container {
   opacity: 0.4 !important;
   filter: saturate(0.5);
+}
+
+/* 7. Dock auto-collapse: fade non-shield/pomodoro icons */
+.app--dnd-active .widget-toggles {
+  opacity: 0.85;
+}
+
+/* Dim icons that aren't shield or pomodoro (indices 1=music, 3=calendar via nth-child) */
+.app--dnd-active .widget-toggles .icon-btns .icon-btn:nth-child(2),
+.app--dnd-active .widget-toggles .icon-btns .icon-btn:nth-child(4) {
+  opacity: 0.25;
+  filter: grayscale(0.7);
+  pointer-events: none;
+  transition: opacity 0.4s ease, filter 0.4s ease;
 }

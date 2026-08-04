@@ -96,18 +96,53 @@ export default function MusicPlayer({ visible }) {
     loadTrack(playlist, next, isPlaying);
   };
 
-  // Sync volume / mute
+  // Sync volume / mute — and smooth-fade on Shield activate / deactivate
   useEffect(() => {
     const player = playerRef.current;
-    if (player) {
-      const vol = (isMuted || dndActive) ? 0 : volume * 100;
-      player.setVolume(vol);
+    if (!player) return;
+
+    if (dndActive) {
+      // Smooth fade down to near-zero over ~400ms (20 steps × 20ms)
+      let current = isMuted ? 0 : volume * 100;
+      const target = 5; // whisper level — not fully silent so it can recover
+      const steps = 20;
+      const delta = (current - target) / steps;
+      let step = 0;
+      const fade = setInterval(() => {
+        step++;
+        current = Math.max(target, current - delta);
+        try { player.setVolume(current); } catch (_) {}
+        if (step >= steps) clearInterval(fade);
+      }, 20);
+    } else {
+      // Fade back up to the user's volume
+      const target = isMuted ? 0 : volume * 100;
+      let current = 5;
+      const steps = 20;
+      const delta = (target - current) / steps;
+      let step = 0;
+      const fade = setInterval(() => {
+        step++;
+        current = Math.min(target, current + delta);
+        try { player.setVolume(current); } catch (_) {}
+        if (step >= steps) clearInterval(fade);
+      }, 20);
     }
-  }, [volume, isMuted, dndActive]);
+  }, [dndActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Sync volume / mute when user changes them manually (shield-unrelated)
+  useEffect(() => {
+    const player = playerRef.current;
+    if (player && !dndActive) {
+      player.setVolume(isMuted ? 0 : volume * 100);
+    }
+  }, [volume, isMuted]); // eslint-disable-line react-hooks/exhaustive-deps
+
 
   const onPlayerReady = (event) => {
     playerRef.current = event.target;
-    const vol = (isMuted || dndActive) ? 0 : volume * 100;
+    // When shield is active, start at whisper level; fade logic will handle the rest
+    const vol = isMuted ? 0 : dndActive ? 5 : volume * 100;
     event.target.setVolume(vol);
     setIsLoading(false);
     
@@ -115,6 +150,7 @@ export default function MusicPlayer({ visible }) {
       event.target.playVideo();
     }
   };
+
 
   const onPlayerStateChange = (event) => {
     // 1 is playing, 2 is paused, 0 is ended, 3 is buffering

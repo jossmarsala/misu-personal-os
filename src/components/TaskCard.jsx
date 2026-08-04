@@ -12,7 +12,7 @@ import './TaskCard.css';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function TaskCard({ task }) {
+export default function TaskCard({ task, isFocused = false, isDimmed = false, onFocus }) {
   const { toggleComplete, updateTask, deleteTask } = useTasks();
   const { t } = useLanguage();
   const { currentEnergy } = useEnergy();
@@ -89,9 +89,10 @@ export default function TaskCard({ task }) {
       animate={{ opacity: isDragging ? 0.4 : 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       whileHover={{ y: -2 }}
-      className={`task-card ${task.completed ? 'completed' : ''} ${isDragging ? 'dragging' : ''}`}
+      className={`task-card ${task.completed ? 'completed' : ''} ${isDragging ? 'dragging' : ''} ${isFocused ? 'task-card--focused' : ''} ${isDimmed ? 'task-card--dimmed' : ''}`}
       data-task-energy={task.energyRequired}
       id={`task-${task.id}`}
+      onClick={isDimmed && onFocus ? onFocus : undefined}
     >
       {/* Drag handle — only shown on non-completed tasks */}
       {!task.completed && (

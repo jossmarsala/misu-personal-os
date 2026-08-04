@@ -123,7 +123,7 @@ export default function TaskForm() {
               onChange={e => handleChange('estimatedHours', e.target.value)}
               id="task-hours-input"
             />
-            <span>{t('common.hours')}</span>
+            <span>{t('common.hoursCapitalized')}</span>
           </label>
 
           {/* Energy selector pill */}
@@ -145,7 +145,7 @@ export default function TaskForm() {
             </span>
           </div>
 
-          {/* Toggle more */}
+          {/* Toggle more */}  
           <button
             type="button"
             className="task-form__more-btn"

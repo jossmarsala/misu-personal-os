@@ -219,7 +219,7 @@ function App() {
                       undefined
                     }
                     tileSize={20}
-                    speed={0.35}
+                    speed={dndActive ? 0.04 : 0.35}
                   />
                 </div>
                 <div className="hero-card__content">
@@ -289,7 +289,7 @@ function App() {
                         undefined
                       }
                       tileSize={40}
-                      speed={0.18}
+                      speed={dndActive ? 0.04 : 0.18}
                     />
                   </div>
                   <span className="stat-chip__label" style={{ position: 'relative', zIndex: 1, color: '#000', textShadow: '0 1px 2px rgba(255, 255, 255, 0.3)' }}>

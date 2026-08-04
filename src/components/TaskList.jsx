@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useTasks } from '../context/TaskContext';
 import TaskCard from './TaskCard';
 import TaskForm from './TaskForm';
@@ -11,9 +11,9 @@ import { PixelLoaderMini } from './PixelLoader';
 import './TaskList.css';
 
 export default function TaskList() {
-  const { tasks, loading } = useTasks(); // X6: consume loading state
+  const { tasks, loading } = useTasks();
   const { t } = useLanguage();
-  const { currentEnergy } = useEnergy();
+  const { currentEnergy, dndActive, focusedTaskId, setFocusedTaskId } = useEnergy();
   const energyDef = getEnergyDef(currentEnergy);
   const [filter, setFilter] = useState('active');
   const [sort, setSort] = useState('deadline');
@@ -40,13 +40,28 @@ export default function TaskList() {
     return list;
   }, [tasks, filter, sort]);
 
+  // When shield activates and no task is focused yet, spotlight the first active task
+  useEffect(() => {
+    if (dndActive && !focusedTaskId) {
+      const firstActive = filtered.find(t => !t.completed);
+      if (firstActive) setFocusedTaskId(firstActive.id);
+    }
+  }, [dndActive, focusedTaskId, filtered, setFocusedTaskId]);
+
+  // Compute the effective focused id (fall back to first active if the focused one disappears)
+  const effectiveFocusId = useMemo(() => {
+    if (!dndActive) return null;
+    if (focusedTaskId && filtered.some(t => t.id === focusedTaskId)) return focusedTaskId;
+    const firstActive = filtered.find(t => !t.completed);
+    return firstActive?.id ?? null;
+  }, [dndActive, focusedTaskId, filtered]);
+
   const counts = {
     all: tasks.length,
     active: tasks.filter(t => !t.completed).length,
     completed: tasks.filter(t => t.completed).length,
   };
 
-  // X6: Show skeleton while data is loading from Supabase
   if (loading) {
     return (
       <div id="task-list" className="animate-fade-in" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
@@ -95,7 +110,13 @@ export default function TaskList() {
       {filtered.length > 0 ? (
         <div className="task-list__items stagger-children">
           {filtered.map(task => (
-            <TaskCard key={task.id} task={task} />
+            <TaskCard
+              key={task.id}
+              task={task}
+              isFocused={dndActive && task.id === effectiveFocusId}
+              isDimmed={dndActive && task.id !== effectiveFocusId && !task.completed}
+              onFocus={dndActive ? () => setFocusedTaskId(task.id) : undefined}
+            />
           ))}
         </div>
       ) : (
@@ -116,3 +137,4 @@ export default function TaskList() {
     </div>
   );
 }
+

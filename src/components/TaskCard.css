@@ -256,3 +256,40 @@
   to   { opacity: 1; transform: scale(1) rotate(2deg); }
 }
 
+/* ── Shield Mode: Focused Task ────────────────────────── */
+.task-card--focused {
+  border-color: var(--energy-primary) !important;
+  box-shadow:
+    0 0 0 2px var(--energy-glow),
+    0 0 24px var(--energy-glow),
+    var(--card-shadow);
+  transform: translateY(-2px) scale(1.015);
+  animation: shield-focus-pulse 2.4s ease-in-out infinite;
+  z-index: 2;
+  position: relative;
+}
+
+@keyframes shield-focus-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--energy-glow), 0 0 20px var(--energy-glow), var(--card-shadow); }
+  50%       { box-shadow: 0 0 0 3px var(--energy-glow), 0 0 36px var(--energy-glow), var(--card-shadow); }
+}
+
+/* ── Shield Mode: Dimmed Tasks ────────────────────────── */
+.task-card--dimmed {
+  opacity: 0.28;
+  filter: blur(0.8px) grayscale(0.3);
+  transform: scale(0.985);
+  cursor: pointer; /* invite a tap to shift focus */
+  pointer-events: auto;
+  transition:
+    opacity 0.4s ease,
+    filter 0.4s ease,
+    transform 0.4s ease;
+}
+
+.task-card--dimmed:hover {
+  opacity: 0.55;
+  filter: blur(0px) grayscale(0);
+  transform: translateY(-1px) scale(1);
+}
+

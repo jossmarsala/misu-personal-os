@@ -7,10 +7,17 @@ export function EnergyProvider({ children }) {
   const [currentEnergy, setCurrentEnergy] = useState(() => loadEnergy());
   const [dndActive, setDndActive] = useState(false);
   const [breathingActive, setBreathingActive] = useState(false);
+  // Shield one-task focus: id of the task currently spotlighted (null = first active)
+  const [focusedTaskId, setFocusedTaskId] = useState(null);
 
   useEffect(() => {
     saveEnergy(currentEnergy);
   }, [currentEnergy]);
+
+  // Clear focused task when shield turns off
+  useEffect(() => {
+    if (!dndActive) setFocusedTaskId(null);
+  }, [dndActive]);
 
   return (
     <EnergyContext.Provider value={{ 
@@ -19,7 +26,9 @@ export function EnergyProvider({ children }) {
       dndActive,
       setDndActive,
       breathingActive,
-      setBreathingActive
+      setBreathingActive,
+      focusedTaskId,
+      setFocusedTaskId,
     }}>
       {children}
     </EnergyContext.Provider>
