@@ -44,6 +44,13 @@ export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
   const prevEnergyRef     = useRef(currentEnergy);
   const tipQueueRef       = useRef([]); // queued tips to show one at a time
 
+  const tasksRef          = useRef(tasks);
+  const adviceRef         = useRef(advice);
+  const helperTypeRef     = useRef(helperType);
+  useEffect(() => { tasksRef.current      = tasks;      }, [tasks]);
+  useEffect(() => { adviceRef.current     = advice;     }, [advice]);
+  useEffect(() => { helperTypeRef.current = helperType; }, [helperType]);
+
   // Helper: show a tip (queues if one is already showing)
   const showTip = useCallback((tipAdvice, tipType = 'advice') => {
     if (helperVisible) {
@@ -54,6 +61,9 @@ export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
     setHelperType(tipType);
     setHelperVisible(true);
   }, [helperVisible]);
+
+  const showTipRef = useRef(showTip);
+  useEffect(() => { showTipRef.current = showTip; }, [showTip]);
 
   // When tip is dismissed, show next in queue
   const handleClose = useCallback(() => {
@@ -81,36 +91,36 @@ export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
     // ── First task ever added ──────────────────────────────
     if (activeCount === 1 && prevTasksCountRef.current === 0 && !hasSeen(FLAGS.FIRST_TASK)) {
       markSeen(FLAGS.FIRST_TASK);
-      showTip('tips.firstTask', 'surprise');
+      showTipRef.current('tips.firstTask', 'surprise');
     }
 
     // ── First task ever completed ──────────────────────────
     if (completedCount > prevCompletedRef.current && !hasSeen(FLAGS.FIRST_COMPLETE)) {
       markSeen(FLAGS.FIRST_COMPLETE);
-      showTip('tips.firstComplete', 'surprise');
+      showTipRef.current('tips.firstComplete', 'surprise');
     }
 
     prevTasksCountRef.current = tasks.length;
     prevCompletedRef.current  = completedCount;
-  }, [tasks]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [tasks]);
 
   // ─── Morning greeting (once per day) ──────────────────────
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour >= 6 && hour < 12 && !hasSeenToday(FLAGS.MORNING_GREETED)) {
       markSeenToday(FLAGS.MORNING_GREETED);
-      const activeTasks = tasks.filter(t => !t.completed).length;
+      const activeTasks = tasksRef.current.filter(t => !t.completed).length;
       if (activeTasks > 0) {
-        setTimeout(() => showTip('tips.morningGreeting', 'surprise'), 3000);
+        setTimeout(() => showTipRef.current('tips.morningGreeting', 'surprise'), 3000);
       }
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   // ─── Overdue tasks detected on load ───────────────────────
   useEffect(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const overdue = tasks.filter(t => {
+    const overdue = tasksRef.current.filter(t => {
       if (t.completed || !t.deadline) return false;
       const dl = new Date(t.deadline);
       dl.setHours(0, 0, 0, 0);
@@ -121,22 +131,22 @@ export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
       const key = `misu_overdue_warned_${new Date().toDateString()}`;
       if (!localStorage.getItem(key)) {
         localStorage.setItem(key, 'true');
-        setTimeout(() => showTip('tips.overdueWarning', 'advice'), 5000);
+        setTimeout(() => showTipRef.current('tips.overdueWarning', 'advice'), 5000);
       }
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   // ─── Energy level changed ───────────────────────────────────
   useEffect(() => {
     // Heavy workload warning when switching to peak energy (4) with many tasks
     if (currentEnergy === 4 && prevEnergyRef.current !== 4) {
-      const heavyTasks = tasks.filter(t => !t.completed && (t.estimatedHours || 0) > 3);
+      const heavyTasks = tasksRef.current.filter(t => !t.completed && (t.estimatedHours || 0) > 3);
       if (heavyTasks.length >= 3) {
-        showTip('tips.heavyWorkload', 'advice');
+        showTipRef.current('tips.heavyWorkload', 'advice');
       }
     }
     prevEnergyRef.current = currentEnergy;
-  }, [currentEnergy]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentEnergy]);
 
   // ─── Idle trigger (20+ min inactive with pending tasks) ───
   useEffect(() => {
@@ -161,10 +171,10 @@ export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
       setHelperType('mindfulness');
       setAdvice('mindfulness.breathing');
       setHelperVisible(true);
-    } else if (helperType === 'mindfulness' && advice === 'mindfulness.breathing') {
+    } else if (helperTypeRef.current === 'mindfulness' && adviceRef.current === 'mindfulness.breathing') {
       setHelperVisible(false);
     }
-  }, [breathingActive]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [breathingActive]);
 
   // ─── Focus Shield first-time onboarding ───────────────────
   useEffect(() => {
@@ -180,9 +190,9 @@ export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
   useEffect(() => {
     if (musicVisible && !hasSeen(FLAGS.MUSIC_INTRO)) {
       markSeen(FLAGS.MUSIC_INTRO);
-      setTimeout(() => showTip('tips.musicIntro', 'info'), 800);
+      setTimeout(() => showTipRef.current('tips.musicIntro', 'info'), 800);
     }
-  }, [musicVisible]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [musicVisible]);
 
   return {
     advice,

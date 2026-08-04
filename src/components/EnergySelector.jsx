@@ -1,7 +1,7 @@
 import { useEnergy } from '../context/EnergyContext';
 import { ENERGY_LEVELS, getEnergyDef } from '../utils/energy';
 import { useLanguage } from '../context/LanguageContext';
-import { playTick } from '../utils/audio';
+import { useAppSounds } from '../hooks/useAppSounds';
 import { motion, AnimatePresence } from 'framer-motion';
 import GradientOrb from './GradientOrb';
 import './EnergySelector.css';
@@ -9,6 +9,7 @@ import './EnergySelector.css';
 export default function EnergySelector() {
   const { currentEnergy, setCurrentEnergy } = useEnergy();
   const { t } = useLanguage();
+  const { playHover, playClickOn } = useAppSounds();
 
   return (
     <div className="energy-selector" id="energy-selector">
@@ -26,9 +27,10 @@ export default function EnergySelector() {
           <button
             key={e.level}
             className="energy-selector__btn"
+            onMouseEnter={playHover}
             onClick={() => {
               setCurrentEnergy(e.level);
-              playTick();
+              playClickOn();
             }}
             aria-label={`${t('header.currentEnergy')} ${t(`energy.${e.level}.label`)}`}
             title={t(`energy.${e.level}.label`)}

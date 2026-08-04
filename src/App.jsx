@@ -20,7 +20,7 @@ import { useLanguage } from './context/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { playPop } from './utils/audio';
+import { useAppSounds } from './hooks/useAppSounds';
 
 // H5: All lazy() declarations come after static imports
 const WeeklyPlanner = lazy(() => import('./components/WeeklyPlanner'));
@@ -43,6 +43,7 @@ function App() {
   const [showMusic, setShowMusic] = useState(false);
   const [showDND, setShowDND] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
+  const { playDrop } = useAppSounds();
   const { currentEnergy, dndActive, breathingActive, setBreathingActive } = useEnergy();
   const { tasks, deleteTask, weeklyPlan, setWeeklyPlan } = useTasks();
   const { t } = useLanguage();
@@ -96,7 +97,7 @@ function App() {
         ...prev,
         [targetDay]: [...(prev[targetDay] || []), newBlock],
       }));
-      playPop();
+      playDrop();
       return;
     }
 

@@ -1,10 +1,11 @@
 import { useEnergy } from '../context/EnergyContext';
-import { playUISound } from '../services/AudioService';
+import { useAppSounds } from '../hooks/useAppSounds';
 import './GlassIcons.css';
 
 // C4: gradientMapping removed — was dead code, color prop already receives hex from energyDef
 const GlassIcons = ({ items, className, colorful = true }) => {
   const { currentEnergy } = useEnergy();
+  const { playHover, playClickOn, playClickOff } = useAppSounds();
   
   const getBackgroundStyle = color => {
     if (!colorful) return { background: 'var(--energy-surface)' };
@@ -19,8 +20,13 @@ const GlassIcons = ({ items, className, colorful = true }) => {
           className={`icon-btn ${item.customClass || ''}`} 
           aria-label={item.label} 
           type="button"
+          onMouseEnter={playHover}
           onClick={(e) => {
-            playUISound('click', currentEnergy);
+            if (item.color === 'gray') {
+              playClickOn();
+            } else {
+              playClickOff();
+            }
             item.onClick?.(e);
           }}
         >
