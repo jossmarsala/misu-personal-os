@@ -21,18 +21,19 @@ export const playPop = () => {
     const gainNode = ctx.createGain();
     
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(300, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.05);
+    const now = ctx.currentTime + 0.015;
+    osc.frequency.setValueAtTime(300, now);
+    osc.frequency.exponentialRampToValueAtTime(600, now + 0.05);
     
-    gainNode.gain.setValueAtTime(0, ctx.currentTime);
-    gainNode.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.01);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(0.15, now + 0.01);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
     
     osc.connect(gainNode);
     gainNode.connect(ctx.destination);
     
-    osc.start();
-    osc.stop(ctx.currentTime + 0.1);
+    osc.start(now);
+    osc.stop(now + 0.1);
   } catch (e) {
     // Ignore audio errors silently (e.g. autoplay policies)
   }
@@ -46,18 +47,19 @@ export const playTick = () => {
     const gainNode = ctx.createGain();
     
     osc.type = 'triangle';
-    osc.frequency.setValueAtTime(150, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.05);
+    const now = ctx.currentTime + 0.015;
+    osc.frequency.setValueAtTime(150, now);
+    osc.frequency.exponentialRampToValueAtTime(50, now + 0.05);
     
-    gainNode.gain.setValueAtTime(0, ctx.currentTime);
-    gainNode.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.01);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(0.05, now + 0.01);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
     
     osc.connect(gainNode);
     gainNode.connect(ctx.destination);
     
-    osc.start();
-    osc.stop(ctx.currentTime + 0.08);
+    osc.start(now);
+    osc.stop(now + 0.08);
   } catch (e) {
     // Ignore audio errors silently
   }

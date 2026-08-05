@@ -110,8 +110,8 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
         whileTap={{ scale: 0.9 }}
         className={`task-card__checkbox ${task.completed ? 'checked' : ''}`}
         onClick={() => {
-          toggleComplete(task.id);
           playUISound('complete', currentEnergy);
+          toggleComplete(task.id);
         }}
         aria-label={task.completed ? t('common.active') : t('common.completed')}
       >

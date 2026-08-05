@@ -33,7 +33,8 @@ export const playUISound = (type, energy = 3) => {
     // Map energy (1-5) to frequency multiplier (e.g. 0.7 to 1.5)
     // Map energy (1-5) to decay speed
     const energyMult = 0.5 + (energy * 0.2); 
-    const now = audioCtx.currentTime;
+    // Add a tiny offset so the audio engine has time to schedule the events accurately
+    const now = audioCtx.currentTime + 0.015;
 
     switch (type) {
       case 'click':

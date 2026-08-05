@@ -27,8 +27,8 @@ export default function EnergySelector() {
             key={e.level}
             className="energy-selector__btn"
             onClick={() => {
-              setCurrentEnergy(e.level);
               playTick();
+              setCurrentEnergy(e.level);
             }}
             aria-label={`${t('header.currentEnergy')} ${t(`energy.${e.level}.label`)}`}
             title={t(`energy.${e.level}.label`)}
