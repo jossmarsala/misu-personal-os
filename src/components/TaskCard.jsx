@@ -5,7 +5,7 @@ import { getEnergyDef } from '../utils/energy';
 import { formatDeadline, getDeadlineStatus } from '../utils/dateUtils';
 import { useLanguage } from '../context/LanguageContext';
 import { useEnergy } from '../context/EnergyContext';
-import { useAppSounds } from '../hooks/useAppSounds';
+import { playUISound } from '../services/AudioService';
 import GradientOrb from './GradientOrb';
 import { useDraggable } from '@dnd-kit/core';
 import './TaskCard.css';
@@ -21,7 +21,6 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
   const [expanded, setExpanded] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showUndo, setShowUndo] = useState(false);
-  const { playHover, playClickOn, playClickOff, playDrop } = useAppSounds();
 
   // Drag source — allows task to be dropped into the weekly planner
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
@@ -64,7 +63,6 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
       // X4: Brief undo window before true deletion
       const deleted = { ...task };
       deleteTask(task.id);
-      playDrop();
       setShowUndo(true);
       const timer = setTimeout(() => setShowUndo(false), 5000);
       // Expose undo via a custom event for a global toast system (best-effort)
@@ -95,7 +93,6 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
       data-task-energy={task.energyRequired}
       id={`task-${task.id}`}
       onClick={isDimmed && onFocus ? onFocus : undefined}
-      onMouseEnter={() => playHover()}
     >
       {/* Drag handle — only shown on non-completed tasks */}
       {!task.completed && (
@@ -113,12 +110,8 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
         whileTap={{ scale: 0.9 }}
         className={`task-card__checkbox ${task.completed ? 'checked' : ''}`}
         onClick={() => {
-          if (task.completed) {
-            playClickOff();
-          } else {
-            playClickOn();
-          }
           toggleComplete(task.id);
+          playUISound('complete', currentEnergy);
         }}
         aria-label={task.completed ? t('common.active') : t('common.completed')}
       >
