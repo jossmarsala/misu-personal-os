@@ -361,7 +361,7 @@ body::before {
 
 .bento-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md), 0 0 20px var(--energy-glow);
   border-color: var(--border-hover);
 }
 
@@ -851,5 +851,45 @@ textarea.input {
   .btn-icon {
     width: 30px;
     height: 30px;
+  }
+}
+
+/* ─── FOCUS VISIBLE ─── */
+/* Restore visible focus rings for keyboard users, themed to current energy */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2.5px solid var(--energy-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 0 4px var(--energy-glow);
+}
+
+/* Pill-shaped buttons get a matching pill outline */
+.btn:focus-visible,
+.icon-btn:focus-visible {
+  outline-offset: 3px;
+  border-radius: var(--radius-full);
+}
+
+/* ─── PREFERS REDUCED MOTION ─── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .bento-card:hover {
+    transform: none;
+  }
+
+  .btn:hover {
+    transform: none;
   }
 }

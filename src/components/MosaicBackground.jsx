@@ -147,6 +147,9 @@ const MosaicBackground = React.memo(function MosaicBackground({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    // Respect prefers-reduced-motion — freeze the canvas entirely
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
     const resize = () => {
       const parent = canvas.parentElement;
       if (parent) {
@@ -163,9 +166,21 @@ const MosaicBackground = React.memo(function MosaicBackground({
     lastFrameRef.current = performance.now();
     animRef.current = requestAnimationFrame(draw);
 
+    // Pause rAF when tab is hidden — biggest free GPU/CPU win
+    const handleVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animRef.current);
+      } else {
+        lastFrameRef.current = performance.now();
+        animRef.current = requestAnimationFrame(draw);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     return () => {
       cancelAnimationFrame(animRef.current);
       observer.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, [draw]);
 

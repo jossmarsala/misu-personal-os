@@ -42,11 +42,43 @@ export default function SettingsModal({ onClose, onReplayTour }) {
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifCatsOpen, setNotifCatsOpen] = useState(false);
   const fileInputRef = useRef(null);
+  const closeButtonRef = useRef(null);
+  const modalRef = useRef(null);
 
   useEffect(() => {
     const settings = loadSettings();
     if (settings.geminiApiKey) setApiKey(settings.geminiApiKey);
   }, []);
+
+  // Focus the close button on open for keyboard users
+  useEffect(() => {
+    closeButtonRef.current?.focus();
+  }, []);
+
+  // Trap focus within the modal
+  useEffect(() => {
+    const modal = modalRef.current;
+    if (!modal) return;
+
+    const focusable = modal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key !== 'Tab') return;
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last?.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first?.focus(); }
+      }
+    };
+
+    modal.addEventListener('keydown', handleKeyDown);
+    return () => modal.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const handleSaveApiKey = () => {
     const settings = loadSettings();
@@ -94,8 +126,13 @@ export default function SettingsModal({ onClose, onReplayTour }) {
 
   return (
     <div className="settings-overlay" onClick={handleOverlayClick} id="settings-modal">
-      <div className="settings-modal scale-in">
-
+      <div
+        className="settings-modal scale-in"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settings-modal-title"
+        ref={modalRef}
+      >
         {/* Header */}
         <div className="settings-modal__header">
           <div className="settings-modal__header-left">
@@ -103,11 +140,16 @@ export default function SettingsModal({ onClose, onReplayTour }) {
               <Key size={16} />
             </div>
             <div>
-              <h2 className="settings-modal__title">{t('common.settings')}</h2>
+              <h2 className="settings-modal__title" id="settings-modal-title">{t('common.settings')}</h2>
               <p className="settings-modal__subtitle">{t('settings.subtitle')}</p>
             </div>
           </div>
-          <button className="btn btn-ghost btn-icon" onClick={onClose} aria-label="Close settings">
+          <button
+            className="btn btn-ghost btn-icon"
+            onClick={onClose}
+            aria-label="Close settings"
+            ref={closeButtonRef}
+          >
             <X size={18} />
           </button>
         </div>
@@ -189,10 +231,6 @@ export default function SettingsModal({ onClose, onReplayTour }) {
                   {saveSuccess ? <Check size={16} /> : t('common.save')}
                 </button>
               </div>
-              {/* H4: Security notice — key is stored in plain localStorage */}
-              <p className="settings-api-security-note">
-                ⚠️ {t('settings.apiKeyStorageWarning')}
-              </p>
             </div>
           </section>
 

@@ -85,6 +85,8 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
     <motion.div
       ref={setNodeRef}
       layout
+      role="article"
+      aria-label={task.title}
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: isDragging ? 0.4 : 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
@@ -114,6 +116,7 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
           toggleComplete(task.id);
         }}
         aria-label={task.completed ? t('common.active') : t('common.completed')}
+        aria-pressed={task.completed}
       >
         <AnimatePresence mode="wait">
           {task.completed && (
@@ -138,6 +141,7 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
               onChange={e => setEditTitle(e.target.value)}
               onKeyDown={handleKeyDown}
               autoFocus
+              aria-label="Edit task title"
             />
             <button className="btn btn-ghost btn-sm" onClick={handleSaveEdit}>
               <Save size={14} />

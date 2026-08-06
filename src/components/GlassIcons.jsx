@@ -17,7 +17,8 @@ const GlassIcons = ({ items, className, colorful = true }) => {
         <button 
           key={index} 
           className={`icon-btn ${item.customClass || ''}`} 
-          aria-label={item.label} 
+          aria-label={item.label}
+          aria-pressed={item.pressed !== undefined ? item.pressed : undefined}
           type="button"
           onClick={(e) => {
             playUISound('click', currentEnergy);

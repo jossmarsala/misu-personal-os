@@ -181,24 +181,28 @@ function App() {
                   icon: <Timer size={20} />,
                   color: showPomodoro ? energyDef.colorA : 'gray',
                   label: t('widgets.focus'),
+                  pressed: showPomodoro,
                   onClick: () => setShowPomodoro(!showPomodoro)
                 },
                 {
                   icon: <Music size={20} />,
                   color: showMusic ? energyDef.colorA : 'gray',
                   label: t('widgets.audio'),
+                  pressed: showMusic,
                   onClick: () => setShowMusic(!showMusic)
                 },
                 {
                   icon: <Shield size={20} />,
                   color: showDND ? energyDef.colorA : 'gray',
                   label: t('settings.shield'),
+                  pressed: showDND,
                   onClick: () => setShowDND(!showDND)
                 },
                 {
                   icon: <Calendar size={20} />,
                   color: showCalendar ? energyDef.colorA : 'gray',
                   label: t('widgets.calendar'),
+                  pressed: showCalendar,
                   onClick: () => setShowCalendar(!showCalendar)
                 }
               ]}
