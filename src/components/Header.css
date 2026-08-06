@@ -73,7 +73,7 @@
     display: inline-flex !important;
     align-items: center;
     justify-content: center;
-    background: var(--bg-card, rgba(255, 255, 255, 0.22)) !important;
+    background: var(--bg-card, rgba(255, 255, 255, 0.90)) !important;
     border: 1px solid var(--border-primary, rgba(255, 255, 255, 0.2)) !important;
     border-radius: 50%;
     color: var(--energy-primary) !important;
