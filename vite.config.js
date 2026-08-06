@@ -20,7 +20,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'masked-icon.svg'],
+      includeAssets: ['misu-logo-color.svg', 'favicon.svg', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
         name: 'Misu — OS',
         short_name: 'Misu',
@@ -29,6 +29,12 @@ export default defineConfig({
         background_color: '#1c1c24',
         display: 'standalone',
         icons: [
+          {
+            src: 'misu-logo-color.svg',
+            sizes: '192x192 512x512',
+            type: 'image/svg+xml',
+            purpose: 'any maskable'
+          },
           {
             src: 'pwa-192x192.png',
             sizes: '192x192',

@@ -63,13 +63,29 @@
   }
 }
 
-/* Tools button: only visible on mobile */
+/* Tools button: strictly visible on mobile only with a solid background */
 .header__tools-btn {
-  display: none;
+  display: none !important;
 }
 
 @media (max-width: 768px) {
   .header__tools-btn {
-    display: flex;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-card, rgba(255, 255, 255, 0.22)) !important;
+    border: 1px solid var(--border-primary, rgba(255, 255, 255, 0.2)) !important;
+    border-radius: 50%;
+    color: var(--energy-primary) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: all 0.2s ease;
+  }
+
+  .header__tools-btn:active {
+    transform: scale(0.92);
+    background: var(--energy-surface, rgba(255, 255, 255, 0.3)) !important;
   }
 }
+

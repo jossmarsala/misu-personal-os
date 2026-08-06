@@ -107,10 +107,10 @@ export function sendNotification({ title, body, icon, tag, dedupKey, dedupWindow
   try {
     const notif = new Notification(title, {
       body,
-      icon: icon || '/pwa-192x192.png',
+      icon: icon || '/misu-logo-color.svg',
       tag: tag || dedupKey || `misu-${Date.now()}`,
       silent,
-      badge: '/masked-icon.svg',
+      badge: '/misu-logo-color.svg',
     });
     return notif;
   } catch (err) {
