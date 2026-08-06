@@ -289,7 +289,7 @@ export default function DNDWidget({ visible }) {
             <input 
               type="range" 
               className="dnd-volume-slider" 
-              min="0.001" max="0.01" step="0.001" 
+              min="0.001" max="0.03" step="0.001" 
               value={volume} 
               onChange={(e) => setVolume(parseFloat(e.target.value))} 
             />
