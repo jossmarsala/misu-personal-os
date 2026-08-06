@@ -78,13 +78,17 @@
   gap: 8px;
   padding: 20px 12px;
   border-radius: 20px;
-  background: var(--surface-raised, rgba(255, 255, 255, 0.04));
+  background: var(--card-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-primary);
+  box-shadow: var(--card-shadow);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition:
     background 0.25s ease,
     border-color 0.25s ease,
+    box-shadow 0.25s ease,
     transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
