@@ -49,6 +49,10 @@ const MosaicBackground = React.memo(function MosaicBackground({
   const cB = useMemo(() => hexToRgb01(colorB), [colorB]);
   const cC_custom = useMemo(() => colorC ? hexToRgb01(colorC) : null, [colorC]);
 
+  const currentCARef = useRef([...cA]);
+  const currentCBRef = useRef([...cB]);
+  const currentCCRef = useRef(cC_custom ? [...cC_custom] : [(cA[0]+cB[0])*0.15, (cA[1]+cB[1])*0.15, (cA[2]+cB[2])*0.15]);
+
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -62,6 +66,25 @@ const MosaicBackground = React.memo(function MosaicBackground({
     lastFrameRef.current = now;
     timeRef.current += dt * speed;
     const time = timeRef.current;
+
+    // Smoothly transition colors
+    const targetCC = cC_custom || [
+      (cA[0] + cB[0]) * 0.15,
+      (cA[1] + cB[1]) * 0.15,
+      (cA[2] + cB[2]) * 0.15
+    ];
+
+    // Lerp rate to reach ~99% of target in ~500ms
+    const lerpRate = 1 - Math.exp(-dt * 0.009);
+    for (let i = 0; i < 3; i++) {
+      currentCARef.current[i] += (cA[i] - currentCARef.current[i]) * lerpRate;
+      currentCBRef.current[i] += (cB[i] - currentCBRef.current[i]) * lerpRate;
+      currentCCRef.current[i] += (targetCC[i] - currentCCRef.current[i]) * lerpRate;
+    }
+
+    const curCA = currentCARef.current;
+    const curCB = currentCBRef.current;
+    const curCC = currentCCRef.current;
 
     // Fill black
     ctx.fillStyle = '#000';
@@ -119,20 +142,10 @@ const MosaicBackground = React.memo(function MosaicBackground({
         w2 /= sum;
         w3 /= sum;
 
-        // Our 3 target colors:
-        // 1. Pure Vivid Color A
-        // 2. Pure Vivid Color B
-        // 3. Custom Color C OR a deep darkened shade of the theme
-        const cC = cC_custom || [
-          (cA[0] + cB[0]) * 0.15,
-          (cA[1] + cB[1]) * 0.15,
-          (cA[2] + cB[2]) * 0.15
-        ];
-
         // Calculate final constrained RGB
-        const finalR = cA[0] * w1 + cB[0] * w2 + cC[0] * w3;
-        const finalG = cA[1] * w1 + cB[1] * w2 + cC[1] * w3;
-        const finalB = cA[2] * w1 + cB[2] * w2 + cC[2] * w3;
+        const finalR = curCA[0] * w1 + curCB[0] * w2 + curCC[0] * w3;
+        const finalG = curCA[1] * w1 + curCB[1] * w2 + curCC[1] * w3;
+        const finalB = curCA[2] * w1 + curCB[2] * w2 + curCC[2] * w3;
 
         ctx.fillStyle = `rgb(${finalR * 255 | 0},${finalG * 255 | 0},${finalB * 255 | 0})`;
         // Tiles flush — no gaps

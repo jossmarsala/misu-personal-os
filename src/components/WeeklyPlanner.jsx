@@ -196,23 +196,48 @@ export default function WeeklyPlanner() {
 
       {!loading && plan && (
         <div className="planner__week animate-fade-in">
-          {weekDays.map((date, i) => {
-            const dayKey = dayKeys[i];
-            const dayTasks = plan[dayKey] || [];
-            const isToday = toInputDate(date) === today;
+          {(() => {
+            const taskOccurrences = {};
+            dayKeys.forEach(dayKey => {
+              const dayTasks = plan[dayKey] || [];
+              dayTasks.forEach(t => {
+                taskOccurrences[t.taskId] = (taskOccurrences[t.taskId] || 0) + 1;
+              });
+            });
 
-            return (
-              <DroppableColumn
-                key={dayKey}
-                id={dayKey}
-                dayTasks={dayTasks}
-                t={t}
-                dayName={formatDayShort(date)}
-                dayDate={date.getDate()}
-                isToday={isToday}
-              />
-            );
-          })}
+            const taskCurrentPart = {};
+
+            return weekDays.map((date, i) => {
+              const dayKey = dayKeys[i];
+              const rawDayTasks = plan[dayKey] || [];
+              const isToday = toInputDate(date) === today;
+
+              const dayTasks = rawDayTasks.map(t => {
+                const total = taskOccurrences[t.taskId];
+                if (total > 1) {
+                  taskCurrentPart[t.taskId] = (taskCurrentPart[t.taskId] || 0) + 1;
+                  return {
+                    ...t,
+                    isChunk: true,
+                    chunkLabel: `Part ${taskCurrentPart[t.taskId]} / ${total}`
+                  };
+                }
+                return { ...t, isChunk: false, chunkLabel: '' };
+              });
+
+              return (
+                <DroppableColumn
+                  key={dayKey}
+                  id={dayKey}
+                  dayTasks={dayTasks}
+                  t={t}
+                  dayName={formatDayShort(date)}
+                  dayDate={date.getDate()}
+                  isToday={isToday}
+                />
+              );
+            });
+          })()}
         </div>
       )}
     </div>

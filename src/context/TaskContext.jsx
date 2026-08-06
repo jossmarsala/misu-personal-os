@@ -164,6 +164,21 @@ export function TaskProvider({ children }) {
 
   const deleteTask = useCallback((id) => {
     setTasks(prev => prev.filter(t => t.id !== id));
+    setWeeklyPlan(prev => {
+      if (!prev) return prev;
+      let hasChanges = false;
+      const newPlan = { ...prev };
+      for (const day in newPlan) {
+        if (Array.isArray(newPlan[day])) {
+          const filtered = newPlan[day].filter(t => t.taskId !== id);
+          if (filtered.length !== newPlan[day].length) {
+            hasChanges = true;
+            newPlan[day] = filtered;
+          }
+        }
+      }
+      return hasChanges ? newPlan : prev;
+    });
   }, []);
 
   const toggleComplete = useCallback((id) => {

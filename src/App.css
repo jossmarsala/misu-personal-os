@@ -393,8 +393,13 @@
   transition: all 0.25s ease;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  user-select: none;
-  -webkit-user-select: none;
+}
+
+@media (max-width: 768px) {
+  .widget-toggle-btn {
+    user-select: none;
+    -webkit-user-select: none;
+  }
 }
 
 .widget-toggle-btn:hover {
