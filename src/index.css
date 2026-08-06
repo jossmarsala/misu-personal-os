@@ -10,6 +10,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
@@ -25,6 +26,7 @@ body {
   transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1),
     color 0.5s ease;
   overflow-x: hidden;
+  overscroll-behavior-y: none;
   min-height: 100vh;
   position: relative;
   background: var(--bg-blob-3);
@@ -33,6 +35,16 @@ body {
     radial-gradient(at 100% 0%, var(--bg-blob-1) 0%, transparent 60%),
     radial-gradient(at 0% 100%, var(--bg-blob-2) 0%, transparent 60%),
     radial-gradient(at 50% 50%, var(--bg-blob-3) 0%, transparent 100%);
+}
+
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll; /* Performance: prevents repaints on scroll */
+  }
+  :root[data-theme="light"],
+  :root[data-theme="dark"] {
+    --glass-blur: blur(20px); /* Performance: cheaper blur on low-end phones */
+  }
 }
 
 /* ─── PIXELATED GRADIENT OVERLAY ─── */
@@ -339,6 +351,8 @@ body::before {
   position: relative;
   overflow: hidden;
   border: var(--glass-border);
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .bento-card::before {
@@ -424,6 +438,8 @@ body::before {
   transition: all var(--transition-base), transform var(--transition-spring);
   text-decoration: none;
   white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
 
   /* Glass setup */
   background: var(--btn-glass-bg);
@@ -577,7 +593,7 @@ body::before {
   border-radius: var(--radius-md);
   color: var(--text-primary);
   font-family: 'Outfit', sans-serif;
-  font-size: 0.9rem;
+  font-size: 16px; /* Prevents iOS auto-zoom */
   transition: all var(--transition-base);
   outline: none;
 }

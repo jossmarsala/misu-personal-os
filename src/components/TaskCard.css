@@ -287,6 +287,14 @@
     transform 0.4s ease;
 }
 
+@media (max-width: 768px) {
+  .task-card--dimmed {
+    filter: none;
+    opacity: 0.5; /* Slightly higher opacity on mobile since there is no blur */
+    transform: scale(1);
+  }
+}
+
 .task-card--dimmed:hover {
   opacity: 0.55;
   filter: blur(0px) grayscale(0);

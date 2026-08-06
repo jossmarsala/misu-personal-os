@@ -393,6 +393,8 @@
   transition: all 0.25s ease;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .widget-toggle-btn:hover {
@@ -436,8 +438,8 @@
   }
 
   .widget-toggle-btn {
-    width: 36px;
-    height: 36px;
+    width: 44px; /* Increased for mobile touch target */
+    height: 44px;
     flex-shrink: 0;
   }
 
@@ -522,6 +524,17 @@
   opacity: 0.4;
   filter: grayscale(0.5) blur(2px);
   pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .app--dnd-active::before {
+    display: none !important;
+  }
+  .app--dnd-active .bento-card:not(.hero-card):not(.bento-grid__tasks):not(.bento-grid__planner) {
+    opacity: 1;
+    filter: none;
+    pointer-events: auto;
+  }
 }
 
 /* 6. Hero card glows softly */
