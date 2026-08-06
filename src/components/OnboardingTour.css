@@ -185,7 +185,6 @@
   border-radius: var(--radius-full, 9999px);
   padding: 9px 18px;
   transition: all 0.2s ease;
-  user-select: none;
   white-space: nowrap;
 }
 
@@ -281,5 +280,12 @@
 
   .joyride-tooltip__nav {
     padding: 14px 16px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .joyride-tooltip__btn {
+    user-select: none;
+    -webkit-user-select: none;
   }
 }

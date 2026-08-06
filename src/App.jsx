@@ -317,7 +317,7 @@ function App() {
                             currentEnergy === 4 ? '#8A2BE2' :
                             undefined
                           }
-                          tileSize={40}
+                          tileSize={20}
                           speed={dndActive ? 0.04 : 0.18}
                         />
                       </div>
@@ -413,7 +413,7 @@ function App() {
                       <MosaicBackground
                         colorA={energyDef.vividColorB}
                         colorB={energyDef.vividColorA}
-                        tileSize={40}
+                        tileSize={20}
                         speed={dndActive ? 0.04 : 0.18}
                       />
                     </div>

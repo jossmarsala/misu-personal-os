@@ -351,8 +351,6 @@ body::before {
   position: relative;
   overflow: hidden;
   border: var(--glass-border);
-  user-select: none;
-  -webkit-user-select: none;
 }
 
 .bento-card::before {
@@ -438,8 +436,6 @@ body::before {
   transition: all var(--transition-base), transform var(--transition-spring);
   text-decoration: none;
   white-space: nowrap;
-  user-select: none;
-  -webkit-user-select: none;
 
   /* Glass setup */
   background: var(--btn-glass-bg);
@@ -907,5 +903,12 @@ textarea.input {
 
   .btn:hover {
     transform: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .bento-card, .btn {
+    user-select: none;
+    -webkit-user-select: none;
   }
 }
