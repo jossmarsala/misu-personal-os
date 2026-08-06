@@ -1,0 +1,91 @@
+/* ═══════════════════════════════════════
+   MOBILE BOTTOM NAVIGATION
+   ═══════════════════════════════════════ */
+
+/* Only visible on mobile */
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    align-items: center;
+    justify-content: space-around;
+    padding: 8px 12px;
+    /* safe area for notched phones */
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+
+    background: var(--card-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-top: var(--glass-border);
+    box-shadow:
+      0 -8px 32px rgba(0, 0, 0, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .mobile-bottom-nav__tab {
+    all: unset;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    position: relative;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 16px;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.2s ease;
+    color: var(--text-tertiary);
+  }
+
+  .mobile-bottom-nav__tab--active {
+    color: var(--energy-primary);
+  }
+
+  /* Animated background pill */
+  .mobile-bottom-nav__pill {
+    position: absolute;
+    inset: 0;
+    background: var(--energy-surface, rgba(var(--energy-primary-rgb, 120, 80, 255), 0.12));
+    border-radius: 16px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .mobile-bottom-nav__icon {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .mobile-bottom-nav__tab--active .mobile-bottom-nav__icon {
+    transform: translateY(-1px);
+  }
+
+  .mobile-bottom-nav__label {
+    position: relative;
+    z-index: 1;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: capitalize;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .mobile-bottom-nav__tab:not(.mobile-bottom-nav__tab--active) .mobile-bottom-nav__label {
+    opacity: 0.55;
+  }
+}

@@ -77,6 +77,49 @@
   }
 }
 
+/* ═══════════════════════════════════════
+   MOBILE TAB LAYOUT
+   ═══════════════════════════════════════ */
+
+/* Mobile main: scrollable column, padded for nav bar */
+.app__main--mobile {
+  padding-top: 0;
+  padding-bottom: 0;
+  /* min-height so AnimatePresence has space */
+  min-height: calc(100dvh - 64px);
+}
+
+/* Each tab screen: scrollable, padded for bottom nav bar */
+.mobile-tab-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 0 var(--space-3);
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 16px));
+  min-height: 100%;
+}
+
+/* Hero card on mobile: tighter, stacked */
+.mobile-hero-card {
+  min-height: 160px !important;
+  border-radius: var(--radius-lg);
+}
+
+/* Recommendation and generic section cards on mobile */
+.mobile-section-card {
+  border-radius: var(--radius-lg);
+}
+
+/* Full-height card for tasks/planner tabs */
+.mobile-full-card {
+  flex: 1;
+}
+
+/* Stats row on mobile: side by side */
+.mobile-stats {
+  grid-template-columns: 1fr 1fr;
+}
+
 /* ─── HERO CARD ─── */
 .hero-card {
   display: flex;

@@ -62,3 +62,14 @@
     display: none !important;
   }
 }
+
+/* Tools button: only visible on mobile */
+.header__tools-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .header__tools-btn {
+    display: flex;
+  }
+}

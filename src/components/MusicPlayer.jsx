@@ -211,48 +211,46 @@ export default function MusicPlayer({ visible }) {
     </div>
   ) : null;
 
-  if (!visible) return youtubePlayer;
-
   return (
-    <DraggableWidget
-      id="music"
-      title={t('music.title')}
-      icon={<Music size={14} />}
-      defaultPosition={defaultWidgetPosition}
-      customWidth={450}
-    >
-      <div className="music-player-layout">
+    <>
+      {youtubePlayer}
+      {visible && (
+        <DraggableWidget
+          id="music"
+          title={t('music.title')}
+          icon={<Music size={14} />}
+          defaultPosition={defaultWidgetPosition}
+          customWidth={450}
+        >
+          <div className="music-player-layout">
 
-        {/* ── Existing player (untouched) ── */}
-        <div className="music-player">
+            {/* ── Existing player (untouched) ── */}
+            <div className="music-player">
 
-          {/* Header: mode name + track name + orb */}
-          <div className="music-player__header">
-            <div className="music-player__now-playing">
-              <span className="music-player__mode-name">{energyDef.name}</span>
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={trackName}
-                  className="music-player__track-name"
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 8 }}
-                  transition={{ duration: 0.2 }}
-                  title={trackName}
-                >
-                  {isLoading ? '⏳ Loading…' : trackName}
-                </motion.span>
-              </AnimatePresence>
-            </div>
-          </div>
+              {/* Header: mode name + track name + orb */}
+              <div className="music-player__header">
+                <div className="music-player__now-playing">
+                  <span className="music-player__mode-name">{energyDef.name}</span>
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={trackName}
+                      className="music-player__track-name"
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 8 }}
+                      transition={{ duration: 0.2 }}
+                      title={trackName}
+                    >
+                      {isLoading ? '⏳ Loading…' : trackName}
+                    </motion.span>
+                  </AnimatePresence>
+                </div>
+              </div>
 
-          {/* Hidden YouTube player — key forces remount on track change so onReady fires */}
-          {youtubePlayer}
-
-          {/* Sound wave visualizer */}
-          <div className="music-player__aurora-wrap">
-            <PixelWave isPlaying={isPlaying} />
-          </div>
+              {/* Sound wave visualizer */}
+              <div className="music-player__aurora-wrap">
+                <PixelWave isPlaying={isPlaying} />
+              </div>
 
           {/* Controls row */}
           <div className="music-player__controls">
@@ -332,5 +330,7 @@ export default function MusicPlayer({ visible }) {
 
       </div>
     </DraggableWidget>
+    )}
+    </>
   );
 }

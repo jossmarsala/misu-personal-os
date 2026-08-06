@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Settings, Download } from 'lucide-react';
+import { Settings, Download, Wrench } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
 import Clock from './Clock';
 import BlurText from './BlurText';
 import './Header.css';
 
-export default function Header({ onOpenSettings }) {
+export default function Header({ onOpenSettings, onOpenTools }) {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 
   useEffect(() => {
@@ -59,6 +59,15 @@ export default function Header({ onOpenSettings }) {
             )}
             <LanguageSwitcher />
             <ThemeToggle />
+            {/* Tools button — mobile only, controlled via CSS */}
+            <button
+              className="btn btn-ghost btn-icon header__tools-btn"
+              onClick={onOpenTools}
+              aria-label="Open tools"
+              id="tools-btn"
+            >
+              <Wrench size={18} />
+            </button>
             <button
               className="btn btn-ghost btn-icon"
               onClick={onOpenSettings}

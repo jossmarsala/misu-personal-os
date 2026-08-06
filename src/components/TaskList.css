@@ -42,6 +42,10 @@
   flex-shrink: 0;
 }
 
+.task-list__items > :last-child {
+  margin-bottom: 24px;
+}
+
 /* Thin styled scrollbar */
 .task-list__items::-webkit-scrollbar {
   width: 4px;

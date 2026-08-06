@@ -14,6 +14,8 @@ import MosaicBackground from './components/MosaicBackground';
 import CommandPalette from './components/CommandPalette';
 import GlassIcons from './components/GlassIcons';
 import MisuHelper from './components/MisuHelper';
+import MobileBottomNav from './components/MobileBottomNav';
+import ToolsSheet from './components/ToolsSheet';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Clock, CheckCircle2, Timer, Music, Shield, Calendar, Command } from 'lucide-react';
 import { useLanguage } from './context/LanguageContext';
@@ -37,12 +39,27 @@ import './App.css';
 const POINTER_SENSOR_OPTIONS = { activationConstraint: { distance: 8 } };
 const KEYBOARD_SENSOR_OPTIONS = { coordinateGetter: sortableKeyboardCoordinates };
 
+// Detect mobile viewport (≤768px). Updates on resize.
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 768px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  return isMobile;
+}
+
 function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [showPomodoro, setShowPomodoro] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
   const [showDND, setShowDND] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [toolsSheetOpen, setToolsSheetOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('home'); // 'home' | 'tasks' | 'planner'
+  const isMobile = useIsMobile();
   const { currentEnergy, dndActive, breathingActive, setBreathingActive } = useEnergy();
   const { tasks, deleteTask, weeklyPlan, setWeeklyPlan } = useTasks();
   const { t } = useLanguage();
@@ -147,179 +164,322 @@ function App() {
       onDragEnd={handleDragEnd}
     >
     <div className={`app ${dndActive ? 'app--dnd-active' : ''}`}>
-      <Header onOpenSettings={() => setSettingsOpen(true)} />
+      <Header
+        onOpenSettings={() => setSettingsOpen(true)}
+        onOpenTools={() => setToolsSheetOpen(true)}
+      />
       <CommandPalette />
 
-      {/* Widget toggle buttons — X2: Add Cmd+K hint */}
-      <div className="widget-toggles">
-        <GlassIcons
-          items={[
-            {
-              icon: <Timer size={20} />,
-              color: showPomodoro ? energyDef.colorA : 'gray',
-              label: t('widgets.focus'),
-              onClick: () => setShowPomodoro(!showPomodoro)
-            },
-            {
-              icon: <Music size={20} />,
-              color: showMusic ? energyDef.colorA : 'gray',
-              label: t('widgets.audio'),
-              onClick: () => setShowMusic(!showMusic)
-            },
-            {
-              icon: <Shield size={20} />,
-              color: showDND ? energyDef.colorA : 'gray',
-              label: t('settings.shield'),
-              onClick: () => setShowDND(!showDND)
-            },
-            {
-              icon: <Calendar size={20} />,
-              color: showCalendar ? energyDef.colorA : 'gray',
-              label: t('widgets.calendar'),
-              onClick: () => setShowCalendar(!showCalendar)
-            }
-          ]}
-          colorful={true}
-          className="widget-glass-container"
-        />
-        {/* X2: Keyboard shortcut hint — hidden on mobile/tablet via CSS */}
-        <span className="widget-kbd-hint" style={{ fontSize: '10px', color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: '4px', marginLeft: '8px' }}>
-          <Command size={10} /><kbd style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '9px' }}>K</kbd>
-        </span>
-      </div>
-
-      <main className="app__main">
-        <div className="container" style={{ paddingBottom: '120px' }}>
-          <motion.div
-            className="bento-grid"
-            initial="hidden"
-            animate="show"
-            variants={{
-              show: {
-                transition: {
-                  staggerChildren: 0.1
+      {/* ── DESKTOP: full bento grid ── */}
+      {!isMobile && (
+        <>
+          {/* Widget toggle buttons — X2: Add Cmd+K hint */}
+          <div className="widget-toggles">
+            <GlassIcons
+              items={[
+                {
+                  icon: <Timer size={20} />,
+                  color: showPomodoro ? energyDef.colorA : 'gray',
+                  label: t('widgets.focus'),
+                  onClick: () => setShowPomodoro(!showPomodoro)
+                },
+                {
+                  icon: <Music size={20} />,
+                  color: showMusic ? energyDef.colorA : 'gray',
+                  label: t('widgets.audio'),
+                  onClick: () => setShowMusic(!showMusic)
+                },
+                {
+                  icon: <Shield size={20} />,
+                  color: showDND ? energyDef.colorA : 'gray',
+                  label: t('settings.shield'),
+                  onClick: () => setShowDND(!showDND)
+                },
+                {
+                  icon: <Calendar size={20} />,
+                  color: showCalendar ? energyDef.colorA : 'gray',
+                  label: t('widgets.calendar'),
+                  onClick: () => setShowCalendar(!showCalendar)
                 }
-              }
-            }}
-          >
-            <div style={{ gridColumn: 'span 2' }}>
-              {/* Hero card */}
+              ]}
+              colorful={true}
+              className="widget-glass-container"
+            />
+            {/* X2: Keyboard shortcut hint — hidden on mobile/tablet via CSS */}
+            <span className="widget-kbd-hint" style={{ fontSize: '10px', color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: '4px', marginLeft: '8px' }}>
+              <Command size={10} /><kbd style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '9px' }}>K</kbd>
+            </span>
+          </div>
+
+          <main className="app__main">
+            <div className="container" style={{ paddingBottom: '120px' }}>
               <motion.div
-                className="bento-grid__hero bento-card bento-card--accent hero-card"
+                className="bento-grid"
+                initial="hidden"
+                animate="show"
                 variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  show: { opacity: 1, y: 0 }
+                  show: {
+                    transition: {
+                      staggerChildren: 0.1
+                    }
+                  }
                 }}
               >
-                <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
-                  <MosaicBackground
-                    colorA={energyDef.vividColorA}
-                    colorB={energyDef.vividColorB}
-                    colorC={
-                      currentEnergy === 1 ? '#5BC9F5' : // Touch of Light Blue for energy 1
-                      currentEnergy === 2 ? '#DC143C' : // Touch of Crimson Red for energy 2
-                      currentEnergy === 4 ? '#8A2BE2' : // Touch of BlueViolet for energy 4
-                      undefined
-                    }
-                    tileSize={20}
-                    speed={dndActive ? 0.04 : 0.35}
-                  />
-                </div>
-                <div className="hero-card__content">
-                  <motion.h2
-                    className="hero-card__title"
-                    layoutId="hero-title"
+                <div style={{ gridColumn: 'span 2' }}>
+                  {/* Hero card */}
+                  <motion.div
+                    className="bento-grid__hero bento-card bento-card--accent hero-card"
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      show: { opacity: 1, y: 0 }
+                    }}
                   >
-                    {t('hero.title')}{' '}
-                    <span style={{ fontStyle: 'italic' }}>{t(`energy.${currentEnergy}.label`)}</span>{' '}
-                    {t('hero.energySuffix')}
-                  </motion.h2>
-                  <p className="hero-card__subtitle">
-                    {t(`energy.${currentEnergy}.desc`)}
-                  </p>
+                    <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+                      <MosaicBackground
+                        colorA={energyDef.vividColorA}
+                        colorB={energyDef.vividColorB}
+                        colorC={
+                          currentEnergy === 1 ? '#5BC9F5' : // Touch of Light Blue for energy 1
+                          currentEnergy === 2 ? '#DC143C' : // Touch of Crimson Red for energy 2
+                          currentEnergy === 4 ? '#8A2BE2' : // Touch of BlueViolet for energy 4
+                          undefined
+                        }
+                        tileSize={20}
+                        speed={dndActive ? 0.04 : 0.35}
+                      />
+                    </div>
+                    <div className="hero-card__content">
+                      <motion.h2
+                        className="hero-card__title"
+                        layoutId="hero-title"
+                      >
+                        {t('hero.title')}{' '}
+                        <span style={{ fontStyle: 'italic' }}>{t(`energy.${currentEnergy}.label`)}</span>{' '}
+                        {t('hero.energySuffix')}
+                      </motion.h2>
+                      <p className="hero-card__subtitle">
+                        {t(`energy.${currentEnergy}.desc`)}
+                      </p>
+                    </div>
+                    <div className="hero-card__energy">
+                      <EnergySelector />
+                    </div>
+                  </motion.div>
                 </div>
-                <div className="hero-card__energy">
-                  <EnergySelector />
-                </div>
+
+                {/* Tasks */}
+                <motion.div
+                  className="bento-grid__tasks bento-card"
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    show: { opacity: 1, y: 0 }
+                  }}
+                >
+                  <h2 className="section-title" style={{ marginBottom: 'var(--space-4)' }}>
+                    <CheckCircle2 size={18} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--energy-primary)' }} />
+                    {t('tasks.title')}
+                  </h2>
+                  <TaskList />
+                </motion.div>
+
+                {/* Recommendations sidebar + mini stats */}
+                <motion.div
+                  className="bento-grid__reco"
+                  variants={{
+                    hidden: { opacity: 0, x: 20 },
+                    show: { opacity: 1, x: 0 }
+                  }}
+                >
+                  <div className="bento-card reco-card">
+                    <Recommendations />
+                  </div>
+                  <div className="stats-mini">
+                    <div className="stat-chip bento-card">
+                      <span className="stat-chip__label">
+                        <Clock size={10} style={{ verticalAlign: 'middle', marginRight: 3 }} />
+                        {t('stats.hoursToGo')}
+                      </span>
+                      <span className="stat-chip__value">{stats.totalHours}</span>
+                      <span className="stat-chip__hint">{stats.active} {t('stats.activeTasks')}</span>
+                    </div>
+                    <div className="stat-chip bento-card bento-card--gradient" style={{ position: 'relative', overflow: 'hidden' }}>
+                      <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', opacity: 0.55 }}>
+                        <MosaicBackground
+                          colorA={energyDef.vividColorB}
+                          colorB={energyDef.vividColorA}
+                          colorC={
+                            currentEnergy === 1 ? '#5BC9F5' :
+                            currentEnergy === 2 ? '#DC143C' :
+                            currentEnergy === 4 ? '#8A2BE2' :
+                            undefined
+                          }
+                          tileSize={40}
+                          speed={dndActive ? 0.04 : 0.18}
+                        />
+                      </div>
+                      <span className="stat-chip__label" style={{ position: 'relative', zIndex: 1, color: '#000', textShadow: '0 1px 2px rgba(255, 255, 255, 0.3)' }}>
+                        <CheckCircle2 size={10} style={{ verticalAlign: 'middle', marginRight: 3 }} />
+                        {t('common.completed')}
+                      </span>
+                      <span className="stat-chip__value" style={{ position: 'relative', zIndex: 1, color: '#000', textShadow: '0 2px 6px rgba(255, 255, 255, 0.4)' }}>{stats.completed}</span>
+                      <span className="stat-chip__hint" style={{ position: 'relative', zIndex: 1, color: '#000', textShadow: '0 1px 2px rgba(255, 255, 255, 0.3)' }}>{t('stats.tasksFinished')}</span>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Weekly Planner — C3: Lazy-loaded */}
+                <motion.div
+                  className="bento-grid__planner bento-card"
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    show: { opacity: 1, y: 0 }
+                  }}
+                >
+                  <Suspense fallback={<div className="shimmer" style={{ height: '300px', borderRadius: 'var(--radius-lg)' }} />}>
+                    <WeeklyPlanner />
+                  </Suspense>
+                </motion.div>
               </motion.div>
-
             </div>
+          </main>
+        </>
+      )}
 
-            {/* Tasks */}
-            <motion.div
-              className="bento-grid__tasks bento-card"
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                show: { opacity: 1, y: 0 }
-              }}
-            >
-              <h2 className="section-title" style={{ marginBottom: 'var(--space-4)' }}>
-                <CheckCircle2 size={18} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--energy-primary)' }} />
-                {t('tasks.title')}
-              </h2>
-              <TaskList />
-            </motion.div>
+      {/* ── MOBILE: tabbed screens ── */}
+      {isMobile && (
+        <main className="app__main app__main--mobile">
+          <AnimatePresence mode="wait">
 
-            {/* Recommendations sidebar + mini stats */}
-            <motion.div
-              className="bento-grid__reco"
-              variants={{
-                hidden: { opacity: 0, x: 20 },
-                show: { opacity: 1, x: 0 }
-              }}
-            >
-              <div className="bento-card reco-card">
-                <Recommendations />
-              </div>
-              <div className="stats-mini">
-                <div className="stat-chip bento-card">
-                  <span className="stat-chip__label">
-                    <Clock size={10} style={{ verticalAlign: 'middle', marginRight: 3 }} />
-                    {t('stats.hoursToGo')}
-                  </span>
-                  <span className="stat-chip__value">{stats.totalHours}</span>
-                  <span className="stat-chip__hint">{stats.active} {t('stats.activeTasks')}</span>
-                </div>
-                <div className="stat-chip bento-card bento-card--gradient" style={{ position: 'relative', overflow: 'hidden' }}>
-                  <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', opacity: 0.55 }}>
+            {/* HOME TAB */}
+            {activeTab === 'home' && (
+              <motion.div
+                key="home"
+                className="mobile-tab-screen"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+              >
+                {/* Hero card */}
+                <div className="bento-card bento-card--accent hero-card mobile-hero-card">
+                  <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
                     <MosaicBackground
-                      colorA={energyDef.vividColorB}
-                      colorB={energyDef.vividColorA}
+                      colorA={energyDef.vividColorA}
+                      colorB={energyDef.vividColorB}
                       colorC={
                         currentEnergy === 1 ? '#5BC9F5' :
                         currentEnergy === 2 ? '#DC143C' :
                         currentEnergy === 4 ? '#8A2BE2' :
                         undefined
                       }
-                      tileSize={40}
-                      speed={dndActive ? 0.04 : 0.18}
+                      tileSize={18}
+                      speed={dndActive ? 0.04 : 0.35}
                     />
                   </div>
-                  <span className="stat-chip__label" style={{ position: 'relative', zIndex: 1, color: '#000', textShadow: '0 1px 2px rgba(255, 255, 255, 0.3)' }}>
-                    <CheckCircle2 size={10} style={{ verticalAlign: 'middle', marginRight: 3 }} />
-                    {t('common.completed')}
-                  </span>
-                  <span className="stat-chip__value" style={{ position: 'relative', zIndex: 1, color: '#000', textShadow: '0 2px 6px rgba(255, 255, 255, 0.4)' }}>{stats.completed}</span>
-                  <span className="stat-chip__hint" style={{ position: 'relative', zIndex: 1, color: '#000', textShadow: '0 1px 2px rgba(255, 255, 255, 0.3)' }}>{t('stats.tasksFinished')}</span>
+                  <div className="hero-card__content" style={{ position: 'relative', zIndex: 1 }}>
+                    <h2 className="hero-card__title">
+                      {t('hero.title')}{' '}
+                      <span style={{ fontStyle: 'italic' }}>{t(`energy.${currentEnergy}.label`)}</span>{' '}
+                      {t('hero.energySuffix')}
+                    </h2>
+                    <p className="hero-card__subtitle">{t(`energy.${currentEnergy}.desc`)}</p>
+                  </div>
+                  <div className="hero-card__energy" style={{ position: 'relative', zIndex: 1 }}>
+                    <EnergySelector />
+                  </div>
                 </div>
-              </div>
-            </motion.div>
 
-            {/* Weekly Planner — C3: Lazy-loaded */}
-            <motion.div
-              className="bento-grid__planner bento-card"
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                show: { opacity: 1, y: 0 }
-              }}
-            >
-              <Suspense fallback={<div className="shimmer" style={{ height: '300px', borderRadius: 'var(--radius-lg)' }} />}>
-                <WeeklyPlanner />
-              </Suspense>
-            </motion.div>
-          </motion.div>
-        </div>
-      </main>
+                {/* Recommendations */}
+                <div className="bento-card mobile-section-card">
+                  <Recommendations />
+                </div>
+
+                {/* Mini stats row */}
+                <div className="stats-mini mobile-stats">
+                  <div className="stat-chip bento-card">
+                    <span className="stat-chip__label">
+                      <Clock size={10} style={{ verticalAlign: 'middle', marginRight: 3 }} />
+                      {t('stats.hoursToGo')}
+                    </span>
+                    <span className="stat-chip__value">{stats.totalHours}</span>
+                    <span className="stat-chip__hint">{stats.active} {t('stats.activeTasks')}</span>
+                  </div>
+                  <div className="stat-chip bento-card bento-card--gradient" style={{ position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', opacity: 0.55 }}>
+                      <MosaicBackground
+                        colorA={energyDef.vividColorB}
+                        colorB={energyDef.vividColorA}
+                        tileSize={40}
+                        speed={dndActive ? 0.04 : 0.18}
+                      />
+                    </div>
+                    <span className="stat-chip__label" style={{ position: 'relative', zIndex: 1, color: '#000', textShadow: '0 1px 2px rgba(255,255,255,0.3)' }}>
+                      <CheckCircle2 size={10} style={{ verticalAlign: 'middle', marginRight: 3 }} />
+                      {t('common.completed')}
+                    </span>
+                    <span className="stat-chip__value" style={{ position: 'relative', zIndex: 1, color: '#000', textShadow: '0 2px 6px rgba(255,255,255,0.4)' }}>{stats.completed}</span>
+                    <span className="stat-chip__hint" style={{ position: 'relative', zIndex: 1, color: '#000', textShadow: '0 1px 2px rgba(255,255,255,0.3)' }}>{t('stats.tasksFinished')}</span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* TASKS TAB */}
+            {activeTab === 'tasks' && (
+              <motion.div
+                key="tasks"
+                className="mobile-tab-screen"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+              >
+                <div className="bento-card mobile-section-card mobile-full-card">
+                  <h2 className="section-title" style={{ marginBottom: 'var(--space-4)' }}>
+                    <CheckCircle2 size={18} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--energy-primary)' }} />
+                    {t('tasks.title')}
+                  </h2>
+                  <TaskList />
+                </div>
+              </motion.div>
+            )}
+
+            {/* PLANNER TAB */}
+            {activeTab === 'planner' && (
+              <motion.div
+                key="planner"
+                className="mobile-tab-screen"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+              >
+                <div className="bento-card mobile-section-card mobile-full-card">
+                  <Suspense fallback={<div className="shimmer" style={{ height: '300px', borderRadius: 'var(--radius-lg)' }} />}>
+                    <WeeklyPlanner />
+                  </Suspense>
+                </div>
+              </motion.div>
+            )}
+
+          </AnimatePresence>
+        </main>
+      )}
+
+      {/* Mobile bottom navigation */}
+      {isMobile && (
+        <MobileBottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      )}
+
+      {/* Tools sheet (mobile header action) */}
+      <ToolsSheet
+        open={toolsSheetOpen}
+        onClose={() => setToolsSheetOpen(false)}
+        showPomodoro={showPomodoro}   onTogglePomodoro={() => setShowPomodoro(p => !p)}
+        showMusic={showMusic}         onToggleMusic={() => setShowMusic(p => !p)}
+        showDND={showDND}             onToggleDND={() => setShowDND(p => !p)}
+        showCalendar={showCalendar}   onToggleCalendar={() => setShowCalendar(p => !p)}
+      />
 
       {settingsOpen && (
         <Suspense fallback={null}>
@@ -327,7 +487,7 @@ function App() {
         </Suspense>
       )}
 
-      {/* M3: Each lazy widget gets its own ErrorBoundary so one failure doesn’t crash all */}
+      {/* M3: Each lazy widget gets its own ErrorBoundary so one failure doesn't crash all */}
       <Suspense fallback={null}>
         <ErrorBoundary>
           <PomodoroWidget visible={showPomodoro} onClose={() => setShowPomodoro(false)} />

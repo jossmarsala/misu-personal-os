@@ -21,6 +21,13 @@ export const translations = {
       logout: "Disconnect Account",
       success: "success!",
       error: "Error:",
+      on: "On",
+      off: "Off",
+    },
+    nav: {
+      home: "Home",
+      tasks: "Tasks",
+      planner: "Planner",
     },
     header: {
       currentEnergy: "Current Mood",
@@ -177,7 +184,8 @@ export const translations = {
     widgets: {
       audio: "Audio",
       focus: "Focus",
-      calendar: "Calendar"
+      calendar: "Calendar",
+      tools: "Tools",
     },
     tips: {
       firstTask: "You added your first task! 🎉 Try changing your energy level on the right to get personalized recommendations that match how you feel right now.",
@@ -250,6 +258,13 @@ export const translations = {
       logout: "Cerrar Sesión",
       success: "¡éxito!",
       error: "Error:",
+      on: "Activo",
+      off: "Inactivo",
+    },
+    nav: {
+      home: "Inicio",
+      tasks: "Tareas",
+      planner: "Planner",
     },
     header: {
       currentEnergy: "Modo Actual",
@@ -406,7 +421,8 @@ export const translations = {
     widgets: {
       audio: "Audio",
       focus: "Enfoque",
-      calendar: "Calendario"
+      calendar: "Calendario",
+      tools: "Herramientas",
     },
     tips: {
       firstTask: "¡Añadiste tu primera tarea! 🎉 Prueba cambiar tu nivel de energía a la derecha para recibir recomendaciones personalizadas según cómo te sientes ahora.",
@@ -479,6 +495,13 @@ export const translations = {
       logout: "Disconnetti Account",
       success: "successo!",
       error: "Errore:",
+      on: "Attivo",
+      off: "Inattivo",
+    },
+    nav: {
+      home: "Home",
+      tasks: "Compiti",
+      planner: "Planner",
     },
     header: {
       currentEnergy: "Stato Attuale",
@@ -635,7 +658,8 @@ export const translations = {
     widgets: {
       audio: "Audio",
       focus: "Focus",
-      calendar: "Calendario"
+      calendar: "Calendario",
+      tools: "Strumenti",
     },
     tips: {
       firstTask: "Hai aggiunto il tuo primo compito! 🎉 Prova a cambiare il tuo livello di energia a destra per ricevere suggerimenti personalizzati in base a come ti senti adesso.",
