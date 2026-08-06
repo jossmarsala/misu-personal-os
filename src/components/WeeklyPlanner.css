@@ -61,6 +61,13 @@
     inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
+.planner__day.highlighted-drop {
+  transform: scale(1.03);
+  border-color: var(--energy-primary);
+  box-shadow: 0 0 30px var(--energy-glow);
+  z-index: 10;
+}
+
 .planner__day-header {
   display: flex;
   align-items: baseline;
