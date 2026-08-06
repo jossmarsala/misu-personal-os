@@ -12,7 +12,6 @@
   transition: box-shadow 0.3s ease, width 0.3s ease;
   /* overflow: hidden; removed to let tooltips break outside window bounds */
   touch-action: none;
-  user-select: none;
 }
 
 .draggable-widget.dragging {
@@ -99,5 +98,7 @@
 @media (max-width: 768px) {
   .draggable-widget {
     width: 240px;
+    user-select: none;
+    -webkit-user-select: none;
   }
 }
