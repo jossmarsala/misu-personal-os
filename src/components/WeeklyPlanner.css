@@ -256,7 +256,9 @@
 }
 
 .planner__task-delete:hover {
-  background: var(--energy-surface);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   color: var(--energy-primary);
   border-color: var(--energy-primary);
   transform: scale(1.1);
