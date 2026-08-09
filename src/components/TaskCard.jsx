@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTasks } from '../context/TaskContext';
-import { Check, Pencil, Trash2, X, Save, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
+import { Check, Pencil, Trash2, X, Save, ChevronDown, ChevronUp, GripVertical, Calendar } from 'lucide-react';
 import { getEnergyDef } from '../utils/energy';
 import { formatDeadline, getDeadlineStatus } from '../utils/dateUtils';
 import { useLanguage } from '../context/LanguageContext';
@@ -18,6 +18,7 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
   const { currentEnergy } = useEnergy();
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
+  const [editDeadline, setEditDeadline] = useState(task.deadline || '');
   const [expanded, setExpanded] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showUndo, setShowUndo] = useState(false);
@@ -45,7 +46,10 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
 
   const handleSaveEdit = () => {
     if (editTitle.trim()) {
-      updateTask(task.id, { title: editTitle.trim() });
+      updateTask(task.id, {
+        title: editTitle.trim(),
+        deadline: editDeadline || null,
+      });
       setIsEditing(false);
     }
   };
@@ -54,6 +58,7 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
     if (e.key === 'Enter') handleSaveEdit();
     if (e.key === 'Escape') {
       setEditTitle(task.title);
+      setEditDeadline(task.deadline || '');
       setIsEditing(false);
     }
   };
@@ -134,21 +139,43 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
 
       <div className="task-card__content">
         {isEditing ? (
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <input
-              className="task-card__edit-input"
-              value={editTitle}
-              onChange={e => setEditTitle(e.target.value)}
-              onKeyDown={handleKeyDown}
-              autoFocus
-              aria-label="Edit task title"
-            />
-            <button className="btn btn-ghost btn-sm" onClick={handleSaveEdit}>
-              <Save size={14} />
-            </button>
-            <button className="btn btn-ghost btn-sm" onClick={() => { setEditTitle(task.title); setIsEditing(false); }}>
-              <X size={14} />
-            </button>
+          <div className="task-card__edit-wrapper">
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                className="task-card__edit-input"
+                value={editTitle}
+                onChange={e => setEditTitle(e.target.value)}
+                onKeyDown={handleKeyDown}
+                autoFocus
+                aria-label="Edit task title"
+              />
+              <button className="btn btn-ghost btn-sm" onClick={handleSaveEdit} title="Save">
+                <Save size={14} />
+              </button>
+              <button className="btn btn-ghost btn-sm" onClick={() => { setEditTitle(task.title); setEditDeadline(task.deadline || ''); setIsEditing(false); }} title="Cancel">
+                <X size={14} />
+              </button>
+            </div>
+            <label className="task-card__edit-deadline">
+              <Calendar size={12} />
+              <input
+                type="date"
+                className="task-card__edit-input task-card__edit-date"
+                value={editDeadline}
+                onChange={e => setEditDeadline(e.target.value)}
+                aria-label="Edit due date"
+              />
+              {editDeadline && (
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm task-card__clear-date"
+                  onClick={() => setEditDeadline('')}
+                  title="Clear due date"
+                >
+                  <X size={11} />
+                </button>
+              )}
+            </label>
           </div>
         ) : (
           <>
@@ -211,7 +238,7 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           className="btn btn-ghost btn-icon btn-sm"
-          onClick={() => { setIsEditing(true); setEditTitle(task.title); }}
+          onClick={() => { setIsEditing(true); setEditTitle(task.title); setEditDeadline(task.deadline || ''); }}
           aria-label={t('common.edit')}
         >
           <Pencil size={14} />
