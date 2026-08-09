@@ -22,7 +22,7 @@ const YOUTUBE_TRACKS = {
     { name: "Coffee Shop Jazz", id: "pfx4r7_WdP8" },
     { name: "Chill playlist", id: "4QXVSfCI7m0" },
     { name: "Soft Vintage Oldies", id: "7xBdtvLx9UE" },
-    { name: "Minecraft Songs", id: "ANkxRGvl1VY" }
+    { name: "Minecraft Songs", id: "ANkxRGvl1VY" },
     { name: "Dreamy Classic Strings", id: "ie2zSl6snvs" }
   ],
   "3": [
