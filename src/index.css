@@ -599,7 +599,15 @@ body::before {
   box-shadow: 0 0 0 3px var(--energy-glow);
 }
 
-.input:focus-visible {
+.input:focus-visible,
+input[type="text"]:focus-visible,
+input[type="password"]:focus-visible,
+input[type="email"]:focus-visible,
+input[type="number"]:focus-visible,
+input[type="date"]:focus-visible,
+input[type="search"]:focus-visible,
+input:not([type]):focus-visible,
+textarea:focus-visible {
   outline: none;
 }
 

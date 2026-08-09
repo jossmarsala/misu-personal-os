@@ -21,15 +21,19 @@ const YOUTUBE_TRACKS = {
   "2": [
     { name: "Coffee Shop Jazz", id: "pfx4r7_WdP8" },
     { name: "Chill playlist", id: "4QXVSfCI7m0" },
-    { name: "Soft vintage oldies", id: "7xBdtvLx9UE" },
-    { name: "Minecraft songs", id: "ANkxRGvl1VY" }
+    { name: "Soft Vintage Oldies", id: "7xBdtvLx9UE" },
+    { name: "Minecraft Songs", id: "ANkxRGvl1VY" }
+    { name: "Dreamy Classic Strings", id: "ie2zSl6snvs" }
   ],
   "3": [
-    { name: "Cozy oldies night", id: "iWuNnm-VUzY" }
+    { name: "Cozy oldies night", id: "iWuNnm-VUzY" },
+    { name: "Hotel Jazz Bar", id: "ui-1w1UbrvY" },
+    { name: "Cute Focus Playlist", id: "mgqPA6Rbu30"}
   ],
   "4": [
     { name: "Peaceful shiny morning",  id: "T9dp6PAsNJs" },
-    { name: "Sunshine jazz", id: "OtpBe_HqL0A" }
+    { name: "Sunshine jazz", id: "OtpBe_HqL0A" },
+    { name: "Bird Songs + Music", id: "fjcBSkLgiQI"}
   ]
 };
 

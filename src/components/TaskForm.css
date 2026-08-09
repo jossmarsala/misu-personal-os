@@ -147,7 +147,6 @@
   outline: none;
 }
 
-/* Date input still relies on placeholder overlay in some browsers, but let's just style date/time natively */
 .task-form__meta-input::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }

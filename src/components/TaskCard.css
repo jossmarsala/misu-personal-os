@@ -127,6 +127,13 @@
 }
 
 /* Edit mode */
+.task-card__edit-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
 .task-card__edit-input {
   width: 100%;
   padding: 6px 10px;
@@ -137,6 +144,34 @@
   font-family: 'Outfit', sans-serif;
   font-size: 0.9rem;
   outline: none;
+}
+
+.task-card__edit-deadline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.task-card__edit-date {
+  width: auto;
+  padding: 3px 8px;
+  font-size: 0.78rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  color-scheme: dark;
+}
+
+.task-card__clear-date {
+  padding: 2px 4px !important;
+  min-width: unset !important;
+  opacity: 0.6;
+}
+
+.task-card__clear-date:hover {
+  opacity: 1;
 }
 
 @media (max-width: 768px) {
