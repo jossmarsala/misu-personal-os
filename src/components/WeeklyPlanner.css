@@ -96,13 +96,6 @@
   box-shadow: 0 0 30px var(--energy-glow);
 }
 
-.planner__day-today::after {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 3px;
-  background: var(--energy-gradient);
-}
-
 .planner__day-today .planner__day-name {
   color: var(--text-primary);
   font-weight: 800;

@@ -73,6 +73,10 @@
   border-bottom-color: var(--energy-primary);
 }
 
+.task-form__title-input:focus-visible {
+  outline: none;
+}
+
 .task-form__submit {
   padding: 8px 14px !important;
   border-radius: var(--radius-full) !important;
@@ -137,6 +141,10 @@
   color: var(--text-primary);
   width: 100%;
   cursor: pointer;
+}
+
+.task-form__meta-input:focus-visible {
+  outline: none;
 }
 
 /* Date input still relies on placeholder overlay in some browsers, but let's just style date/time natively */
