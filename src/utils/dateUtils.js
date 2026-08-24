@@ -28,11 +28,23 @@ export function getWeekDays(date = null) {
 }
 
 /**
+ * Parse local date to avoid UTC timezone shifts with YYYY-MM-DD strings
+ */
+export function parseLocalDate(dateVal) {
+  if (!dateVal) return new Date();
+  if (typeof dateVal === 'string' && dateVal.match(/^\d{4}-\d{2}-\d{2}/)) {
+    const [year, month, day] = dateVal.split('T')[0].split('-');
+    return new Date(year, month - 1, day);
+  }
+  return new Date(dateVal);
+}
+
+/**
  * Format date as human-friendly string
  */
 export function formatDate(date) {
   if (!date) return '';
-  const d = new Date(date);
+  const d = parseLocalDate(date);
   const locale = document.documentElement.lang || 'en-US';
   return d.toLocaleDateString(locale, {
     month: 'short',
@@ -45,7 +57,7 @@ export function formatDate(date) {
  * Format date as short day name
  */
 export function formatDayShort(date) {
-  const d = new Date(date);
+  const d = parseLocalDate(date);
   const locale = document.documentElement.lang || 'en-US';
   return d.toLocaleDateString(locale, { weekday: 'short' });
 }
@@ -54,7 +66,7 @@ export function formatDayShort(date) {
  * Format date as full day name
  */
 export function formatDayLong(date) {
-  const d = new Date(date);
+  const d = parseLocalDate(date);
   const locale = document.documentElement.lang || 'en-US';
   return d.toLocaleDateString(locale, { weekday: 'long' });
 }
@@ -64,7 +76,7 @@ export function formatDayLong(date) {
  */
 export function toInputDate(date) {
   if (!date) return '';
-  const d = new Date(date);
+  const d = parseLocalDate(date);
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
@@ -78,9 +90,9 @@ export function getDeadlineStatus(deadline) {
   if (!deadline) return 'none';
   const now = new Date();
   now.setHours(0, 0, 0, 0);
-  const dl = new Date(deadline);
+  const dl = parseLocalDate(deadline);
   dl.setHours(0, 0, 0, 0);
-  const diff = Math.ceil((dl - now) / (1000 * 60 * 60 * 24));
+  const diff = Math.round((dl - now) / (1000 * 60 * 60 * 24));
 
   if (diff < 0) return 'overdue';
   if (diff === 0) return 'today';
@@ -96,9 +108,9 @@ export function getDaysUntil(deadline) {
   if (!deadline) return null;
   const now = new Date();
   now.setHours(0, 0, 0, 0);
-  const dl = new Date(deadline);
+  const dl = parseLocalDate(deadline);
   dl.setHours(0, 0, 0, 0);
-  return Math.ceil((dl - now) / (1000 * 60 * 60 * 24));
+  return Math.round((dl - now) / (1000 * 60 * 60 * 24));
 }
 
 /**
