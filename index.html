@@ -6,6 +6,26 @@
     <meta name="description" content="Misu — An energy-aware, cinematic task management OS inspired by Greek harmony. Manage tasks intelligently based on your energy levels." />
     <meta name="theme-color" content="#0a0a12" />
 
+    <!--
+      Flash guard: fija background-color en html+body ANTES del primer paint.
+      Usamos background-color (no el shorthand) para no cancelar los gradientes
+      que index.css cargará justo después.
+      El script ajusta el color según el tema guardado en localStorage.
+    -->
+    <style id="flash-guard">
+      html, body { background-color: #1c1b1a; }
+    </style>
+    <script>
+      (function () {
+        var t = localStorage.getItem('misu:theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+        if (t === 'light') {
+          document.getElementById('flash-guard').textContent =
+            'html,body{background-color:#fdfbf7}';
+        }
+      })();
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -19,3 +39,4 @@
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
+

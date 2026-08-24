@@ -14,10 +14,13 @@ function useDebounceRef(fn, delay) {
 
 const TaskContext = createContext();
 
-export function TaskProvider({ children }) {
+export function TaskProvider({ children, initialTasks }) {
   const { user } = useAuth();
-  
+  const isDebug = Boolean(initialTasks);
+
   const [tasks, setTasks] = useState(() => {
+    // 🐛 Debug mode: use provided sample tasks, skip localStorage
+    if (initialTasks) return initialTasks;
     try {
       const cached = localStorage.getItem('misu-offline-tasks');
       if (cached) return JSON.parse(cached);
@@ -33,7 +36,7 @@ export function TaskProvider({ children }) {
     return null;
   });
   
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!isDebug); // debug: skip loading state
   const [isOffline, setIsOffline] = useState(typeof window !== 'undefined' ? !navigator.onLine : false);
   const [needsSync, setNeedsSync] = useState(false);
   const isInitialMount = useRef(true);
@@ -82,8 +85,8 @@ export function TaskProvider({ children }) {
         setLoading(false);
       }
     };
-    if (user?.id) init();
-    else if (!user) {
+    if (user?.id && !isDebug) init();
+    else if (!user && !isDebug) {
       setTasks([]);
       localStorage.removeItem('misu-offline-tasks');
       setLoading(false);
@@ -91,11 +94,11 @@ export function TaskProvider({ children }) {
   // H2: isOffline removed from deps — re-fetching on reconnect would overwrite
   // any offline edits. The reconnect sync effect (below) handles pushing local
   // changes back to Supabase instead.
-  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user, isDebug]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Consolidated, debounced sync (fixes L1 double-write + L7 no-debounce) ──
   const syncToSupabase = useCallback(async (currentTasks, currentPlan) => {
-    if (!user?.id || isOffline) return;
+    if (!user?.id || isOffline || isDebug) return;
     const { error } = await supabase
       .from('user_data')
       .upsert({ user_id: user.id, payload: { tasks: currentTasks, weeklyPlan: currentPlan } }, { onConflict: 'user_id' });
@@ -114,6 +117,9 @@ export function TaskProvider({ children }) {
       isInitialMount.current = false;
       return;
     }
+
+    // Skip all persistence in debug mode
+    if (isDebug) return;
 
     // Always back up locally first (offline-first)
     localStorage.setItem('misu-offline-tasks', JSON.stringify(tasks));
