@@ -157,12 +157,14 @@ export function TaskProvider({ children, initialTasks }) {
       deadline: taskData.deadline || null,
       estimatedHours: totalHours,
       energyRequired: taskData.energyRequired || 3,
+      category: taskData.category || 'other',
       completed: false,
       createdAt: new Date().toISOString(),
     };
     setTasks(prev => [newTask, ...prev]);
     return newTask;
   }, []);
+
 
   const updateTask = useCallback((id, updates) => {
     setTasks(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTasks } from '../context/TaskContext';
 import { Check, Pencil, Trash2, X, Save, ChevronDown, ChevronUp, GripVertical, Calendar } from 'lucide-react';
 import { getEnergyDef } from '../utils/energy';
+import { getCategoryDef } from '../utils/categories';
 import { formatDeadline, getDeadlineStatus } from '../utils/dateUtils';
 import { useLanguage } from '../context/LanguageContext';
 import { useEnergy } from '../context/EnergyContext';
@@ -14,7 +15,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TaskCard({ task, isFocused = false, isDimmed = false, onFocus }) {
   const { toggleComplete, updateTask, deleteTask } = useTasks();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { currentEnergy } = useEnergy();
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
@@ -31,6 +32,7 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
   });
 
   const energy = getEnergyDef(task.energyRequired);
+  const category = getCategoryDef(task.category || 'other');
   const deadlineStatus = getDeadlineStatus(task.deadline);
   
   const getDeadlineText = (deadline) => {
@@ -226,6 +228,17 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
               <GradientOrb color={energy.vividColorA} size="100%" />
             </div>
             {energy.name}
+          </span>
+          {/* Category badge */}
+          <span
+            className="task-card__category-badge"
+            style={{
+              background: category.colorBg,
+              color: category.color,
+              border: `1px solid ${category.colorBorder}`,
+            }}
+          >
+            {category.icon} {category.labels[language] ?? category.labels.en}
           </span>
           {task.estimatedHours && (
             <span className="task-card__duration">{task.estimatedHours}{t('common.hoursCapitalized').substring(0,1)}</span>

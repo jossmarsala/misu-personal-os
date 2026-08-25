@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react';
 import { useTasks } from '../context/TaskContext';
-import { Plus, X, Calendar, Clock, ChevronDown, ChevronUp, Zap } from 'lucide-react';
+import { Plus, X, Calendar, Clock, ChevronDown, ChevronUp, Tag } from 'lucide-react';
 import { ENERGY_LEVELS } from '../utils/energy';
+import { CATEGORIES, getCategoryDef } from '../utils/categories';
 import { useLanguage } from '../context/LanguageContext';
 import { useEnergy } from '../context/EnergyContext';
 import { playUISound } from '../services/AudioService';
@@ -14,12 +15,14 @@ export default function TaskForm() {
   const { currentEnergy } = useEnergy();
   const [isOpen, setIsOpen] = useState(false);
   const [showMore, setShowMore] = useState(false);
+  const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [form, setForm] = useState({
     title: '',
     description: '',
     deadline: '',
     estimatedHours: '',
     energyRequired: currentEnergy,
+    category: 'other',
   });
   const titleRef = useRef(null);
 
@@ -33,8 +36,9 @@ export default function TaskForm() {
       estimatedHours: parseFloat(form.estimatedHours) || 1,
     });
 
-    setForm({ title: '', description: '', deadline: '', estimatedHours: '', energyRequired: currentEnergy });
+    setForm({ title: '', description: '', deadline: '', estimatedHours: '', energyRequired: currentEnergy, category: 'other' });
     setShowMore(false);
+    setShowCategoryPicker(false);
     setIsOpen(false);
   };
 
@@ -51,7 +55,8 @@ export default function TaskForm() {
   const handleClose = () => {
     setIsOpen(false);
     setShowMore(false);
-    setForm({ title: '', description: '', deadline: '', estimatedHours: '', energyRequired: currentEnergy });
+    setShowCategoryPicker(false);
+    setForm({ title: '', description: '', deadline: '', estimatedHours: '', energyRequired: currentEnergy, category: 'other' });
   };
 
   if (!isOpen) {
@@ -143,6 +148,46 @@ export default function TaskForm() {
             <span className="task-form__energy-label" style={{ color: selectedEnergy?.vividColorA }}>
               {t(`energy.${form.energyRequired}.label`)}
             </span>
+          </div>
+
+          {/* Category picker */}
+          <div className="task-form__category-wrapper">
+            <button
+              type="button"
+              className="task-form__meta-pill task-form__meta-pill--category"
+              onClick={() => setShowCategoryPicker(v => !v)}
+              title={t('tasks.fieldCategory')}
+              style={{
+                background: getCategoryDef(form.category).colorBg,
+                borderColor: getCategoryDef(form.category).colorBorder,
+                color: getCategoryDef(form.category).color,
+              }}
+            >
+              <Tag size={12} />
+              <span>{getCategoryDef(form.category).icon} {t(`categories.${form.category}`) || getCategoryDef(form.category).labels.en}</span>
+              <ChevronDown size={11} style={{ opacity: 0.7 }} />
+            </button>
+
+            {showCategoryPicker && (
+              <div className="task-form__category-dropdown">
+                {CATEGORIES.map(cat => (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    className={`task-form__category-option ${form.category === cat.id ? 'selected' : ''}`}
+                    onClick={() => { handleChange('category', cat.id); setShowCategoryPicker(false); }}
+                    style={form.category === cat.id ? {
+                      background: cat.colorBg,
+                      color: cat.color,
+                      borderColor: cat.colorBorder,
+                    } : {}}
+                  >
+                    <span className="task-form__category-option-icon">{cat.icon}</span>
+                    <span>{t(`categories.${cat.id}`) || cat.labels.en}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Toggle more */}  
