@@ -64,6 +64,7 @@ export async function generateWeeklyPlan(tasks, apiKey, language = 'en', startDa
     return {
       id: t.id,
       title: t.title,
+      category: t.category || 'general',
       deadline: t.deadline || 'No deadline',
       isOverdue,
       dueThisWeek,
@@ -135,10 +136,16 @@ RULE 6 — COGNITIVE LOAD:
   • Alternate heavy and light tasks within a day when possible — avoid back-to-back high-energy blocks.
   • If total hours allow, leave at least one day with ≤2 hours as a natural buffer.
 
-RULE 7 — OUTPUT FORMAT:
+RULE 7 — CATEGORY GROUPING & AFFINITY:
+  • Try to group tasks of the same category on the same day (e.g., all 'studies' tasks on Tuesday).
+  • Energy-category affinity: high-energy days (energyRequired ≥ 4) → prefer 'work' and 'sideProjects'. Low-energy days → prefer 'health', 'social', 'home', 'hobbies'.
+  • Never schedule a 'work' or 'sideProjects' task with estimatedHours > 2 on a day already carrying ≥ 4h of high-energy tasks.
+  • Output each block's category in the JSON for UI display.
+
+RULE 8 — OUTPUT FORMAT:
   • Respond with ONLY valid JSON. No markdown, no backticks, no text outside the JSON.
   • Keys must be exact YYYY-MM-DD date strings.
-  • Each block: taskId (string), title (string), hours (number), isChunk (boolean), chunkLabel (string, empty "" if not chunked).
+  • Each block: taskId (string), title (string), hours (number), category (string), isChunk (boolean), chunkLabel (string, empty "" if not chunked).
   • Days with no tasks → empty array [].
 
 REQUIRED JSON STRUCTURE:

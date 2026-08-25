@@ -90,6 +90,7 @@ export default function Recommendations() {
                   <GradientOrb color={energyDef.vividColorA} size="100%" />
                 </div>
                 <span className="recommendations__item-title">{task.title}</span>
+                <div className="recommendations__tooltip">{task.title}</div>
                 <div className="recommendations__item-meta">
                   {task.deadline && (
                     <span className={deadlineBadgeClass(task.deadline)}>

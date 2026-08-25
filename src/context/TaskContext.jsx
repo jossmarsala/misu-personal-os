@@ -157,7 +157,7 @@ export function TaskProvider({ children, initialTasks }) {
       deadline: taskData.deadline || null,
       estimatedHours: totalHours,
       energyRequired: taskData.energyRequired || 3,
-      category: taskData.category || 'other',
+      category: taskData.category || 'general',
       completed: false,
       createdAt: new Date().toISOString(),
     };

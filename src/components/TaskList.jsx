@@ -6,24 +6,31 @@ import { getDaysUntil } from '../utils/dateUtils';
 import { useLanguage } from '../context/LanguageContext';
 import { useEnergy } from '../context/EnergyContext';
 import { getEnergyDef } from '../utils/energy';
+import { CATEGORIES, isGeneralCategory } from '../utils/categories';
 import GradientOrb from './GradientOrb';
 import { PixelLoaderMini } from './PixelLoader';
 import './TaskList.css';
 
 export default function TaskList() {
   const { tasks, loading } = useTasks();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { currentEnergy, dndActive, focusedTaskId, setFocusedTaskId } = useEnergy();
   const energyDef = getEnergyDef(currentEnergy);
   const [filter, setFilter] = useState('active');
   const [sort, setSort] = useState('deadline');
+  const [categoryFilter, setCategoryFilter] = useState('all');
 
   const filtered = useMemo(() => {
     let list = [...tasks];
 
-    // Filter
+    // Status filter
     if (filter === 'active') list = list.filter(t => !t.completed);
     else if (filter === 'completed') list = list.filter(t => t.completed);
+
+    // Category filter
+    if (categoryFilter !== 'all') {
+      list = list.filter(t => (t.category || 'general') === categoryFilter);
+    }
 
     // Sort
     list.sort((a, b) => {
@@ -38,7 +45,7 @@ export default function TaskList() {
     });
 
     return list;
-  }, [tasks, filter, sort]);
+  }, [tasks, filter, sort, categoryFilter]);
 
   // When shield activates and no task is focused yet, spotlight the first active task
   useEffect(() => {
@@ -62,6 +69,17 @@ export default function TaskList() {
     completed: tasks.filter(t => t.completed).length,
   };
 
+  // Compute which categories have tasks (for the filter row)
+  const usedCategories = useMemo(() => {
+    const activeTasks = filter === 'active'
+      ? tasks.filter(t => !t.completed)
+      : filter === 'completed'
+      ? tasks.filter(t => t.completed)
+      : tasks;
+    const ids = new Set(activeTasks.map(t => t.category || 'general'));
+    return CATEGORIES.filter(c => ids.has(c.id));
+  }, [tasks, filter]);
+
   if (loading) {
     return (
       <div id="task-list" className="animate-fade-in" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
@@ -80,7 +98,7 @@ export default function TaskList() {
             <button
               key={f}
               className={`btn btn-sm ${filter === f ? 'btn-primary' : 'btn-ghost'}`}
-              onClick={() => setFilter(f)}
+              onClick={() => { setFilter(f); setCategoryFilter('all'); }}
             >
               {t(`common.${f}`)}
               <span style={{ marginLeft: '4px', opacity: 0.5 }}>
@@ -91,21 +109,41 @@ export default function TaskList() {
         </div>
 
         <div className="task-list__sort" style={{ display: 'flex', gap: 'var(--space-2)' }}>
-          {[
-            { key: 'deadline', label: t('tasks.fieldDeadline') },
-            { key: 'energy', label: t('tasks.fieldEnergy') },
-            { key: 'duration', label: t('common.hoursCapitalized') },
-          ].map(s => (
-            <button
-              key={s.key}
-              className={`btn btn-sm ${sort === s.key ? 'btn-primary' : 'btn-ghost'}`}
-              onClick={() => setSort(s.key)}
-            >
-              {s.label}
-            </button>
-          ))}
+          <button
+            className={`btn btn-sm ${sort === 'deadline' ? 'btn-primary' : 'btn-ghost'}`}
+            onClick={() => setSort('deadline')}
+          >
+            {t('tasks.fieldDeadline')}
+          </button>
+
+          <button
+            className={`btn btn-sm ${categoryFilter !== 'all' ? 'btn-primary' : 'btn-ghost'}`}
+            onClick={() => {
+              const filterOptions = ['all', ...usedCategories.map(c => c.id)];
+              const currentIndex = filterOptions.indexOf(categoryFilter);
+              const nextIndex = (currentIndex + 1) % filterOptions.length;
+              setCategoryFilter(filterOptions[nextIndex]);
+            }}
+          >
+            {categoryFilter === 'all' 
+              ? (t('categories.filterLabel') || 'Category') 
+              : (() => {
+                  const cat = CATEGORIES.find(c => c.id === categoryFilter);
+                  return cat ? `${cat.icon} ${cat.labels[language] ?? cat.labels.en}` : categoryFilter;
+                })()
+            }
+          </button>
+
+          <button
+            className={`btn btn-sm ${sort === 'duration' ? 'btn-primary' : 'btn-ghost'}`}
+            onClick={() => setSort('duration')}
+          >
+            {t('common.hoursCapitalized')}
+          </button>
         </div>
       </div>
+
+
 
       {filtered.length > 0 ? (
         <div className="task-list__items stagger-children">
@@ -126,7 +164,9 @@ export default function TaskList() {
           </div>
           {/* X1: Contextual empty state messages per filter */}
           <p className="task-list__empty-text">
-            {filter === 'completed'
+            {categoryFilter !== 'all'
+              ? `No ${CATEGORIES.find(c => c.id === categoryFilter)?.labels[language] ?? categoryFilter} tasks`
+              : filter === 'completed'
               ? t('tasks.emptyCompleted') || 'No completed tasks yet'
               : filter === 'active'
               ? t(`energy.${currentEnergy}.empty`)
@@ -137,4 +177,3 @@ export default function TaskList() {
     </div>
   );
 }
-

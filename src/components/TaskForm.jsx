@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useTasks } from '../context/TaskContext';
 import { Plus, X, Calendar, Clock, ChevronDown, ChevronUp, Tag } from 'lucide-react';
 import { ENERGY_LEVELS } from '../utils/energy';
@@ -8,6 +9,76 @@ import { useEnergy } from '../context/EnergyContext';
 import { playUISound } from '../services/AudioService';
 import GradientOrb from './GradientOrb';
 import './TaskForm.css';
+
+/**
+ * CategoryDropdown — rendered via React Portal directly into document.body
+ * so it's never clipped or stacked under any transformed ancestor (e.g. Framer Motion).
+ */
+function CategoryDropdown({ anchorRef, onSelect, onClose, selected, t }) {
+  const dropdownRef = useRef(null);
+  const [pos, setPos] = useState(null);
+
+  // Compute position once on mount, relative to the anchor button
+  useEffect(() => {
+    if (!anchorRef.current) return;
+    const rect = anchorRef.current.getBoundingClientRect();
+    setPos({
+      // Open downward: top of dropdown = bottom of anchor + 8px gap
+      top: rect.bottom + 8,
+      left: rect.left,
+    });
+  }, [anchorRef]);
+
+  // Close on outside click
+  useEffect(() => {
+    const handleOutside = (e) => {
+      if (
+        dropdownRef.current && !dropdownRef.current.contains(e.target) &&
+        anchorRef.current && !anchorRef.current.contains(e.target)
+      ) {
+        onClose();
+      }
+    };
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, [anchorRef, onClose]);
+
+  if (!pos) return null;
+
+  return createPortal(
+    <div
+      ref={dropdownRef}
+      className="task-form__category-dropdown"
+      style={{
+        position: 'fixed',
+        top: pos.top,
+        left: pos.left,
+      }}
+    >
+      {CATEGORIES.map(cat => (
+        <button
+          key={cat.id}
+          type="button"
+          className={`task-form__category-option ${selected === cat.id ? 'selected' : ''}`}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onSelect(cat.id);
+          }}
+          style={selected === cat.id ? {
+            background: cat.colorBg,
+            color: cat.color,
+            borderColor: cat.colorBorder,
+          } : {}}
+        >
+          <span className="task-form__category-option-icon">{cat.icon}</span>
+          <span>{t(`categories.${cat.id}`) || cat.labels.en}</span>
+        </button>
+      ))}
+    </div>,
+    document.body
+  );
+}
 
 export default function TaskForm() {
   const { addTask } = useTasks();
@@ -22,21 +93,17 @@ export default function TaskForm() {
     deadline: '',
     estimatedHours: '',
     energyRequired: currentEnergy,
-    category: 'other',
+    category: 'general',
   });
   const titleRef = useRef(null);
+  const catBtnRef = useRef(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.title.trim()) return;
-
     playUISound('click', currentEnergy);
-    addTask({
-      ...form,
-      estimatedHours: parseFloat(form.estimatedHours) || 1,
-    });
-
-    setForm({ title: '', description: '', deadline: '', estimatedHours: '', energyRequired: currentEnergy, category: 'other' });
+    addTask({ ...form, estimatedHours: parseFloat(form.estimatedHours) || 1 });
+    setForm({ title: '', description: '', deadline: '', estimatedHours: '', energyRequired: currentEnergy, category: 'general' });
     setShowMore(false);
     setShowCategoryPicker(false);
     setIsOpen(false);
@@ -56,7 +123,7 @@ export default function TaskForm() {
     setIsOpen(false);
     setShowMore(false);
     setShowCategoryPicker(false);
-    setForm({ title: '', description: '', deadline: '', estimatedHours: '', energyRequired: currentEnergy, category: 'other' });
+    setForm({ title: '', description: '', deadline: '', estimatedHours: '', energyRequired: currentEnergy, category: 'general' });
   };
 
   if (!isOpen) {
@@ -71,6 +138,7 @@ export default function TaskForm() {
   }
 
   const selectedEnergy = ENERGY_LEVELS.find(e => e.level === form.energyRequired);
+  const catDef = getCategoryDef(form.category);
 
   return (
     <div className="task-form">
@@ -150,47 +218,41 @@ export default function TaskForm() {
             </span>
           </div>
 
-          {/* Category picker */}
+          {/* Category trigger pill */}
           <div className="task-form__category-wrapper">
             <button
+              ref={catBtnRef}
               type="button"
               className="task-form__meta-pill task-form__meta-pill--category"
               onClick={() => setShowCategoryPicker(v => !v)}
               title={t('tasks.fieldCategory')}
-              style={{
-                background: getCategoryDef(form.category).colorBg,
-                borderColor: getCategoryDef(form.category).colorBorder,
-                color: getCategoryDef(form.category).color,
-              }}
             >
               <Tag size={12} />
-              <span>{getCategoryDef(form.category).icon} {t(`categories.${form.category}`) || getCategoryDef(form.category).labels.en}</span>
-              <ChevronDown size={11} style={{ opacity: 0.7 }} />
+              <span>{catDef.icon} {t(`categories.${form.category}`) || catDef.labels.en}</span>
+              <ChevronDown
+                size={11}
+                style={{
+                  opacity: 0.7,
+                  transform: showCategoryPicker ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.2s',
+                  flexShrink: 0,
+                }}
+              />
             </button>
-
-            {showCategoryPicker && (
-              <div className="task-form__category-dropdown">
-                {CATEGORIES.map(cat => (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    className={`task-form__category-option ${form.category === cat.id ? 'selected' : ''}`}
-                    onClick={() => { handleChange('category', cat.id); setShowCategoryPicker(false); }}
-                    style={form.category === cat.id ? {
-                      background: cat.colorBg,
-                      color: cat.color,
-                      borderColor: cat.colorBorder,
-                    } : {}}
-                  >
-                    <span className="task-form__category-option-icon">{cat.icon}</span>
-                    <span>{t(`categories.${cat.id}`) || cat.labels.en}</span>
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
 
-          {/* Toggle more */}  
+          {/* Category portal dropdown */}
+          {showCategoryPicker && (
+            <CategoryDropdown
+              anchorRef={catBtnRef}
+              selected={form.category}
+              t={t}
+              onSelect={(id) => { handleChange('category', id); setShowCategoryPicker(false); }}
+              onClose={() => setShowCategoryPicker(false)}
+            />
+          )}
+
+          {/* Toggle more */}
           <button
             type="button"
             className="task-form__more-btn"

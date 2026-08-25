@@ -13,6 +13,29 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import sampleTasks from './data/sample-tasks.json';
 import './index.css';
 
+/** Resolve __TODAY__, __TOMORROW__, __IN3DAYS__ placeholders → real YYYY-MM-DD strings */
+function resolveSampleDates(tasks) {
+  const pad = n => String(n).padStart(2, '0');
+  const toDateStr = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+  const in3Days  = new Date(today); in3Days.setDate(today.getDate() + 3);
+
+  const MAP = {
+    '__TODAY__':   toDateStr(today),
+    '__TOMORROW__': toDateStr(tomorrow),
+    '__IN3DAYS__':  toDateStr(in3Days),
+  };
+
+  return tasks.map(task => ({
+    ...task,
+    deadline: MAP[task.deadline] ?? task.deadline,
+  }));
+}
+
+
 // 🐛 Debug mode — auto-enabled on localhost, bypasses auth + seeds sample tasks
 const IS_DEBUG = typeof window !== 'undefined' &&
   (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
@@ -98,7 +121,7 @@ function AuthGate() {
   // 🐛 Debug mode: skip login entirely, seed with sample tasks
   if (IS_DEBUG) {
     return (
-      <TaskProvider initialTasks={sampleTasks.tasks}>
+      <TaskProvider initialTasks={resolveSampleDates(sampleTasks.tasks)}>
         <ThemedApp />
       </TaskProvider>
     );

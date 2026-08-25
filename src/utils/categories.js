@@ -62,22 +62,27 @@ export const CATEGORIES = [
     labels: { en: 'Home', es: 'Hogar', it: 'Casa' },
   },
   {
-    id: 'other',
-    icon: '📌',
+    id: 'general',
+    icon: '📋',
     color: '#94A3B8',          // slate-400
     colorBg: 'rgba(148,163,184,0.15)',
     colorBorder: 'rgba(148,163,184,0.25)',
-    labels: { en: 'Other', es: 'Otro', it: 'Altro' },
+    labels: { en: 'General', es: 'General', it: 'Generale' },
   },
 ];
 
-/** Find a category by id (returns `other` as fallback). */
+/** Find a category by id (returns `general` as fallback). */
 export function getCategoryDef(id) {
-  return CATEGORIES.find(c => c.id === id) ?? CATEGORIES.find(c => c.id === 'other');
+  return CATEGORIES.find(c => c.id === id) ?? CATEGORIES.find(c => c.id === 'general');
 }
 
 /** Get localised label for a category. */
 export function getCategoryLabel(id, language = 'en') {
   const cat = getCategoryDef(id);
   return cat.labels[language] ?? cat.labels.en;
+}
+
+/** Returns true for the "no badge" sentinel category. */
+export function isGeneralCategory(id) {
+  return !id || id === 'general';
 }

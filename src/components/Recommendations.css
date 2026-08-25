@@ -31,7 +31,6 @@
   box-shadow: var(--shadow-sm);
   cursor: default;
   position: relative;
-  overflow: hidden;
 }
 
 .recommendations__item::before {
@@ -41,6 +40,7 @@
   background-image: var(--glass-noise);
   opacity: 0.03;
   pointer-events: none;
+  border-radius: inherit;
 }
 
 .recommendations__item:hover {
@@ -48,6 +48,36 @@
   border-color: var(--energy-primary);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
   background: var(--bg-card-hover);
+}
+
+.recommendations__tooltip {
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: normal;
+  min-width: max-content;
+  max-width: 250px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-primary);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 100;
+}
+
+.recommendations__item:hover .recommendations__tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }
 
 .recommendations__item-rank {

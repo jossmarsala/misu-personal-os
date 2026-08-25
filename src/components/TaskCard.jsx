@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTasks } from '../context/TaskContext';
 import { Check, Pencil, Trash2, X, Save, ChevronDown, ChevronUp, GripVertical, Calendar } from 'lucide-react';
 import { getEnergyDef } from '../utils/energy';
-import { getCategoryDef } from '../utils/categories';
+import { getCategoryDef, isGeneralCategory } from '../utils/categories';
 import { formatDeadline, getDeadlineStatus } from '../utils/dateUtils';
 import { useLanguage } from '../context/LanguageContext';
 import { useEnergy } from '../context/EnergyContext';
@@ -229,17 +229,19 @@ export default function TaskCard({ task, isFocused = false, isDimmed = false, on
             </div>
             {energy.name}
           </span>
-          {/* Category badge */}
-          <span
-            className="task-card__category-badge"
-            style={{
-              background: category.colorBg,
-              color: category.color,
-              border: `1px solid ${category.colorBorder}`,
-            }}
-          >
-            {category.icon} {category.labels[language] ?? category.labels.en}
-          </span>
+          {/* Category badge — hidden for 'general' tasks */}
+          {!isGeneralCategory(task.category) && (
+            <span 
+              className="badge"
+              style={{
+                background: category.colorBg,
+                color: category.color,
+                border: `1px solid ${category.colorBorder}`
+              }}
+            >
+              {category.icon} {category.labels[language] ?? category.labels.en}
+            </span>
+          )}
           {task.estimatedHours && (
             <span className="task-card__duration">{task.estimatedHours}{t('common.hoursCapitalized').substring(0,1)}</span>
           )}

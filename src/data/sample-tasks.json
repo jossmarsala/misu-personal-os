@@ -1,57 +1,117 @@
 {
   "version": "1.0",
   "app": "MISU",
-  "exportedAt": "2026-04-12T06:00:00Z",
+  "exportedAt": "2026-08-25T06:00:00Z",
   "tasks": [
     {
       "id": "550e8400-e29b-41d4-a716-446655440001",
       "title": "Design landing page mockup",
       "description": "Create wireframes and high-fidelity designs for the homepage. Focus on hero section, feature grid, and CTA placement.",
-      "deadline": "2026-04-16",
+      "deadline": "__TODAY__",
       "estimatedHours": 4,
       "energyRequired": 4,
+      "category": "sideProjects",
       "completed": false,
-      "createdAt": "2026-04-12T05:00:00Z"
+      "createdAt": "2026-08-20T05:00:00Z"
     },
     {
       "id": "550e8400-e29b-41d4-a716-446655440002",
       "title": "Write weekly report",
       "description": "Summarize project progress, blockers, and next steps for stakeholder review.",
-      "deadline": "2026-04-14",
+      "deadline": "__TODAY__",
       "estimatedHours": 1,
       "energyRequired": 2,
+      "category": "work",
       "completed": false,
-      "createdAt": "2026-04-12T05:00:00Z"
+      "createdAt": "2026-08-20T05:00:00Z"
     },
     {
       "id": "550e8400-e29b-41d4-a716-446655440003",
       "title": "Review pull requests",
       "description": "Review and approve pending PRs on the main repository.",
-      "deadline": "2026-04-13",
+      "deadline": "__TOMORROW__",
       "estimatedHours": 2,
       "energyRequired": 3,
+      "category": "work",
       "completed": false,
-      "createdAt": "2026-04-12T05:00:00Z"
+      "createdAt": "2026-08-21T05:00:00Z"
     },
     {
       "id": "550e8400-e29b-41d4-a716-446655440004",
       "title": "Refactor authentication module",
       "description": "Migrate from session-based auth to JWT tokens. Update middleware and test endpoints.",
-      "deadline": "2026-04-18",
+      "deadline": "__IN3DAYS__",
       "estimatedHours": 6,
       "energyRequired": 4,
+      "category": "sideProjects",
       "completed": false,
-      "createdAt": "2026-04-12T05:00:00Z"
+      "createdAt": "2026-08-21T05:00:00Z"
     },
     {
       "id": "550e8400-e29b-41d4-a716-446655440005",
       "title": "Organize project files",
       "description": "Clean up folder structure, archive old designs, update README.",
-      "deadline": "2026-04-15",
+      "deadline": "__TOMORROW__",
       "estimatedHours": 1.5,
       "energyRequired": 1,
+      "category": "work",
       "completed": false,
-      "createdAt": "2026-04-12T05:00:00Z"
+      "createdAt": "2026-08-22T05:00:00Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440006",
+      "title": "Study algorithms chapter 4",
+      "description": "Cover dynamic programming patterns and solve 5 practice problems.",
+      "deadline": "__IN3DAYS__",
+      "estimatedHours": 3,
+      "energyRequired": 4,
+      "category": "studies",
+      "completed": false,
+      "createdAt": "2026-08-22T05:00:00Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440007",
+      "title": "Call mom and catch up",
+      "description": null,
+      "deadline": "__TOMORROW__",
+      "estimatedHours": 0.5,
+      "energyRequired": 2,
+      "category": "social",
+      "completed": false,
+      "createdAt": "2026-08-23T05:00:00Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440008",
+      "title": "30-minute morning run",
+      "description": "Easy pace, focus on consistency this week.",
+      "deadline": null,
+      "estimatedHours": 0.5,
+      "energyRequired": 3,
+      "category": "health",
+      "completed": false,
+      "createdAt": "2026-08-23T05:00:00Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440009",
+      "title": "Work on personal illustration",
+      "description": "Continue the digital art piece — finish the background layer.",
+      "deadline": null,
+      "estimatedHours": 2,
+      "energyRequired": 2,
+      "category": "hobbies",
+      "completed": false,
+      "createdAt": "2026-08-24T05:00:00Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440010",
+      "title": "Grocery shopping",
+      "description": "Restock kitchen: fruits, vegetables, protein, oats.",
+      "deadline": null,
+      "estimatedHours": 1,
+      "energyRequired": 1,
+      "category": "home",
+      "completed": false,
+      "createdAt": "2026-08-24T05:00:00Z"
     }
   ]
 }

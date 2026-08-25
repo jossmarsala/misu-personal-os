@@ -73,7 +73,7 @@ export const translations = {
       sideProjects: "Side Projects",
       health: "Health",
       home: "Home",
-      other: "Other",
+      general: "General",
     },
     planner: {
       title: "Weekly Plan",
@@ -322,7 +322,7 @@ export const translations = {
       sideProjects: "Proyectos propios",
       health: "Salud",
       home: "Hogar",
-      other: "Otro",
+      general: "General",
     },
     planner: {
       title: "Plan Semanal",
@@ -571,7 +571,7 @@ export const translations = {
       sideProjects: "Progetti personali",
       health: "Salute",
       home: "Casa",
-      other: "Altro",
+      general: "Generale",
     },
     planner: {
       title: "Piano Settimanale",

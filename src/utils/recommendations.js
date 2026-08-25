@@ -1,8 +1,36 @@
 /* ═══════════════════════════════════════
    Smart task recommendation engine
+   Category-aware scoring for
+   "¿Qué puedo hacer ahora?"
    ═══════════════════════════════════════ */
 
 import { getDaysUntil } from './dateUtils';
+
+/**
+ * Category affinity map per energy level.
+ * Score bonus applied when a task's category matches the current energy zone.
+ *
+ * HIGH   (4–5): Cognitive work — boost work, sideProjects, studies
+ * MEDIUM (3)  : Balanced — boost studies, hobbies
+ * LOW    (1–2): Recovery — boost social, health, home
+ */
+const CATEGORY_ENERGY_BONUS = {
+  5: { work: 18, sideProjects: 15, studies: 12 },
+  4: { work: 15, sideProjects: 12, studies: 10 },
+  3: { studies: 10, hobbies: 8, sideProjects: 6 },
+  2: { social: 14, health: 12, home: 10, hobbies: 8 },
+  1: { health: 14, social: 12, home: 10, hobbies: 6 },
+};
+
+/**
+ * Category time-box limits (hours) at low energy.
+ * Tasks of this category exceeding the limit get a heavy penalty.
+ */
+const CATEGORY_LOW_ENERGY_HOUR_CAP = {
+  work: 1.5,
+  sideProjects: 1,
+  studies: 1,
+};
 
 export function getRecommendations(tasks, currentEnergy) {
   const activeTasks = tasks.filter(t => !t.completed);
@@ -13,10 +41,13 @@ export function getRecommendations(tasks, currentEnergy) {
   if (currentEnergy <= 2) maxTasks = 2;
   else if (currentEnergy === 3) maxTasks = 4;
 
+  const energyBonuses = CATEGORY_ENERGY_BONUS[currentEnergy] || {};
+
   const scored = activeTasks.map(task => {
     // L5: Hard gate — don't recommend tasks that exceed current energy by more than 1 level
     if (task.energyRequired > currentEnergy + 1) return null;
 
+    const category = task.category || 'general';
     let score = 100; // Base score
 
     // Energy match scoring
@@ -27,6 +58,17 @@ export function getRecommendations(tasks, currentEnergy) {
     } else {
       // Exponential penalty for exceeding current energy
       score -= Math.pow(task.energyRequired - currentEnergy, 2) * 10;
+    }
+
+    // ── Category affinity bonus ──
+    score += energyBonuses[category] || 0;
+
+    // ── Low-energy category cap penalty ──
+    if (currentEnergy <= 2) {
+      const cap = CATEGORY_LOW_ENERGY_HOUR_CAP[category];
+      if (cap !== undefined && (task.estimatedHours || 1) > cap) {
+        score -= 20; // Heavy penalty — task is too demanding for this energy
+      }
     }
 
     // Deadline urgency scoring
@@ -87,4 +129,3 @@ export function getRecommendations(tasks, currentEnergy) {
 
   return finalRecs;
 }
-

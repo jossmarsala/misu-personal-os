@@ -21,7 +21,7 @@ export const playPop = () => {
     const gainNode = ctx.createGain();
     
     osc.type = 'sine';
-    const now = ctx.currentTime + 0.015;
+    const now = ctx.currentTime;
     osc.frequency.setValueAtTime(300, now);
     osc.frequency.exponentialRampToValueAtTime(600, now + 0.05);
     
@@ -47,7 +47,7 @@ export const playTick = () => {
     const gainNode = ctx.createGain();
     
     osc.type = 'triangle';
-    const now = ctx.currentTime + 0.015;
+    const now = ctx.currentTime;
     osc.frequency.setValueAtTime(150, now);
     osc.frequency.exponentialRampToValueAtTime(50, now + 0.05);
     

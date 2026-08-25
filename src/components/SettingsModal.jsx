@@ -164,8 +164,12 @@ export default function SettingsModal({ onClose, onReplayTour }) {
             </div>
             <div className="settings-section__card">
               <div className="settings-account">
-                <div className="settings-account__avatar">
-                  {user?.email?.[0]?.toUpperCase() || 'U'}
+                <div className="settings-account__avatar" style={{ overflow: 'hidden', background: 'none' }}>
+                  <img 
+                    src={`https://api.dicebear.com/10.x/pixelbot/svg?seed=${encodeURIComponent(user?.email || 'User')}`} 
+                    alt="User Avatar" 
+                    style={{ width: '100%', height: '100%' }} 
+                  />
                 </div>
                 <div className="settings-account__info">
                   <span className="settings-account__title">{t('settings.signedInAs')}</span>
