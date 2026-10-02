@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Timer, Music, Shield, CalendarDays, X } from 'lucide-react';
+import { Timer, Music, Shield, CalendarDays, ClipboardList, X } from 'lucide-react';
 import { useEnergy } from '../context/EnergyContext';
 import { getEnergyDef } from '../utils/energy';
 import { useLanguage } from '../context/LanguageContext';
@@ -34,6 +34,7 @@ export default function ToolsSheet({
   showMusic,    onToggleMusic,
   showDND,      onToggleDND,
   showCalendar, onToggleCalendar,
+  showChecklist, onToggleChecklist,
 }) {
   const { currentEnergy } = useEnergy();
   const energyDef = getEnergyDef(currentEnergy);
@@ -79,6 +80,14 @@ export default function ToolsSheet({
       label: t('widgets.calendar'),
       active: showCalendar,
       onToggle: () => { playPop(); onToggleCalendar(); onClose(); },
+      color: energyDef.colorA,
+    },
+    {
+      id: 'checklist',
+      icon: ClipboardList,
+      label: t('widgets.notes'),
+      active: showChecklist,
+      onToggle: () => { playPop(); onToggleChecklist?.(); onClose(); },
       color: energyDef.colorA,
     },
   ];

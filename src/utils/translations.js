@@ -198,6 +198,19 @@ export const translations = {
       focus: "Focus",
       calendar: "Calendar",
       tools: "Tools",
+      notes: "Today"
+    },
+    checklist: {
+      title: "Today's Notes",
+      placeholder: "Add a note…",
+      empty: "Nothing here yet — jot something down!",
+      add: "Add item",
+      check: "Mark done",
+      uncheck: "Mark undone",
+      delete: "Delete",
+      clearDone: "Clear done",
+      doubleClickEdit: "Double-click to edit",
+      hint: "Clears automatically at midnight ✦"
     },
     tips: {
       firstTask: "You added your first task! 🎉 Try changing your energy level on the right to get personalized recommendations that match how you feel right now.",
@@ -447,6 +460,19 @@ export const translations = {
       focus: "Enfoque",
       calendar: "Calendario",
       tools: "Herramientas",
+      notes: "Hoy"
+    },
+    checklist: {
+      title: "Notas de hoy",
+      placeholder: "Añade una nota…",
+      empty: "Nada aquí todavía — ¡anota algo!",
+      add: "Añadir",
+      check: "Marcar hecho",
+      uncheck: "Desmarcar",
+      delete: "Eliminar",
+      clearDone: "Borrar hechos",
+      doubleClickEdit: "Doble clic para editar",
+      hint: "Se limpia automáticamente a medianoche ✦"
     },
     tips: {
       firstTask: "¡Añadiste tu primera tarea! 🎉 Prueba cambiar tu nivel de energía a la derecha para recibir recomendaciones personalizadas según cómo te sientes ahora.",
@@ -696,6 +722,19 @@ export const translations = {
       focus: "Focus",
       calendar: "Calendario",
       tools: "Strumenti",
+      notes: "Oggi"
+    },
+    checklist: {
+      title: "Note di oggi",
+      placeholder: "Aggiungi una nota…",
+      empty: "Niente ancora — scrivi qualcosa!",
+      add: "Aggiungi",
+      check: "Segna come fatto",
+      uncheck: "Deseleziona",
+      delete: "Elimina",
+      clearDone: "Rimuovi completati",
+      doubleClickEdit: "Doppio clic per modificare",
+      hint: "Si azzera automaticamente a mezzanotte ✦"
     },
     tips: {
       firstTask: "Hai aggiunto il tuo primo compito! 🎉 Prova a cambiare il tuo livello di energia a destra per ricevere suggerimenti personalizzati in base a come ti senti adesso.",

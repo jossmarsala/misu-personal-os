@@ -17,7 +17,7 @@ import MisuHelper from './components/MisuHelper';
 import MobileBottomNav from './components/MobileBottomNav';
 import ToolsSheet from './components/ToolsSheet';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { Clock, CheckCircle2, Timer, Music, Shield, Calendar, Command } from 'lucide-react';
+import { Clock, CheckCircle2, Timer, Music, Shield, Calendar, Command, ClipboardList } from 'lucide-react';
 import { useLanguage } from './context/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
@@ -32,6 +32,7 @@ const MusicPlayer = lazy(() => import('./components/MusicPlayer'));
 const DNDWidget = lazy(() => import('./components/DNDWidget'));
 const CalendarView = lazy(() => import('./components/CalendarView'));
 const OnboardingTour = lazy(() => import('./components/OnboardingTour'));
+const DailyChecklist = lazy(() => import('./components/DailyChecklist'));
 
 import './App.css';
 
@@ -57,6 +58,7 @@ function App() {
   const [showMusic, setShowMusic] = useState(false);
   const [showDND, setShowDND] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [showChecklist, setShowChecklist] = useState(false);
   const [toolsSheetOpen, setToolsSheetOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('home'); // 'home' | 'tasks' | 'planner'
   const isMobile = useIsMobile();
@@ -131,6 +133,7 @@ function App() {
       if (action === 'toggle-music') setShowMusic(p => !p);
       if (action === 'toggle-dnd') setShowDND(p => !p);
       if (action === 'toggle-calendar') setShowCalendar(p => !p);
+      if (action === 'toggle-checklist') setShowChecklist(p => !p);
       if (action === 'open-settings') setSettingsOpen(true);
       if (action === 'clear-completed') {
         tasks.filter(t => t.completed).forEach(t => deleteTask(t.id));
@@ -204,6 +207,13 @@ function App() {
                   label: t('widgets.calendar'),
                   pressed: showCalendar,
                   onClick: () => setShowCalendar(!showCalendar)
+                },
+                {
+                  icon: <ClipboardList size={20} />,
+                  color: showChecklist ? energyDef.colorA : 'gray',
+                  label: t('widgets.notes'),
+                  pressed: showChecklist,
+                  onClick: () => setShowChecklist(!showChecklist)
                 }
               ]}
               colorful={true}
@@ -483,6 +493,7 @@ function App() {
         showMusic={showMusic}         onToggleMusic={() => setShowMusic(p => !p)}
         showDND={showDND}             onToggleDND={() => setShowDND(p => !p)}
         showCalendar={showCalendar}   onToggleCalendar={() => setShowCalendar(p => !p)}
+        showChecklist={showChecklist} onToggleChecklist={() => setShowChecklist(p => !p)}
       />
 
       {settingsOpen && (
@@ -510,6 +521,11 @@ function App() {
       <Suspense fallback={null}>
         <ErrorBoundary>
           <CalendarView visible={showCalendar} onClose={() => setShowCalendar(false)} />
+        </ErrorBoundary>
+      </Suspense>
+      <Suspense fallback={null}>
+        <ErrorBoundary>
+          <DailyChecklist visible={showChecklist} onClose={() => setShowChecklist(false)} />
         </ErrorBoundary>
       </Suspense>
 
