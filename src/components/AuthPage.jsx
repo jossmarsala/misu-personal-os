@@ -634,6 +634,27 @@ export default function AuthPage() {
               />
             ))}
           </div>
+          {/* Live Demo button inside left visual pane */}
+          <motion.button
+            type="button"
+            className="auth-demo-btn auth-demo-btn--visual"
+            onClick={enterDemo}
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            id="auth-live-demo-visual-btn"
+          >
+            <div className="auth-demo-btn__icon-wrap">
+              <Sparkles size={16} className="auth-demo-btn__icon" />
+            </div>
+            <div className="auth-demo-btn__info">
+              <span className="auth-demo-btn__title">{t('auth.liveDemo') || 'Try Live Demo'}</span>
+              <span className="auth-demo-btn__subtitle">
+                {t('auth.liveDemoDesc') || 'Explore with sample tasks · No sign-in required'}
+              </span>
+            </div>
+            <ArrowRight size={15} className="auth-demo-btn__arrow" />
+          </motion.button>
+
           {/* Security badge */}
           <div className="auth-visual__trust">
             <ShieldCheck size={13} />
@@ -843,32 +864,34 @@ export default function AuthPage() {
             </motion.form>
           </AnimatePresence>
 
-          {/* Live Demo Option */}
-          <div className="auth-divider">
-            <span className="auth-divider__line" />
-            <span className="auth-divider__text">{t('auth.or') || 'or'}</span>
-            <span className="auth-divider__line" />
-          </div>
+          {/* Live Demo Option (Mobile only, desktop is in visual pane) */}
+          <div className="auth-demo-mobile-wrapper">
+            <div className="auth-divider">
+              <span className="auth-divider__line" />
+              <span className="auth-divider__text">{t('auth.or') || 'or'}</span>
+              <span className="auth-divider__line" />
+            </div>
 
-          <motion.button
-            type="button"
-            className="auth-demo-btn"
-            onClick={enterDemo}
-            whileHover={{ scale: 1.015, y: -1 }}
-            whileTap={{ scale: 0.985 }}
-            id="auth-live-demo-btn"
-          >
-            <div className="auth-demo-btn__icon-wrap">
-              <Sparkles size={16} className="auth-demo-btn__icon" />
-            </div>
-            <div className="auth-demo-btn__info">
-              <span className="auth-demo-btn__title">{t('auth.liveDemo') || 'Try Live Demo'}</span>
-              <span className="auth-demo-btn__subtitle">
-                {t('auth.liveDemoDesc') || 'Explore with sample tasks · No sign-in required'}
-              </span>
-            </div>
-            <ArrowRight size={15} className="auth-demo-btn__arrow" />
-          </motion.button>
+            <motion.button
+              type="button"
+              className="auth-demo-btn"
+              onClick={enterDemo}
+              whileHover={{ scale: 1.015, y: -1 }}
+              whileTap={{ scale: 0.985 }}
+              id="auth-live-demo-btn"
+            >
+              <div className="auth-demo-btn__icon-wrap">
+                <Sparkles size={16} className="auth-demo-btn__icon" />
+              </div>
+              <div className="auth-demo-btn__info">
+                <span className="auth-demo-btn__title">{t('auth.liveDemo') || 'Try Live Demo'}</span>
+                <span className="auth-demo-btn__subtitle">
+                  {t('auth.liveDemoDesc') || 'Explore with sample tasks · No sign-in required'}
+                </span>
+              </div>
+              <ArrowRight size={15} className="auth-demo-btn__arrow" />
+            </motion.button>
+          </div>
 
           {/* Switch mode footer */}
           <p className="auth-switch">

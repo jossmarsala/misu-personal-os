@@ -155,6 +155,7 @@ export const translations = {
       liveDemo: "Try Live Demo",
       liveDemoDesc: "Explore with sample tasks · No sign-in required",
       demoBadge: "LIVE DEMO",
+      demoNotice: "Live demonstration only · Changes will not be saved",
       exitDemo: "Exit Demo",
     },
     energy: {
@@ -424,6 +425,7 @@ export const translations = {
       liveDemo: "Probar Demo en Vivo",
       liveDemoDesc: "Explora con tareas de ejemplo · Sin iniciar sesión",
       demoBadge: "DEMO EN VIVO",
+      demoNotice: "Demostración en vivo · Los cambios no se guardarán",
       exitDemo: "Salir del Demo",
     },
     energy: {
@@ -693,6 +695,7 @@ export const translations = {
       liveDemo: "Prova Demo Live",
       liveDemoDesc: "Esplora con compiti di esempio · Nessun accesso richiesto",
       demoBadge: "DEMO LIVE",
+      demoNotice: "Dimostrazione live · Le modifiche non verranno salvate",
       exitDemo: "Esci dalla Demo",
     },
     energy: {

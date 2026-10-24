@@ -61,7 +61,7 @@ function DemoBadge() {
     <div
       data-theme={oppositeTheme}
       className="demo-floating-badge"
-      title="Live Demo mode: explore with sample tasks."
+      title={t('auth.demoNotice') || 'Live demonstration only · Changes will not be saved'}
       style={{
         position: 'fixed',
         bottom: '18px',
@@ -83,22 +83,29 @@ function DemoBadge() {
         color: 'var(--text-primary)',
         letterSpacing: '0.03em',
         transition: 'all var(--transition-fast)',
+        maxWidth: 'calc(100vw - 36px)',
       }}
     >
-      {/* Small status dot — energy color from opposite theme context */}
-      <span style={{
-        width: '7px',
-        height: '7px',
-        borderRadius: '50%',
-        background: 'var(--energy-primary-vivid, var(--energy-primary))',
-        boxShadow: '0 0 8px var(--energy-primary)',
-        flexShrink: 0,
-      }} />
-      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+      <span style={{ display: 'flex', alignItems: 'center', gap: '5px', flexShrink: 0 }}>
         <Sparkles size={13} style={{ color: 'var(--energy-primary)' }} />
-        {t('auth.demoBadge') || 'LIVE DEMO'}
+        <span>{t('auth.demoBadge') || 'LIVE DEMO'}</span>
       </span>
-      <span style={{ opacity: 0.3 }}>|</span>
+      <span style={{ opacity: 0.3, flexShrink: 0 }}>·</span>
+      <span
+        style={{
+          fontSize: '11px',
+          fontWeight: 400,
+          color: 'var(--text-secondary)',
+          letterSpacing: '0.01em',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          maxWidth: '280px',
+        }}
+      >
+        {t('auth.demoNotice') || 'Changes will not be saved'}
+      </span>
+      <span style={{ opacity: 0.3, flexShrink: 0 }}>|</span>
       <button
         onClick={exitDemo}
         type="button"
