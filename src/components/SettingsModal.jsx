@@ -31,7 +31,7 @@ function HelpTip({ text }) {
 
 export default function SettingsModal({ onClose, onReplayTour }) {
   const { tasks, importTasksFromJSON, clearAll } = useTasks();
-  const { user, logout } = useAuth();
+  const { user, logout, isDemo, exitDemo } = useAuth();
   const { t } = useLanguage();
   const { permission, prefs, updatePrefs, askPermission } = useNotifications();
   const [apiKey, setApiKey] = useState('');
@@ -172,12 +172,22 @@ export default function SettingsModal({ onClose, onReplayTour }) {
                   />
                 </div>
                 <div className="settings-account__info">
-                  <span className="settings-account__title">{t('settings.signedInAs')}</span>
-                  <span className="settings-account__email">{user?.email}</span>
+                  <span className="settings-account__title">{isDemo ? (t('settings.demoMode') || 'Demo Mode') : t('settings.signedInAs')}</span>
+                  <span className="settings-account__email">{isDemo ? (t('settings.guestExplorer') || 'Guest Explorer') : user?.email}</span>
                 </div>
-                <button className="btn btn-ghost btn-sm settings-logout" onClick={logout}>
+                <button
+                  className="btn btn-ghost btn-sm settings-logout"
+                  onClick={() => {
+                    if (isDemo) {
+                      exitDemo();
+                      onClose?.();
+                    } else {
+                      logout();
+                    }
+                  }}
+                >
                   <LogOut size={14} />
-                  {t('common.logout')}
+                  {isDemo ? (t('auth.exitDemo') || 'Exit Demo') : t('common.logout')}
                 </button>
               </div>
             </div>

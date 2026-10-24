@@ -13,6 +13,41 @@ export function AuthProvider({ children }) {
   const [justVerified, setJustVerified] = useState(false);
   // True when a user clicked the reset password link
   const [resetMode, setResetMode] = useState(false);
+  // True when exploring in no sign-in Live Demo mode
+  const [isDemo, setIsDemo] = useState(() => {
+    try {
+      if (typeof window === 'undefined') return false;
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('demo') === '1' || params.get('demo') === 'true' || params.get('debug') === '1') {
+        return true;
+      }
+      return sessionStorage.getItem('misu:demo_mode') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const enterDemo = () => {
+    try {
+      sessionStorage.setItem('misu:demo_mode', 'true');
+    } catch {}
+    setIsDemo(true);
+  };
+
+  const exitDemo = () => {
+    try {
+      sessionStorage.removeItem('misu:demo_mode');
+    } catch {}
+    setIsDemo(false);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('demo') || url.searchParams.has('debug')) {
+        url.searchParams.delete('demo');
+        url.searchParams.delete('debug');
+        window.history.replaceState({}, '', url.pathname + (url.search ? url.search : '') + url.hash);
+      }
+    }
+  };
 
   useEffect(() => {
     if (!supabase) {
@@ -98,6 +133,10 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
+    if (isDemo) {
+      exitDemo();
+      return;
+    }
     if (!supabase) return;
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
@@ -112,6 +151,9 @@ export function AuthProvider({ children }) {
       forgotPassword,
       updatePassword,
       logout,
+      enterDemo,
+      exitDemo,
+      isDemo,
       loading,
       justVerified,
       resetMode,

@@ -466,6 +466,118 @@
 }
 
 /* ─────────────────────────────────────────
+   Auth Divider (or)
+───────────────────────────────────────── */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 22px 0 16px;
+}
+
+.auth-divider__line {
+  flex: 1;
+  height: 1px;
+  background: var(--border-primary);
+}
+
+.auth-divider__text {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ─────────────────────────────────────────
+   Live Demo Button
+───────────────────────────────────────── */
+.auth-demo-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.auth-demo-btn:hover {
+  border-color: var(--energy-primary);
+  background: color-mix(in srgb, var(--energy-primary) 6%, var(--bg-secondary));
+  box-shadow: 0 4px 20px var(--energy-glow), 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.auth-demo-btn:focus-visible {
+  outline: none;
+  border-color: var(--energy-primary);
+  box-shadow: 0 0 0 3px var(--energy-glow);
+}
+
+.auth-demo-btn__icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--energy-primary) 14%, var(--bg-primary));
+  border: 1px solid color-mix(in srgb, var(--energy-primary) 25%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--energy-primary);
+  flex-shrink: 0;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.auth-demo-btn:hover .auth-demo-btn__icon-wrap {
+  transform: rotate(8deg) scale(1.05);
+  background: color-mix(in srgb, var(--energy-primary) 22%, var(--bg-primary));
+}
+
+.auth-demo-btn__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.auth-demo-btn__title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.auth-demo-btn__subtitle {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.auth-demo-btn__arrow {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.auth-demo-btn:hover .auth-demo-btn__arrow {
+  transform: translateX(3px);
+  color: var(--energy-primary);
+}
+
+/* ─────────────────────────────────────────
    Switch Mode Footer
 ───────────────────────────────────────── */
 .auth-switch {

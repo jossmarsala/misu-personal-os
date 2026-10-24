@@ -6,7 +6,7 @@ import { useEnergy } from '../context/EnergyContext';
 import { getEnergyDef } from '../utils/energy';
 import {
   Mail, Lock, ArrowRight, Loader2, CheckCircle2,
-  Eye, EyeOff, RotateCcw, ShieldCheck, Inbox,
+  Eye, EyeOff, RotateCcw, ShieldCheck, Inbox, Sparkles,
 } from 'lucide-react';
 import MosaicBackground from './MosaicBackground';
 import './AuthPage.css';
@@ -114,9 +114,19 @@ export default function AuthPage() {
   const [resetError, setResetError] = useState('');
   const [resetSuccess, setResetSuccess] = useState(false);
 
-  const { login, signup, forgotPassword, updatePassword, resetMode, setResetMode } = useAuth();
+  const { login, signup, forgotPassword, updatePassword, resetMode, setResetMode, enterDemo } = useAuth();
   const { t, language } = useLanguage();
   const { currentEnergy } = useEnergy();
+
+  // Random energy theme selected once per sign-in page load (only for gradient pixel mosaic)
+  const [randomEnergyLevel] = useState(() => Math.floor(Math.random() * 4) + 1);
+  const visualEnergyDef = getEnergyDef(randomEnergyLevel);
+  const visualColorC =
+    randomEnergyLevel === 1 ? '#5BC9F5' :
+    randomEnergyLevel === 2 ? '#DC143C' :
+    randomEnergyLevel === 4 ? '#8A2BE2' :
+    undefined;
+
   const energyDef = getEnergyDef(currentEnergy || 3);
 
   const passwordStrength = !isLogin ? getPasswordStrength(password) : null;
@@ -593,14 +603,9 @@ export default function AuthPage() {
       {/* Left visual pane */}
       <div className="auth-visual">
         <MosaicBackground
-          colorA={energyDef.vividColorA}
-          colorB={energyDef.vividColorB}
-          colorC={
-            currentEnergy === 1 ? '#5BC9F5' :
-            currentEnergy === 2 ? '#DC143C' :
-            currentEnergy === 4 ? '#8A2BE2' :
-            undefined
-          }
+          colorA={visualEnergyDef.vividColorA}
+          colorB={visualEnergyDef.vividColorB}
+          colorC={visualColorC}
           tileSize={22}
           speed={0.28}
         />
@@ -648,14 +653,9 @@ export default function AuthPage() {
           {/* Mobile visual banner */}
           <div className="auth-mobile-hero">
             <MosaicBackground
-              colorA={energyDef.vividColorA}
-              colorB={energyDef.vividColorB}
-              colorC={
-                currentEnergy === 1 ? '#5BC9F5' :
-                currentEnergy === 2 ? '#DC143C' :
-                currentEnergy === 4 ? '#8A2BE2' :
-                undefined
-              }
+              colorA={visualEnergyDef.vividColorA}
+              colorB={visualEnergyDef.vividColorB}
+              colorC={visualColorC}
               tileSize={18}
               speed={0.25}
             />
@@ -842,6 +842,33 @@ export default function AuthPage() {
               </motion.button>
             </motion.form>
           </AnimatePresence>
+
+          {/* Live Demo Option */}
+          <div className="auth-divider">
+            <span className="auth-divider__line" />
+            <span className="auth-divider__text">{t('auth.or') || 'or'}</span>
+            <span className="auth-divider__line" />
+          </div>
+
+          <motion.button
+            type="button"
+            className="auth-demo-btn"
+            onClick={enterDemo}
+            whileHover={{ scale: 1.015, y: -1 }}
+            whileTap={{ scale: 0.985 }}
+            id="auth-live-demo-btn"
+          >
+            <div className="auth-demo-btn__icon-wrap">
+              <Sparkles size={16} className="auth-demo-btn__icon" />
+            </div>
+            <div className="auth-demo-btn__info">
+              <span className="auth-demo-btn__title">{t('auth.liveDemo') || 'Try Live Demo'}</span>
+              <span className="auth-demo-btn__subtitle">
+                {t('auth.liveDemoDesc') || 'Explore with sample tasks · No sign-in required'}
+              </span>
+            </div>
+            <ArrowRight size={15} className="auth-demo-btn__arrow" />
+          </motion.button>
 
           {/* Switch mode footer */}
           <p className="auth-switch">

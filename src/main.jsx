@@ -4,13 +4,14 @@ import { TaskProvider } from './context/TaskContext';
 import { EnergyProvider } from './context/EnergyContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { useEnergy } from './context/EnergyContext';
-import { LanguageProvider } from './context/LanguageContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import AuthPage from './components/AuthPage';
 import SplashScreen from './components/SplashScreen';
 import App from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import sampleTasks from './data/sample-tasks.json';
+import { LogOut, Sparkles } from 'lucide-react';
 import './index.css';
 
 /** Resolve __TODAY__, __TOMORROW__, __IN3DAYS__ placeholders → real YYYY-MM-DD strings */
@@ -35,16 +36,13 @@ function resolveSampleDates(tasks) {
   }));
 }
 
-
-// 🐛 Debug mode — auto-enabled on localhost, bypasses auth + seeds sample tasks
-const IS_DEBUG = typeof window !== 'undefined' &&
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-
-// Tiny floating badge shown only in debug mode — always renders in the OPPOSITE theme
-function DebugBadge() {
+// Floating badge shown only when exploring in Live Demo mode — always renders in the OPPOSITE theme
+function DemoBadge() {
+  const { isDemo, exitDemo } = useAuth();
+  const { t } = useLanguage();
   const [dismissed, setDismissed] = useState(false);
   const [theme, setTheme] = useState(
-    () => document.documentElement.getAttribute('data-theme') || 'dark'
+    () => (typeof document !== 'undefined' ? document.documentElement.getAttribute('data-theme') || 'dark' : 'dark')
   );
 
   useEffect(() => {
@@ -55,15 +53,15 @@ function DebugBadge() {
     return () => obs.disconnect();
   }, []);
 
-  if (!IS_DEBUG || dismissed) return null;
+  if (!isDemo || dismissed) return null;
 
   const oppositeTheme = theme === 'dark' ? 'light' : 'dark';
 
   return (
     <div
       data-theme={oppositeTheme}
-      onClick={() => setDismissed(true)}
-      title="Debug mode: no login required. Click to dismiss."
+      className="demo-floating-badge"
+      title="Live Demo mode: explore with sample tasks."
       style={{
         position: 'fixed',
         bottom: '18px',
@@ -71,16 +69,14 @@ function DebugBadge() {
         zIndex: 9999,
         display: 'flex',
         alignItems: 'center',
-        gap: 'var(--space-2)',
-        padding: '8px 14px',
+        gap: '8px',
+        padding: '8px 12px 8px 14px',
         borderRadius: 'var(--radius-full)',
         background: 'var(--bg-overlay)',
         backdropFilter: 'var(--glass-blur)',
         WebkitBackdropFilter: 'var(--glass-blur)',
         border: '1px solid var(--border-primary)',
         boxShadow: 'var(--shadow-md)',
-        cursor: 'pointer',
-        userSelect: 'none',
         fontSize: '12px',
         fontFamily: "'Outfit', -apple-system, sans-serif",
         fontWeight: 600,
@@ -88,38 +84,73 @@ function DebugBadge() {
         letterSpacing: '0.03em',
         transition: 'all var(--transition-fast)',
       }}
-      onMouseEnter={e => {
-        e.currentTarget.style.color = 'var(--text-secondary)';
-        e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
-        e.currentTarget.style.transform = 'translateY(-2px)';
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.color = 'var(--text-primary)';
-        e.currentTarget.style.boxShadow = 'var(--shadow-md)';
-        e.currentTarget.style.transform = 'translateY(0)';
-      }}
     >
       {/* Small status dot — energy color from opposite theme context */}
       <span style={{
-        width: '6px',
-        height: '6px',
+        width: '7px',
+        height: '7px',
         borderRadius: '50%',
         background: 'var(--energy-primary-vivid, var(--energy-primary))',
+        boxShadow: '0 0 8px var(--energy-primary)',
         flexShrink: 0,
-        opacity: 1,
       }} />
-      DEBUG MODE
+      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        <Sparkles size={13} style={{ color: 'var(--energy-primary)' }} />
+        {t('auth.demoBadge') || 'LIVE DEMO'}
+      </span>
+      <span style={{ opacity: 0.3 }}>|</span>
+      <button
+        onClick={exitDemo}
+        type="button"
+        title="Exit Demo and return to sign-in page"
+        style={{
+          background: 'transparent',
+          border: 'none',
+          color: 'var(--energy-primary)',
+          fontWeight: 700,
+          cursor: 'pointer',
+          padding: '2px 4px',
+          borderRadius: 'var(--radius-sm)',
+          fontSize: '11px',
+          letterSpacing: '0.02em',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px',
+          fontFamily: 'inherit',
+        }}
+      >
+        <LogOut size={12} />
+        {t('auth.exitDemo') || 'Exit Demo'}
+      </button>
+      <button
+        onClick={() => setDismissed(true)}
+        type="button"
+        aria-label="Dismiss badge"
+        title="Dismiss"
+        style={{
+          background: 'transparent',
+          border: 'none',
+          color: 'var(--text-tertiary)',
+          cursor: 'pointer',
+          padding: '0 2px',
+          display: 'flex',
+          alignItems: 'center',
+          fontSize: '14px',
+          lineHeight: 1,
+          opacity: 0.7,
+        }}
+      >
+        ×
+      </button>
     </div>
   );
 }
 
-
-
 function AuthGate() {
-  const { user } = useAuth();
+  const { user, isDemo } = useAuth();
 
-  // 🐛 Debug mode: skip login entirely, seed with sample tasks
-  if (IS_DEBUG) {
+  // 🚀 Live Demo mode: skip login entirely, seed with sample tasks
+  if (isDemo) {
     return (
       <TaskProvider initialTasks={resolveSampleDates(sampleTasks.tasks)}>
         <ThemedApp />
@@ -147,7 +178,6 @@ function ThemedApp() {
 
 // Chequeo de las 8 horas — síncrono, fuera de React
 function shouldShowSplash() {
-  if (IS_DEBUG) return true; // En dev siempre mostrar el splash
   const LAST_LOAD_KEY = 'misu:lastLoadTime';
   const EIGHT_HOURS_MS = 8 * 60 * 60 * 1000;
   const now = Date.now();
@@ -182,11 +212,11 @@ function AppWithSplash() {
           <AuthProvider>
             <EnergyProvider>
               <AuthGate />
+              <DemoBadge />
             </EnergyProvider>
           </AuthProvider>
         </LanguageProvider>
       </ErrorBoundary>
-      <DebugBadge />
     </>
   );
 }
