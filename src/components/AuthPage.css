@@ -149,6 +149,16 @@
   justify-content: center;
   padding: var(--space-6) var(--space-5);
   background: var(--bg-primary);
+  position: relative;
+}
+
+.auth-form-topbar {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
 }
 
 @media (min-width: 768px) {
@@ -156,6 +166,11 @@
     flex: 0 0 520px;
     padding: var(--space-8) var(--space-10);
     border-left: 1px solid var(--border-primary);
+  }
+
+  .auth-form-topbar {
+    top: 24px;
+    right: 28px;
   }
 }
 

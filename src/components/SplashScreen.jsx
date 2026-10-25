@@ -3,7 +3,20 @@ import { useEffect, useRef, useState } from 'react';
 // ── Leer idioma sin necesitar el contexto de React ──────────────────────────
 // Devuelve [antes, después] para colocar el icono en el centro de la frase
 function getWelcomeParts() {
-  const lang = localStorage.getItem('misu-language') || 'en';
+  const getDeviceLang = () => {
+    if (typeof navigator === 'undefined') return 'en';
+    const candidates = [
+      ...(Array.isArray(navigator.languages) ? navigator.languages : []),
+      navigator.language,
+      navigator.userLanguage,
+    ].filter(Boolean);
+    for (const l of candidates) {
+      const code = l.toLowerCase().split(/[-_]/)[0];
+      if (['en', 'es', 'it', 'fr', 'de', 'pt'].includes(code)) return code;
+    }
+    return 'en';
+  };
+  const lang = localStorage.getItem('misu-language') || getDeviceLang();
   const map = {
     en: ['Welcome', 'back!'],
     es: ['\u00a1Hola', 'de nuevo!'],

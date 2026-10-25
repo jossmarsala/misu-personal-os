@@ -3,9 +3,29 @@ import { translations } from '../utils/translations';
 
 const LanguageContext = createContext();
 
+const SUPPORTED_LANGUAGES = ['en', 'es', 'it'];
+
+function getDeviceLanguage() {
+  if (typeof navigator === 'undefined') return 'en';
+  // Check navigator.languages list or navigator.language
+  const candidates = [
+    ...(Array.isArray(navigator.languages) ? navigator.languages : []),
+    navigator.language,
+    navigator.userLanguage,
+  ].filter(Boolean);
+
+  for (const lang of candidates) {
+    const code = lang.toLowerCase().split(/[-_]/)[0];
+    if (SUPPORTED_LANGUAGES.includes(code)) {
+      return code;
+    }
+  }
+  return 'en';
+}
+
 export function LanguageProvider({ children }) {
   const [language, setLanguage] = useState(() => {
-    return localStorage.getItem('misu-language') || 'en';
+    return localStorage.getItem('misu-language') || getDeviceLanguage();
   });
 
   useEffect(() => {

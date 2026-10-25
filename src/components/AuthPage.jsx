@@ -6,9 +6,10 @@ import { useEnergy } from '../context/EnergyContext';
 import { getEnergyDef } from '../utils/energy';
 import {
   Mail, Lock, ArrowRight, Loader2, CheckCircle2,
-  Eye, EyeOff, RotateCcw, ShieldCheck, Inbox, Sparkles,
+  Eye, EyeOff, RotateCcw, ShieldCheck, Inbox, Sparkles, Languages,
 } from 'lucide-react';
 import MosaicBackground from './MosaicBackground';
+import LanguageSwitcher from './LanguageSwitcher';
 import './AuthPage.css';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -252,10 +253,10 @@ export default function AuthPage() {
                       <Inbox size={26} className="auth-success-icon" />
                     </div>
                   </motion.div>
-                  <h2 className="auth-success-title">Check your inbox</h2>
+                  <h2 className="auth-success-title">{t('auth.forgotCheckInbox') || 'Check your inbox'}</h2>
                   <p className="auth-success-desc">
-                    We sent a password-reset link to <strong>{forgotEmail}</strong>.<br /><br />
-                    Check your spam folder if it doesn't arrive within a few minutes.
+                    {t('auth.forgotSentDesc') || 'We sent a password-reset link to'} <strong>{forgotEmail}</strong>.<br /><br />
+                    {t('auth.forgotSpamHint') || "Check your spam folder if it doesn't arrive within a few minutes."}
                   </p>
                 </div>
                 
@@ -264,7 +265,7 @@ export default function AuthPage() {
                   onClick={() => { setShowForgot(false); setForgotSent(false); setForgotEmail(''); }}
                 >
                   <RotateCcw size={14} />
-                  <span>Back to Sign In</span>
+                  <span>{t('auth.backToSignIn') || 'Back to Sign In'}</span>
                 </button>
               </>
             ) : (
@@ -281,16 +282,16 @@ export default function AuthPage() {
                       <Lock size={26} className="auth-success-icon" />
                     </div>
                   </motion.div>
-                  <h2 className="auth-success-title">Reset Password</h2>
+                  <h2 className="auth-success-title">{t('auth.forgotTitle') || 'Reset Password'}</h2>
                   <p className="auth-success-desc">
-                    Enter your email and we'll send a secure reset link.
+                    {t('auth.forgotDesc') || "Enter your email and we'll send a secure reset link."}
                   </p>
                 </div>
 
                 <form onSubmit={handleForgotSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div className="auth-field" style={{ textAlign: 'left' }}>
                     <label className="auth-label" htmlFor="forgot-email">
-                      <Mail size={13} /> Email
+                      <Mail size={13} /> {t('auth.email') || 'Email'}
                     </label>
                     <input
                       id="forgot-email"
@@ -317,7 +318,7 @@ export default function AuthPage() {
                   >
                     {forgotLoading
                       ? <Loader2 className="spin" size={18} />
-                      : <>Send Reset Link <ArrowRight size={16} /></>
+                      : <>{t('auth.forgotSendBtn') || 'Send Reset Link'} <ArrowRight size={16} /></>
                     }
                   </motion.button>
                   <button
@@ -326,7 +327,7 @@ export default function AuthPage() {
                     style={{ textAlign: 'center', marginTop: '8px' }}
                     onClick={() => { setShowForgot(false); setForgotError(''); }}
                   >
-                    ← Cancel
+                    ← {t('auth.cancel') || 'Cancel'}
                   </button>
                 </form>
               </>
@@ -616,11 +617,11 @@ export default function AuthPage() {
           transition={{ delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
           <h1 className="auth-visual__headline">
-            Your mind,<br />
-            <em>organised.</em>
+            {t('auth.visualHeadline') || 'Your mind,'}<br />
+            <em>{t('auth.visualHeadlineEm') || 'organised with misu.'}</em>
           </h1>
           <p className="auth-visual__tagline">
-            Energy-aware tasks,<br />focus, and planning — all in one place.
+            {t('auth.visualTagline') || 'Energy-aware tasks, focus, and planning — all in one place.'}
           </p>
 
           {/* Live Demo button inside left visual pane */}
@@ -648,6 +649,9 @@ export default function AuthPage() {
 
       {/* Right form pane */}
       <div className="auth-form-pane">
+        <div className="auth-form-topbar">
+          <LanguageSwitcher />
+        </div>
         <motion.div
           className="auth-form-wrapper"
           initial={{ opacity: 0, y: 16 }}
