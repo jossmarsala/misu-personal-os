@@ -34,6 +34,14 @@
   }
 }
 
+.auth-visual canvas {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1;
+}
+
 .auth-visual__content {
   position: relative;
   z-index: 2;
@@ -582,14 +590,16 @@
 
 /* Visual Pane variant for left side */
 .auth-demo-btn--visual {
+  display: flex !important;
   margin-top: 28px;
   max-width: 360px;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.42);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   color: #fff;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
+  cursor: pointer;
 }
 
 .auth-demo-btn--visual .auth-demo-btn__icon-wrap {
