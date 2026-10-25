@@ -615,10 +615,6 @@ export default function AuthPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="auth-visual__wordmark">
-            <span className="auth-visual__logo">M</span>
-            <span className="auth-visual__brand">misu</span>
-          </div>
           <h1 className="auth-visual__headline">
             Your mind,<br />
             <em>organised.</em>
@@ -626,14 +622,7 @@ export default function AuthPage() {
           <p className="auth-visual__tagline">
             Energy-aware tasks,<br />focus, and planning — all in one place.
           </p>
-          <div className="auth-visual__energy-dots">
-            {[1, 2, 3, 4].map(i => (
-              <div
-                key={i}
-                className={`auth-dot ${i <= (currentEnergy || 3) ? 'active' : ''}`}
-              />
-            ))}
-          </div>
+
           {/* Live Demo button inside left visual pane */}
           <motion.button
             type="button"
@@ -654,12 +643,6 @@ export default function AuthPage() {
             </div>
             <ArrowRight size={15} className="auth-demo-btn__arrow" />
           </motion.button>
-
-          {/* Security badge */}
-          <div className="auth-visual__trust">
-            <ShieldCheck size={13} />
-            <span>Secure · Encrypted · Private</span>
-          </div>
         </motion.div>
       </div>
 
