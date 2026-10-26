@@ -125,3 +125,38 @@ export function formatDeadline(deadline) {
   if (days <= 7) return `${days}d left`;
   return formatDate(deadline);
 }
+
+/**
+ * Format a 7-day week range for display (e.g., "Oct 26 – Nov 1, 2026")
+ */
+export function formatWeekRange(startDate, endDate) {
+  if (!startDate || !endDate) return '';
+  const s = parseLocalDate(startDate);
+  const e = parseLocalDate(endDate);
+  const locale = document.documentElement.lang || 'en-US';
+  
+  const startMonth = s.toLocaleDateString(locale, { month: 'short' });
+  const endMonth = e.toLocaleDateString(locale, { month: 'short' });
+  const startDay = s.getDate();
+  const endDay = e.getDate();
+  const year = e.getFullYear();
+
+  if (s.getFullYear() !== e.getFullYear()) {
+    return `${startMonth} ${startDay}, ${s.getFullYear()} – ${endMonth} ${endDay}, ${year}`;
+  }
+  if (s.getMonth() === e.getMonth()) {
+    return `${startMonth} ${startDay} – ${endDay}, ${year}`;
+  }
+  return `${startMonth} ${startDay} – ${endMonth} ${endDay}, ${year}`;
+}
+
+/**
+ * Get relative week offset from current week (0 = this week, 1 = next week, etc.)
+ */
+export function getWeekOffset(targetDate, baseDate = new Date()) {
+  const t = getStartOfWeek(targetDate);
+  const b = getStartOfWeek(baseDate);
+  const diffDays = Math.round((t.getTime() - b.getTime()) / (1000 * 60 * 60 * 24));
+  return Math.round(diffDays / 7);
+}
+

@@ -5,7 +5,7 @@ import GradientOrb from './GradientOrb';
 import { X } from 'lucide-react';
 import { useTasks } from '../context/TaskContext';
 
-export default function SortableTask({ id, task, t, children }) {
+export default function SortableTask({ id, task, t, dayKey, children }) {
   const { setWeeklyPlan } = useTasks();
 
   const {
@@ -15,7 +15,7 @@ export default function SortableTask({ id, task, t, children }) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id, data: { type: 'planner-block' } });
+  } = useSortable({ id, data: { type: 'planner-block', day: dayKey } });
 
   const energyDef = getEnergyDef(task.energyRequired || 3);
 

@@ -3,7 +3,10 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import SortableTask from './SortableTask';
 
 export default function DroppableColumn({ id, dayTasks, t, dayName, dayDate, isToday }) {
-  const { setNodeRef, isOver } = useDroppable({ id });
+  const { setNodeRef, isOver } = useDroppable({
+    id,
+    data: { type: 'planner-day', day: id }
+  });
 
   return (
     <div
@@ -23,10 +26,12 @@ export default function DroppableColumn({ id, dayTasks, t, dayName, dayDate, isT
         >
           {dayTasks.length > 0 ? (
             dayTasks.map(task => (
-              <SortableTask key={task.dndId} id={task.dndId} task={task} t={t} />
+              <SortableTask key={task.dndId} id={task.dndId} task={task} t={t} dayKey={id} />
             ))
           ) : (
-            <div className="planner__day-empty">{t('planner.restDay')}</div>
+            <div className={`planner__day-empty ${isOver ? 'planner__day-empty--hover' : ''}`}>
+              {isOver ? (t('planner.dropHere') || 'Drop task here') : t('planner.restDay')}
+            </div>
           )}
         </SortableContext>
       </div>

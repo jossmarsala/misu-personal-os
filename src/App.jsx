@@ -96,25 +96,58 @@ function App() {
 
     const activeType = active.data.current?.type;
 
-    // ── Cross-zone: task card dropped onto a planner day ──
+    // ── Cross-zone: task card dropped onto a planner day or week switcher ──
     if (activeType === 'task-card') {
-      if (!weeklyPlan) return; // no plan — silently do nothing
-      const targetDay = over.id; // must match a YYYY-MM-DD key
-      if (!weeklyPlan[targetDay]) return;
+      let targetDay = null;
+
+      if (over.data?.current?.day) {
+        targetDay = over.data.current.day;
+      } else if (over.data?.current?.targetDay) {
+        targetDay = over.data.current.targetDay;
+      } else if (typeof over.id === 'string') {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(over.id)) {
+          targetDay = over.id;
+        } else if (/^\d{4}-\d{2}-\d{2}/.test(over.id)) {
+          targetDay = over.id.slice(0, 10);
+        }
+      }
+
+      if (!targetDay && weeklyPlan) {
+        for (const day of Object.keys(weeklyPlan)) {
+          if (weeklyPlan[day]?.some(t => t.dndId === over.id)) {
+            targetDay = day;
+            break;
+          }
+        }
+      }
+
+      if (!targetDay) return;
+
       const task = active.data.current.task;
       const newBlock = {
         taskId: task.id,
         title: task.title,
         hours: task.estimatedHours || 1,
+        category: task.category || 'other',
         isChunk: false,
         chunkLabel: '',
         dndId: `${targetDay}-${task.id}-manual-${Date.now()}`,
         energyRequired: task.energyRequired || 3,
       };
-      setWeeklyPlan(prev => ({
-        ...prev,
-        [targetDay]: [...(prev[targetDay] || []), newBlock],
-      }));
+
+      setWeeklyPlan(prev => {
+        const currentPlan = prev ? { ...prev } : {};
+        const dayList = currentPlan[targetDay] ? [...currentPlan[targetDay]] : [];
+        return {
+          ...currentPlan,
+          [targetDay]: [...dayList, newBlock],
+        };
+      });
+
+      if (over.data?.current?.type === 'week-switcher') {
+        window.dispatchEvent(new CustomEvent('misu:planner-set-date', { detail: { date: targetDay } }));
+      }
+
       playPop();
       return;
     }
