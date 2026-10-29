@@ -91,6 +91,7 @@ export const translations = {
       inWeeks: "+{n} Wks",
       prevWeek: "Previous Week",
       currentWeek: "Current Week",
+      backToToday: "Back to today",
     },
     settings: {
       apiKey: "Gemini API Key",
@@ -379,6 +380,7 @@ export const translations = {
       inWeeks: "+{n} sem",
       prevWeek: "Semana anterior",
       currentWeek: "Semana actual",
+      backToToday: "Volver a hoy",
     },
     settings: {
       apiKey: "Clave API de Gemini",
@@ -667,6 +669,7 @@ export const translations = {
       inWeeks: "+{n} sett",
       prevWeek: "Settimana precedente",
       currentWeek: "Settimana corrente",
+      backToToday: "Torna a oggi",
     },
     settings: {
       apiKey: "Chiave API Gemini",

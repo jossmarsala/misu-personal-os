@@ -135,8 +135,9 @@ export function formatWeekRange(startDate, endDate) {
   const e = parseLocalDate(endDate);
   const locale = document.documentElement.lang || 'en-US';
   
-  const startMonth = s.toLocaleDateString(locale, { month: 'short' });
-  const endMonth = e.toLocaleDateString(locale, { month: 'short' });
+  const cleanMonth = (m) => m.replace(/\./g, '').trim();
+  const startMonth = cleanMonth(s.toLocaleDateString(locale, { month: 'short' }));
+  const endMonth = cleanMonth(e.toLocaleDateString(locale, { month: 'short' }));
   const startDay = s.getDate();
   const endDay = e.getDate();
   const year = e.getFullYear();

@@ -25,15 +25,20 @@
 }
 
 .planner__range-badge {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
-  padding: 2px 8px;
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 500;
+  padding: 3px 10px;
   border-radius: var(--radius-full);
   background: var(--bg-card);
-  border: var(--glass-border);
-  color: var(--energy-primary);
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  border: 1px solid var(--border-primary);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: 0.01em;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-xs);
 }
 
 .planner__nav {
@@ -41,68 +46,78 @@
   align-items: center;
   gap: 3px;
   background: var(--bg-card);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-primary);
   border-radius: var(--radius-full);
   padding: 3px 4px;
+  box-shadow: var(--shadow-xs);
 }
 
-.planner__week-tabs {
-  display: flex;
+.planner__nav-btn {
+  display: inline-flex;
   align-items: center;
-  gap: 2px;
-}
-
-.planner__week-tab {
-  background: transparent;
-  border: 1px solid transparent;
-  color: var(--text-secondary);
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 5px 10px;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
   border-radius: var(--radius-full);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.planner__week-tab:hover {
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.planner__week-tab--active {
-  background: var(--energy-primary);
-  color: #ffffff !important;
-  border-color: var(--energy-primary);
-  box-shadow: 0 0 14px var(--energy-glow);
-}
-
-.planner__week-tab.highlighted-drop {
-  border-color: var(--energy-primary);
-  background: var(--energy-glow);
-  box-shadow: 0 0 20px var(--energy-glow);
-  transform: scale(1.06);
+.planner__nav-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text-primary);
 }
 
 .planner__nav-btn.highlighted-drop {
-  border-color: var(--energy-primary);
-  box-shadow: 0 0 20px var(--energy-glow);
+  border: 1px solid var(--energy-primary);
+  box-shadow: 0 0 16px var(--energy-glow);
   transform: scale(1.1);
   color: var(--energy-primary);
 }
 
-.planner__reset-btn {
+.planner__today-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-primary);
   border-radius: var(--radius-full);
-  color: var(--text-tertiary);
-  transition: all 0.2s ease;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-left: 2px;
+  white-space: nowrap;
 }
 
-.planner__reset-btn:hover {
-  color: var(--energy-primary);
+.planner__today-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+}
+
+.planner__today-btn svg {
+  transition: transform 0.25s ease;
+}
+
+.planner__today-btn:hover svg {
   transform: rotate(-45deg);
+}
+
+.planner__today-btn.highlighted-drop {
+  border-color: var(--energy-primary);
+  background: var(--energy-surface);
+  color: var(--energy-primary);
+  box-shadow: 0 0 16px var(--energy-glow);
 }
 
 .planner__quick-hint {

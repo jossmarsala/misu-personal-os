@@ -12,46 +12,6 @@ import { useDroppable } from '@dnd-kit/core';
 import DroppableColumn from './DroppableColumn';
 import './WeeklyPlanner.css';
 
-function WeekTabItem({ targetDate, label, active, onSelect }) {
-  const dayKey = toInputDate(targetDate);
-  const { setNodeRef, isOver } = useDroppable({
-    id: `week-tab-${dayKey}`,
-    data: {
-      type: 'week-switcher',
-      targetDay: dayKey,
-      targetDate,
-    }
-  });
-
-  const timerRef = useRef(null);
-
-  useEffect(() => {
-    if (isOver && !active) {
-      timerRef.current = setTimeout(() => {
-        onSelect(targetDate);
-        playPop();
-      }, 450);
-    } else {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    }
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [isOver, active, onSelect, targetDate]);
-
-  return (
-    <button
-      ref={setNodeRef}
-      type="button"
-      onClick={() => onSelect(targetDate)}
-      className={`planner__week-tab ${active ? 'planner__week-tab--active' : ''} ${isOver ? 'highlighted-drop' : ''}`}
-      title={label}
-    >
-      {label}
-    </button>
-  );
-}
-
 function WeekNavButton({ direction, baseDate, onClick, label }) {
   const isNext = direction === 'next';
   const targetDate = new Date(baseDate);
@@ -93,12 +53,37 @@ function WeekNavButton({ direction, baseDate, onClick, label }) {
       ref={setNodeRef}
       type="button"
       onClick={onClick}
-      className={`btn btn-icon planner__nav-btn ${isOver ? 'highlighted-drop' : ''}`}
-      style={{ padding: '8px' }}
+      className={`planner__nav-btn ${isOver ? 'highlighted-drop' : ''}`}
       aria-label={label}
       title={label}
     >
       {isNext ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+    </button>
+  );
+}
+
+function BackToTodayButton({ onClick, label }) {
+  const todayDate = new Date();
+  const todayKey = toInputDate(todayDate);
+  const { setNodeRef, isOver } = useDroppable({
+    id: 'planner-back-to-today',
+    data: {
+      type: 'week-switcher',
+      targetDay: todayKey,
+      targetDate: todayDate,
+    }
+  });
+
+  return (
+    <button
+      ref={setNodeRef}
+      type="button"
+      onClick={onClick}
+      className={`planner__today-btn ${isOver ? 'highlighted-drop' : ''}`}
+      title={label}
+    >
+      <RotateCcw size={12} />
+      <span>{label}</span>
     </button>
   );
 }
@@ -152,41 +137,6 @@ export default function WeeklyPlanner() {
     window.addEventListener('misu:planner-set-date', handler);
     return () => window.removeEventListener('misu:planner-set-date', handler);
   }, []);
-
-  const getRelativeWeekLabel = (offset) => {
-    if (offset === 0) return t('planner.thisWeek');
-    if (offset === 1) return t('planner.nextWeek');
-    if (offset > 1) return t('planner.inWeeks', { n: offset }) || `+${offset} Wks`;
-    if (offset === -1) return t('planner.prevWeek') || 'Last Week';
-    return `${offset} Wks`;
-  };
-
-  const weekTabOptions = [
-    { offset: 0, date: currentWeekStart, label: t('planner.thisWeek') },
-    {
-      offset: 1,
-      date: (() => { const d = new Date(currentWeekStart); d.setDate(d.getDate() + 7); return d; })(),
-      label: t('planner.nextWeek')
-    },
-    {
-      offset: 2,
-      date: (() => { const d = new Date(currentWeekStart); d.setDate(d.getDate() + 14); return d; })(),
-      label: t('planner.inWeeks', { n: 2 }) || '+2 Wks'
-    },
-  ];
-
-  if (weekOffset < 0 || weekOffset > 2) {
-    const customTab = {
-      offset: weekOffset,
-      date: baseDate,
-      label: getRelativeWeekLabel(weekOffset),
-    };
-    if (weekOffset < 0) {
-      weekTabOptions.unshift(customTab);
-    } else {
-      weekTabOptions.push(customTab);
-    }
-  }
 
   const handleGenerate = async () => {
     const settings = loadSettings();
@@ -301,7 +251,7 @@ export default function WeeklyPlanner() {
     <div className="planner" id="weekly-planner">
       <div className="planner__header">
         <div className="planner__title-area">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             <h2 className="section-title" style={{ marginBottom: 0 }}>
               <Calendar size={18} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--energy-primary)' }} />
               {t('planner.title')}
@@ -310,13 +260,10 @@ export default function WeeklyPlanner() {
               {formatWeekRange(weekDays[0], weekDays[6])}
             </span>
           </div>
-          <p className="section-subtitle">
-            {t('planner.subtitle')} · {getRelativeWeekLabel(weekOffset)}
-          </p>
         </div>
 
         <div className="planner__actions">
-          {/* Week navigation with droppable buttons and tabs */}
+          {/* Minimal week navigation: arrows + Volver a hoy */}
           <div className="planner__nav">
             <WeekNavButton
               direction="prev"
@@ -324,17 +271,6 @@ export default function WeeklyPlanner() {
               onClick={handlePrevWeek}
               label={t('planner.prevWeek')}
             />
-            <div className="planner__week-tabs">
-              {weekTabOptions.map((opt) => (
-                <WeekTabItem
-                  key={`tab-${opt.offset}`}
-                  targetDate={opt.date}
-                  label={opt.label}
-                  active={weekOffset === opt.offset}
-                  onSelect={(d) => setBaseDate(d)}
-                />
-              ))}
-            </div>
             <WeekNavButton
               direction="next"
               baseDate={baseDate}
@@ -342,15 +278,10 @@ export default function WeeklyPlanner() {
               label={t('planner.nextWeek')}
             />
             {!isCurrentWeek && (
-              <button
-                type="button"
+              <BackToTodayButton
                 onClick={handleResetToCurrent}
-                className="btn btn-icon planner__reset-btn"
-                title={t('planner.currentWeek')}
-                style={{ padding: '8px', marginLeft: '2px' }}
-              >
-                <RotateCcw size={14} />
-              </button>
+                label={t('planner.backToToday') || 'Volver a hoy'}
+              />
             )}
           </div>
 
