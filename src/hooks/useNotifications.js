@@ -3,18 +3,21 @@
    ─────────────────────────────────────────────────────────────
    Provides:
    - Permission request UI state
-   - Scheduled deadline watchers (24h before, day-of)
+   - Scheduled deadline watchers (24h before, day-of, grouped overdue)
    - Weekly Monday morning reminder
    - Morning task-due-today summary
    - Afternoon energy check-in
-   - Inactivity desktop nudge (15+ min away with open tab)
-   - Overdue task notification (once/day)
+   - Inactivity desktop nudge & mindfulness break reminder
+   - Streak & all-tasks-complete celebration
+   - Evening daily wrap-up
+   - Focus shield activation notification
    - Pomodoro event integration via custom events
    ═══════════════════════════════════════════════════════════════ */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTasks } from '../context/TaskContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useEnergy } from '../context/EnergyContext';
 import {
   loadNotifPrefs,
   saveNotifPrefs,
@@ -23,7 +26,6 @@ import {
   sendNotification,
   scheduleNotification,
   cancelScheduled,
-  cancelAllScheduled,
   NotifTemplates,
 } from '../services/NotificationService';
 
@@ -51,13 +53,20 @@ function getWeek(d = new Date()) {
 export function useNotifications() {
   const { tasks } = useTasks();
   const { language } = useLanguage();
+  const { dndActive } = useEnergy();
   const lang = language || 'en';
 
   const [permission, setPermission] = useState(getPermissionStatus);
   const [prefs, setPrefsState] = useState(loadNotifPrefs);
 
-  const lastActivityRef = useRef(Date.now());
-  const scheduledDeadlinesRef = useRef(new Set()); // track which task IDs have scheduled notifs
+  const lastActivityRef = useRef(0);
+  const lastInactivityNotifRef = useRef(0);
+  const prevDndActiveRef = useRef(dndActive);
+  const prevCompletedCountRef = useRef(tasks.filter(t => t.completed).length);
+
+  useEffect(() => {
+    lastActivityRef.current = Date.now();
+  }, []);
 
   // ── Persist prefs ──────────────────────────────────────────
   const updatePrefs = useCallback((patch) => {
@@ -75,52 +84,73 @@ export function useNotifications() {
     return result;
   }, []);
 
-  // ── Track page visibility for inactivity ──────────────────
+  // ── Track page visibility & activity ──────────────────────
   useEffect(() => {
-    const onVisible = () => { lastActivityRef.current = Date.now(); };
-    const onMove = () => { lastActivityRef.current = Date.now(); };
+    const onActivity = () => { lastActivityRef.current = Date.now(); };
 
-    document.addEventListener('visibilitychange', onVisible);
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('keydown', onMove);
-    // M4: touch events so mobile users don't appear permanently "idle"
-    document.addEventListener('touchstart', onMove, { passive: true });
+    document.addEventListener('visibilitychange', onActivity);
+    document.addEventListener('mousemove', onActivity);
+    document.addEventListener('keydown', onActivity);
+    document.addEventListener('touchstart', onActivity, { passive: true });
 
     return () => {
-      document.removeEventListener('visibilitychange', onVisible);
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('keydown', onMove);
-      document.removeEventListener('touchstart', onMove);
+      document.removeEventListener('visibilitychange', onActivity);
+      document.removeEventListener('mousemove', onActivity);
+      document.removeEventListener('keydown', onActivity);
+      document.removeEventListener('touchstart', onActivity);
     };
   }, []);
 
-  // ── Inactivity nudge — fires when tab is unfocused 15+ min ─
+  // ── Focus Shield activation notification ──────────────────
   useEffect(() => {
-    if (!prefs.enabled || !prefs.inactivity) return;
+    if (dndActive && !prevDndActiveRef.current) {
+      if (prefs.enabled && prefs.focusShield && getPermissionStatus() === 'granted') {
+        sendNotification({
+          ...NotifTemplates.focusShieldActive(lang),
+          tag: 'misu-focus-shield',
+          silent: true,
+        });
+      }
+    }
+    prevDndActiveRef.current = dndActive;
+  }, [dndActive, prefs.enabled, prefs.focusShield, lang]);
+
+  // ── Inactivity nudge & mindfulness breathing reminder ─────
+  useEffect(() => {
+    if (!prefs.enabled || (!prefs.inactivity && !prefs.mindfulness)) return;
 
     const interval = setInterval(() => {
-      const idleMs = Date.now() - lastActivityRef.current;
+      const idleMs = Date.now() - (lastActivityRef.current || Date.now());
       const idleMin = idleMs / 60000;
+      const cooldownMs = 2.5 * 60 * 60 * 1000; // 2.5h cooldown between nudges
+      const canNudge = Date.now() - lastInactivityNotifRef.current > cooldownMs;
 
       // Only fire if tab is hidden and user has been away 15+ min
-      if (
-        document.visibilityState === 'hidden' &&
-        idleMin >= 15 &&
-        !wasSeenToday('inactivity')
-      ) {
+      if (document.visibilityState === 'hidden' && idleMin >= 15 && canNudge) {
+        lastInactivityNotifRef.current = Date.now();
         markSeenToday('inactivity');
-        sendNotification({
-          ...NotifTemplates.inactivityNudge(lang),
-          tag: 'misu-inactivity',
-          dedupKey: `inactivity-${new Date().toDateString()}`,
-        });
+
+        // Alternate or prioritize mindfulness break if enabled
+        if (prefs.mindfulness) {
+          sendNotification({
+            ...NotifTemplates.mindfulnessBreak(lang),
+            tag: 'misu-mindfulness-break',
+            dedupKey: `mindfulness-${new Date().toDateString()}-${Math.floor(Date.now() / cooldownMs)}`,
+          });
+        } else {
+          sendNotification({
+            ...NotifTemplates.inactivityNudge(lang),
+            tag: 'misu-inactivity',
+            dedupKey: `inactivity-${new Date().toDateString()}-${Math.floor(Date.now() / cooldownMs)}`,
+          });
+        }
       }
     }, 5 * 60 * 1000); // check every 5 min
 
     return () => clearInterval(interval);
-  }, [prefs.enabled, prefs.inactivity, lang]);
+  }, [prefs.enabled, prefs.inactivity, prefs.mindfulness, lang]);
 
-  // ── Deadline notifications ─────────────────────────────────
+  // ── Deadline & Overdue notifications ──────────────────────
   useEffect(() => {
     if (!prefs.enabled || !prefs.deadlines) return;
     if (getPermissionStatus() !== 'granted') return;
@@ -128,8 +158,7 @@ export function useNotifications() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
+    const overdueList = [];
 
     tasks.forEach(task => {
       if (task.completed || !task.deadline) return;
@@ -140,13 +169,9 @@ export function useNotifications() {
       const msUntilDeadline = deadline.getTime() - today.getTime();
       const daysUntil = Math.round(msUntilDeadline / (24 * 60 * 60 * 1000));
 
-      const alreadyScheduledTomorrow = scheduledDeadlinesRef.current.has(`${task.id}-tomorrow`);
-      const alreadyScheduledToday = scheduledDeadlinesRef.current.has(`${task.id}-today`);
-
-      // 24h warning — fire at 9:00 AM the day before the deadline
-      if (daysUntil === 1 && !alreadyScheduledTomorrow && !wasSeenToday(`deadline-tomorrow-${task.id}`)) {
+      // 24h warning — fire once per day per task
+      if (daysUntil === 1 && !wasSeenToday(`deadline-tomorrow-${task.id}`)) {
         markSeenToday(`deadline-tomorrow-${task.id}`);
-        scheduledDeadlinesRef.current.add(`${task.id}-tomorrow`);
         sendNotification({
           ...NotifTemplates.deadlineTomorrow(task.title, lang),
           tag: `deadline-tomorrow-${task.id}`,
@@ -154,10 +179,9 @@ export function useNotifications() {
         });
       }
 
-      // Day-of warning — fire at 9:00 AM on the deadline day
-      if (daysUntil === 0 && !alreadyScheduledToday && !wasSeenToday(`deadline-today-${task.id}`)) {
+      // Day-of warning — fire once per day per task
+      if (daysUntil === 0 && !wasSeenToday(`deadline-today-${task.id}`)) {
         markSeenToday(`deadline-today-${task.id}`);
-        scheduledDeadlinesRef.current.add(`${task.id}-today`);
         sendNotification({
           ...NotifTemplates.deadlineToday(task.title, lang),
           tag: `deadline-today-${task.id}`,
@@ -165,27 +189,51 @@ export function useNotifications() {
         });
       }
 
-      // Overdue — once per day per task
-      if (daysUntil < 0 && !wasSeenToday(`overdue-${task.id}`)) {
-        markSeenToday(`overdue-${task.id}`);
-        sendNotification({
-          ...NotifTemplates.overdue(task.title, lang),
-          tag: `overdue-${task.id}`,
-          dedupKey: `overdue-${task.id}-${new Date().toDateString()}`,
-        });
+      // Collect overdue tasks
+      if (daysUntil < 0) {
+        overdueList.push(task);
       }
     });
 
-    // Cleanup removed tasks from scheduled set
-    const activeIds = new Set(tasks.filter(t => !t.completed && t.deadline).map(t => t.id));
-    for (const key of scheduledDeadlinesRef.current) {
-      const taskId = key.split('-')[0];
-      if (!activeIds.has(taskId)) {
-        cancelScheduled(`deadline-${key}`);
-        scheduledDeadlinesRef.current.delete(key);
-      }
+    // Grouped overdue notifications: prevent multi-notification alert spam
+    if (overdueList.length === 1 && !wasSeenToday(`overdue-${overdueList[0].id}`)) {
+      markSeenToday(`overdue-${overdueList[0].id}`);
+      sendNotification({
+        ...NotifTemplates.overdue(overdueList[0].title, lang),
+        tag: `overdue-${overdueList[0].id}`,
+        dedupKey: `overdue-${overdueList[0].id}-${new Date().toDateString()}`,
+      });
+    } else if (overdueList.length > 1 && !wasSeenToday('overdue-summary')) {
+      markSeenToday('overdue-summary');
+      sendNotification({
+        ...NotifTemplates.overdueSummary(overdueList.length, lang),
+        tag: 'misu-overdue-summary',
+        dedupKey: `overdue-summary-${new Date().toDateString()}`,
+      });
     }
   }, [tasks, prefs.enabled, prefs.deadlines, lang]);
+
+  // ── Streak / All Tasks Completed Celebration ──────────────
+  useEffect(() => {
+    if (!prefs.enabled || !prefs.streak) return;
+    if (getPermissionStatus() !== 'granted') return;
+
+    const activeCount = tasks.filter(t => !t.completed).length;
+    const completedCount = tasks.filter(t => t.completed).length;
+
+    if (activeCount === 0 && completedCount > 0 && prevCompletedCountRef.current < completedCount) {
+      if (!wasSeenToday('all-tasks-completed')) {
+        markSeenToday('all-tasks-completed');
+        sendNotification({
+          ...NotifTemplates.allTasksCompleted(lang),
+          tag: 'misu-all-completed',
+          dedupKey: `all-completed-${new Date().toDateString()}`,
+        });
+      }
+    }
+
+    prevCompletedCountRef.current = completedCount;
+  }, [tasks, prefs.enabled, prefs.streak, lang]);
 
   // ── Morning summary (tasks due today) ─────────────────────
   useEffect(() => {
@@ -211,7 +259,6 @@ export function useNotifications() {
 
     if (dueToday.length > 0) {
       markSeenToday('morning-summary');
-      // Small delay so it doesn't fire immediately on app open
       setTimeout(() => {
         sendNotification({
           ...NotifTemplates.tasksDueToday(dueToday.length, lang),
@@ -229,7 +276,7 @@ export function useNotifications() {
     const now = new Date();
     const hour = now.getHours();
 
-    // Only schedule if it's before 3PM today and we haven't sent yet
+    // Schedule if before 3 PM today and not seen
     if (hour < 15 && !wasSeenToday('energy-checkin')) {
       const fireAt = new Date();
       fireAt.setHours(15, 0, 0, 0);
@@ -242,7 +289,7 @@ export function useNotifications() {
           dedupKey: `energy-checkin-${new Date().toDateString()}`,
         }, delay);
       }
-    } else if (hour === 15 && !wasSeenToday('energy-checkin')) {
+    } else if (hour >= 15 && hour < 18 && !wasSeenToday('energy-checkin')) {
       markSeenToday('energy-checkin');
       sendNotification({
         ...NotifTemplates.energyCheckIn(lang),
@@ -253,6 +300,31 @@ export function useNotifications() {
 
     return () => cancelScheduled('misu-energy-checkin');
   }, [prefs.enabled, prefs.energyCheck, lang]);
+
+  // ── Evening Daily Wrap-up (6 PM – 9 PM) ───────────────────
+  useEffect(() => {
+    if (!prefs.enabled || !prefs.dailyWrapup) return;
+
+    const hour = new Date().getHours();
+    const isEvening = hour >= 18 && hour < 22;
+
+    if (!isEvening || wasSeenToday('daily-wrapup')) return;
+    if (getPermissionStatus() !== 'granted') return;
+
+    const completedToday = tasks.filter(t => t.completed).length;
+    const activeRemaining = tasks.filter(t => !t.completed).length;
+
+    if (completedToday > 0 || activeRemaining > 0) {
+      markSeenToday('daily-wrapup');
+      setTimeout(() => {
+        sendNotification({
+          ...NotifTemplates.dailyWrapup(completedToday, activeRemaining, lang),
+          tag: 'misu-daily-wrapup',
+          dedupKey: `daily-wrapup-${new Date().toDateString()}`,
+        });
+      }, 10000);
+    }
+  }, [tasks, prefs.enabled, prefs.dailyWrapup, lang]);
 
   // ── Weekly Monday morning reminder ────────────────────────
   useEffect(() => {

@@ -31,14 +31,18 @@ function markSeen(key) {
 }
 
 export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
-  const { currentEnergy, breathingActive } = useEnergy();
+  const { currentEnergy, breathingActive, setBreathingActive } = useEnergy();
   const { tasks } = useTasks();
 
   const [advice, setAdvice]             = useState(null);
   const [helperVisible, setHelperVisible] = useState(false);
   const [helperType, setHelperType]     = useState('advice');
 
-  const lastActivityRef   = useRef(Date.now());
+  const lastActivityRef   = useRef(0);
+  useEffect(() => {
+    lastActivityRef.current = Date.now();
+  }, []);
+
   const prevTasksCountRef = useRef(tasks.length);
   const prevCompletedRef  = useRef(tasks.filter(t => t.completed).length);
   const prevEnergyRef     = useRef(currentEnergy);
@@ -66,8 +70,17 @@ export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
   useEffect(() => { showTipRef.current = showTip; }, [showTip]);
 
   // When tip is dismissed, show next in queue
-  const handleClose = useCallback(() => {
+  const handleClose = useCallback((targetState = false) => {
+    if (typeof targetState === 'boolean' && targetState) {
+      setHelperVisible(true);
+      return;
+    }
+
     setHelperVisible(false);
+    if (breathingActive && adviceRef.current === 'mindfulness.breathing') {
+      setBreathingActive?.(false);
+    }
+
     const next = tipQueueRef.current.shift();
     if (next) {
       setTimeout(() => {
@@ -76,7 +89,7 @@ export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
         setHelperVisible(true);
       }, 400);
     }
-  }, []);
+  }, [breathingActive, setBreathingActive]);
 
   // ─── Track activity ────────────────────────────────────────
   useEffect(() => {
@@ -98,6 +111,15 @@ export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
     if (completedCount > prevCompletedRef.current && !hasSeen(FLAGS.FIRST_COMPLETE)) {
       markSeen(FLAGS.FIRST_COMPLETE);
       showTipRef.current('tips.firstComplete', 'surprise');
+    }
+
+    // ── All tasks completed celebration ──────────────────────
+    if (activeCount === 0 && completedCount > 0 && prevCompletedRef.current < completedCount) {
+      const key = `misu_all_completed_${new Date().toDateString()}`;
+      if (!localStorage.getItem(key)) {
+        localStorage.setItem(key, 'true');
+        setTimeout(() => showTipRef.current('tips.allCompleted', 'surprise'), 600);
+      }
     }
 
     prevTasksCountRef.current = tasks.length;
@@ -145,6 +167,10 @@ export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
         showTipRef.current('tips.heavyWorkload', 'advice');
       }
     }
+    // Whisper mode guidance when shifting down to resting level (1)
+    if (currentEnergy === 1 && prevEnergyRef.current !== 1 && prevEnergyRef.current !== undefined) {
+      showTipRef.current('tips.whisperMode', 'info');
+    }
     prevEnergyRef.current = currentEnergy;
   }, [currentEnergy]);
 
@@ -152,7 +178,7 @@ export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
   useEffect(() => {
     const interval = setInterval(() => {
       const activeCount = tasks.filter(t => !t.completed).length;
-      const idleMinutes = (Date.now() - lastActivityRef.current) / 60000;
+      const idleMinutes = (Date.now() - (lastActivityRef.current || Date.now())) / 60000;
 
       if (currentEnergy >= 3 && activeCount > 0 && idleMinutes > 20 && !helperVisible && !breathingActive) {
         setHelperType('mindfulness');
@@ -194,10 +220,19 @@ export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
     }
   }, [musicVisible]);
 
+  // ─── Pomodoro widget first open ───────────────────────────
+  useEffect(() => {
+    if (pomodoroVisible && !hasSeen(FLAGS.POMODORO_INTRO)) {
+      markSeen(FLAGS.POMODORO_INTRO);
+      setTimeout(() => showTipRef.current('tips.pomodoroIntro', 'info'), 800);
+    }
+  }, [pomodoroVisible]);
+
   return {
     advice,
     helperVisible,
     helperType,
-    setHelperVisible: handleClose,
+    setHelperVisible,
+    handleClose,
   };
 }

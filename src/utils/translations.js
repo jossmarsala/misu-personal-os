@@ -132,6 +132,15 @@ export const translations = {
       notifEnergyCheckDesc: "Reminder to update your energy level at 3 PM",
       notifInactivity: "Inactivity nudge",
       notifInactivityDesc: "Gentle reminder when you've been away 15+ min",
+      notifTypes: "Notification types",
+      notifMindfulness: "Mindfulness & breathing",
+      notifMindfulnessDesc: "Suggestions to recalibrate and breathe",
+      notifStreak: "Completion celebrations",
+      notifStreakDesc: "Celebration when you finish all daily tasks",
+      notifDailyWrapup: "Evening wrap-up",
+      notifDailyWrapupDesc: "Daily review of your finished work at 6–9 PM",
+      notifFocusShield: "Focus shield alerts",
+      notifFocusShieldDesc: "Confirmation when entering distraction-free shield mode",
     },
     auth: {
       loginTitle: "Welcome Back",
@@ -184,11 +193,55 @@ export const translations = {
       4: { label: "Pulse", desc: "High creative spark and mental drive", musicDesc: "Animated beats", msg: "Feeling inspired! Take on something creative...", empty: "No big tasks left — channel that spark elsewhere!" },
       // Note: Level 5 has been removed; system is now 4 levels only (L3 fix)
     },
+    motivational: {
+      badges: {
+        progress: "Daily Progress",
+        rest: "Rest & Recharge",
+        morning: "Morning Flow",
+        unblock: "Gentle Focus",
+        planning: "Looking Ahead",
+      },
+      tasksCompleted: {
+        title: "Great job today!",
+        descOne: "You completed 1 task today. Great job keeping the momentum going!",
+        descMultiple: "You completed {count} tasks today. Great job! Keep this gentle rhythm going.",
+      },
+      lateNight: {
+        title: "Time to recharge",
+        desc: "It's late. Give yourself permission to pause and recharge your energy for tomorrow.",
+      },
+      earlyMorning: {
+        title: "Good morning!",
+        desc: "A fresh day begins. Align with your morning energy and take things one step at a time.",
+      },
+      multipleOverdue: {
+        title: "One step at a time",
+        desc: "You have {count} overdue tasks. No guilt or pressure — just pick one small step to get moving.",
+      },
+      planTomorrow: {
+        title: "Tomorrow's focus",
+        descWithTask: "Tomorrow, you can focus on \"{taskTitle}\". Great foundation set today!",
+        descGeneral: "Take a moment to prepare for tomorrow so you can wake up with clarity and calm.",
+      },
+      dismiss: "Dismiss",
+      viewEnergy: "Show energy level",
+    },
+    helper: {
+      advice: "Misu says",
+      mindfulness: "4-7-8 Breathing",
+      surprise: "Nice one ✨",
+      info: "Quick tip",
+    },
     mindfulness: {
       breathing: "Inhale (4s), Hold (7s), Exhale (8s). Repeat 4 times to recalibrate your nervous system.",
       idleAdvice: "You have been inactive for 20+ minutes. Here is a little breathing exercise that might help you break the friction!",
       dndIntro: "Focus Shield Active",
-      dndHelp: "White: improves concentration and blocks distractions. Pink: balances and calms the mind. Brown: induces deep relaxation and supports sleep."
+      dndHelp: "White: improves concentration and blocks distractions. Pink: balances and calms the mind. Brown: induces deep relaxation and supports sleep.",
+      breathingTitle: "Breathing Exercise",
+      stopBreathing: "Stop Breathing",
+      phase_inhale: "Inhale",
+      phase_hold: "Hold",
+      phase_exhale: "Exhale",
     },
     dnd: {
       shieldActive: "Shield Active",
@@ -247,7 +300,8 @@ export const translations = {
       whisperMode: "You switched to Whisper mode 🌿 This is a great time to rest or do something light. Close any non-essential widgets and let your mind breathe.",
       heavyWorkload: "Big day ahead! You have several heavy tasks. Consider using the Pomodoro timer to break them into focused 25-minute sprints.",
       musicIntro: "Music adapts to your energy level 🎵 Each mood has its own curated playlist. Change your energy level to shift the vibe.",
-      pomodoroIntro: "Select a task in the Pomodoro timer to track your focus session. When the timer ends, you can mark it as done directly."
+      pomodoroIntro: "Select a task in the Pomodoro timer to track your focus session. When the timer ends, you can mark it as done directly.",
+      allCompleted: "All tasks done for today! 🎉 You've accomplished your goals. Take time to relax and recharge."
     },
     onboarding: {
       back: "Back",
@@ -421,6 +475,15 @@ export const translations = {
       notifEnergyCheckDesc: "Recordatorio para actualizar tu nivel de energía a las 3 PM",
       notifInactivity: "Aviso de inactividad",
       notifInactivityDesc: "Recordatorio suave cuando llevas 15+ min sin actividad",
+      notifTypes: "Tipos de notificaciones",
+      notifMindfulness: "Mindfulness y respiración",
+      notifMindfulnessDesc: "Sugerencias para recalibrar y respirar",
+      notifStreak: "Celebración de logros",
+      notifStreakDesc: "Celebración al completar todas las tareas del día",
+      notifDailyWrapup: "Cierre del día",
+      notifDailyWrapupDesc: "Resumen vespertino de tu trabajo entre las 18 y 21 hs",
+      notifFocusShield: "Alertas de escudo de enfoque",
+      notifFocusShieldDesc: "Confirmación al activar el modo libre de distracciones",
     },
     auth: {
       loginTitle: "¡Hola de nuevo!",
@@ -473,11 +536,55 @@ export const translations = {
       4: { label: "Impulso", desc: "Alta creatividad y energía mental", musicDesc: "Beats animados", msg: "¡Estás inspirado! Anímate a algo creativo...", empty: "No quedan tareas grandes — ¡canaliza esa chispa!" },
       // Nivel 5 eliminado — el sistema ahora tiene 4 niveles (L3 fix)
     },
+    motivational: {
+      badges: {
+        progress: "Progreso diario",
+        rest: "Descanso y recuperación",
+        morning: "Energía matutina",
+        unblock: "Enfoque suave",
+        planning: "Mirando hacia mañana",
+      },
+      tasksCompleted: {
+        title: "¡Gran trabajo hoy!",
+        descOne: "Completaste 1 tarea hoy. ¡Excelente para mantener el impulso!",
+        descMultiple: "Completaste {count} tareas hoy. ¡Gran trabajo! Mantén este ritmo fluido.",
+      },
+      lateNight: {
+        title: "Hora de recargar",
+        desc: "Es tarde. Date permiso para pausar y recargar tu energía para mañana.",
+      },
+      earlyMorning: {
+        title: "¡Buenos días!",
+        desc: "Comienza un nuevo día. Conéctate con tu energía matutina y da un paso a la vez.",
+      },
+      multipleOverdue: {
+        title: "Un paso a la vez ",
+        desc: "Tienes {count} tareas vencidas. Sin culpas ni presión: elige un pequeño paso para volver al flujo.",
+      },
+      planTomorrow: {
+        title: "Enfoque para mañana",
+        descWithTask: "Mañana puedes enfocarte en \"{taskTitle}\". ¡Dejaste una gran base hoy!",
+        descGeneral: "Tómate un momento para planificar mañana y despertar con claridad y tranquilidad.",
+      },
+      dismiss: "Descartar",
+      viewEnergy: "Ver nivel de energía",
+    },
+    helper: {
+      advice: "Misu dice",
+      mindfulness: "Respiración 4-7-8",
+      surprise: "¡Excelente!",
+      info: "Consejo rápido",
+    },
     mindfulness: {
       breathing: "Inhala (4s), Mantén (7s), Exhala (8s). Repetir 4 veces para recalibrar tu sistema nervioso.",
-      idleAdvice: "Has estado inactivo durante más de 20 minutos. ¡Aquí tienes un pequeño ejercicio de respirazione que podría ayudarte!",
+      idleAdvice: "Has estado inactivo durante más de 20 minutos. ¡Aquí tienes un pequeño ejercicio de respiración que podría ayudarte!",
       dndIntro: "Escudo de Enfoque Activo",
-      dndHelp: "Blanco: mejora la concentración y bloquea distracciones. Rosa: equilibra y calma la mente. Marrón: induce relajación profunda y favorece el sueño."
+      dndHelp: "Blanco: mejora la concentración y bloquea distracciones. Rosa: equilibra y calma la mente. Marrón: induce relajación profunda y favorece el sueño.",
+      breathingTitle: "Ejercicio de respiración",
+      stopBreathing: "Detener respiración",
+      phase_inhale: "Inhala",
+      phase_hold: "Mantén",
+      phase_exhale: "Exhala",
     },
     dnd: {
       shieldActive: "Escudo Activo",
@@ -536,7 +643,8 @@ export const translations = {
       whisperMode: "Cambiaste al modo Susurro 🌿 Es un buen momento para descansar o hacer algo ligero. Cierra los widgets que no necesites y deja respirar tu mente.",
       heavyWorkload: "¡Gran día por delante! Tienes varias tareas pesadas. Considera usar el temporizador Pomodoro para dividirlas en sprints de 25 minutos.",
       musicIntro: "La música se adapta a tu nivel de energía 🎵 Cada estado tiene su propia playlist. Cambia tu energía para cambiar el ambiente.",
-      pomodoroIntro: "Selecciona una tarea en el temporizador Pomodoro para hacer seguimiento de tu sesión. Cuando acabe, puedes marcarla como terminada directamente."
+      pomodoroIntro: "Selecciona una tarea en el temporizador Pomodoro para hacer seguimiento de tu sesión. Cuando acabe, puedes marcarla como terminada directamente.",
+      allCompleted: "¡Todas las tareas listas por hoy! 🎉 Lograste tus metas. Tómate un tiempo para relajarte y descansar."
     },
     onboarding: {
       back: "Atrás",
@@ -710,6 +818,15 @@ export const translations = {
       notifEnergyCheckDesc: "Promemoria per aggiornare il tuo livello di energia alle 15",
       notifInactivity: "Avviso di inattività",
       notifInactivityDesc: "Promemoria gentile dopo 15+ min di assenza",
+      notifTypes: "Tipi di notifiche",
+      notifMindfulness: "Mindfulness e respirazione",
+      notifMindfulnessDesc: "Suggerimenti per ricalibrare e respirare",
+      notifStreak: "Celebrazione traguardi",
+      notifStreakDesc: "Festeggia quando completi tutte le attività del giorno",
+      notifDailyWrapup: "Riepilogo serale",
+      notifDailyWrapupDesc: "Riepilogo serale del lavoro svolto tra le 18 e le 21",
+      notifFocusShield: "Avvisi scudo di concentrazione",
+      notifFocusShieldDesc: "Conferma all'attivazione della modalità senza distrazioni",
     },
     auth: {
       loginTitle: "Bentornato!",
@@ -762,11 +879,55 @@ export const translations = {
       4: { label: "Impulso", desc: "Alta creatività ed energia mentale", musicDesc: "Beats vivaci", msg: "Sei ispirato! Affronta qualcosa di creativo...", empty: "Nessun compito grande rimasto — canalizza quella scintilla!" },
       // Livello 5 rimosso — il sistema ora ha 4 livelli (L3 fix)
     },
+    motivational: {
+      badges: {
+        progress: "Progresso giornaliero",
+        rest: "Riposo e recupero",
+        morning: "Ritmo mattutino",
+        unblock: "Concentrazione dolce",
+        planning: "Guardando avanti",
+      },
+      tasksCompleted: {
+        title: "Ottimo lavoro oggi!",
+        descOne: "Hai completato 1 attività oggi. Ottimo lavoro nel mantenere il ritmo!",
+        descMultiple: "Hai completato {count} attività oggi. Ottimo lavoro! Continua con questo ritmo sereno.",
+      },
+      lateNight: {
+        title: "Tempo di ricaricarsi",
+        desc: "È tardi. Concediti il permesso di fare una pausa e ricaricare le tue energie per domani.",
+      },
+      earlyMorning: {
+        title: "Buongiorno!",
+        desc: "Inizia una nuova giornata. Sintonizzati con la tua energia mattutina e fai un passo alla volta.",
+      },
+      multipleOverdue: {
+        title: "Un passo alla volta",
+        desc: "Hai {count} attività in sospeso. Nessuna pressione: scegli un piccolo passo per ripartire con calma.",
+      },
+      planTomorrow: {
+        title: "Il focus di domani",
+        descWithTask: "Domani potrai concentrarti su \"{taskTitle}\". Hai gettato ottime basi oggi!",
+        descGeneral: "Prenditi un momento per preparare la giornata di domani e svegliarti con chiarezza e serenità.",
+      },
+      dismiss: "Chiudi",
+      viewEnergy: "Mostra livello di energia",
+    },
+    helper: {
+      advice: "Misu dice",
+      mindfulness: "Respirazione 4-7-8",
+      surprise: "Ottimo!",
+      info: "Consiglio rapido",
+    },
     mindfulness: {
       breathing: "Inspira (4s), Trattieni (7s), Espira (8s). Ripeti 4 volte per ricalibrare il sistema nervoso.",
       idleAdvice: "Sei stato inattivo per più di 20 minuti. Ecco un piccolo esercizio di respirazione che potrebbe aiutarti a ritrovare il flusso!",
       dndIntro: "Scudo Focus Attivo",
-      dndHelp: "Bianco: migliora la concentrazione e blocca le distrazioni. Rosa: equilibra e calma la mente. Marrone: induce un rilassamento profondo e favorisce il sonno."
+      dndHelp: "Bianco: migliora la concentrazione e blocca le distrazioni. Rosa: equilibra e calma la mente. Marrone: induce un rilassamento profondo e favorisce il sonno.",
+      breathingTitle: "Esercizio di respirazione",
+      stopBreathing: "Interrompi respirazione",
+      phase_inhale: "Inspira",
+      phase_hold: "Trattieni",
+      phase_exhale: "Espira",
     },
     dnd: {
       shieldActive: "Scudo Attivo",
@@ -778,7 +939,7 @@ export const translations = {
       muteNoise: "Silenzia Rumore",
       startNoise: "Inizia Rumore",
       musicMuted: "Musica Silenziata",
-      distrazioniHidden: "Distrazioni Nascoste"
+      distractionsHidden: "Distrazioni Nascoste"
     },
     pomodoro: {
       title: "Pomodoro",
@@ -825,7 +986,8 @@ export const translations = {
       whisperMode: "Hai attivato la modalità Sussurro 🌿 È un buon momento per riposare o fare qualcosa di leggero. Chiudi i widget non essenziali e lascia respirare la mente.",
       heavyWorkload: "Grande giornata in arrivo! Hai diversi compiti impegnativi. Considera di usare il timer Pomodoro per dividerli in sprint da 25 minuti.",
       musicIntro: "La musica si adatta al tuo livello di energia 🎵 Ogni stato ha la sua playlist. Cambia il livello per cambiare l'atmosfera.",
-      pomodoroIntro: "Seleziona un compito nel timer Pomodoro per tracciare la tua sessione di focus. Quando il timer finisce, puoi segnarlo come completato direttamente."
+      pomodoroIntro: "Seleziona un compito nel timer Pomodoro per tracciare la tua sessione di focus. Quando il timer finisce, puoi segnarlo come completato direttamente.",
+      allCompleted: "Tutte le attività completate per oggi! 🎉 Hai raggiunto i tuoi obiettivi. Prenditi del tempo per ricaricarti."
     },
     onboarding: {
       back: "Indietro",

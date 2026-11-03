@@ -33,7 +33,7 @@ export function LanguageProvider({ children }) {
     document.documentElement.lang = language;
   }, [language]);
 
-  const t = (path) => {
+  const t = (path, params) => {
     if (typeof path !== 'string') return path;
     const keys = path.split('.');
     let result = translations[language];
@@ -42,6 +42,11 @@ export function LanguageProvider({ children }) {
       if (result == null || typeof result !== 'object') return path;
       if (result[key] === undefined) return path;
       result = result[key];
+    }
+    if (typeof result === 'string' && params && typeof params === 'object') {
+      return Object.entries(params).reduce((str, [k, v]) => {
+        return str.replaceAll(`{${k}}`, String(v));
+      }, result);
     }
     return result;
   };

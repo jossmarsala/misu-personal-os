@@ -1,0 +1,78 @@
+/* ── Motivational message inside Energy Bar ── */
+
+.hero-card__motivational {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.hero-card__title--motivational {
+  font-size: clamp(1.8rem, 3.2vw, 2.5rem);
+  line-height: 1.15;
+  margin-bottom: var(--space-2);
+  color: var(--text-primary);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.hero-card__subtitle--motivational {
+  font-size: 1.05rem;
+  line-height: 1.45;
+  color: var(--text-primary);
+  opacity: 0.95;
+  max-width: 480px;
+}
+
+.hero-card__motivational-actions {
+  display: flex;
+  align-items: center;
+  margin-top: var(--space-3);
+}
+
+.hero-card__motivational-dismiss {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hero-card__motivational-dismiss:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .hero-card__title--motivational {
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+
+  .hero-card__subtitle--motivational {
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+
+  .hero-card__motivational-actions {
+    margin-top: var(--space-2);
+  }
+
+  .hero-card__motivational-dismiss span {
+    display: none;
+  }
+
+  .hero-card__motivational-dismiss {
+    padding: 3px 6px;
+  }
+}

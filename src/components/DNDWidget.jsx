@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Shield, Volume2, VolumeX, Moon, Zap, Timer } from 'lucide-react';
+import { Shield, Volume2, VolumeX, Moon, Zap, Timer, Wind } from 'lucide-react';
 import { useEnergy } from '../context/EnergyContext';
 import DraggableWidget from './DraggableWidget';
 import './DNDWidget.css';
@@ -10,7 +10,7 @@ import { getAudioContext } from '../utils/audio';
 const POMODORO_FOCUS_DURATION = 25 * 60;
 
 export default function DNDWidget({ visible }) {
-  const { dndActive, setDndActive } = useEnergy();
+  const { dndActive, setDndActive, breathingActive, setBreathingActive } = useEnergy();
   const { t } = useLanguage();
   const [noiseType, setNoiseType] = useState('white'); // white, pink, brown
   const [volume, setVolume] = useState(0.01);
@@ -293,6 +293,18 @@ export default function DNDWidget({ visible }) {
               value={volume} 
               onChange={(e) => setVolume(parseFloat(e.target.value))} 
             />
+          </div>
+
+          <div className="dnd-breathing-action" style={{ marginTop: '10px' }}>
+            <button
+              type="button"
+              className={`dnd-btn ${breathingActive ? 'active' : ''}`}
+              onClick={() => setBreathingActive(b => !b)}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+            >
+              <Wind size={13} />
+              {breathingActive ? (t('mindfulness.stopBreathing') || 'Stop Breathing') : (t('mindfulness.breathingTitle') || '4-7-8 Breathing')}
+            </button>
           </div>
         </div>
 

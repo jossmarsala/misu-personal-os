@@ -145,7 +145,8 @@
 
 .breath-bar-fill[data-phase="exhale"] {
   background: linear-gradient(90deg, var(--energy-surface), var(--energy-primary));
-  opacity: 0.6;
+  box-shadow: 0 0 8px var(--energy-glow);
+  opacity: 0.85;
 }
 
 /* Glowing leading dot */
@@ -156,7 +157,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  transition: background 0.4s ease;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
   pointer-events: none;
 }
 
@@ -167,12 +168,14 @@
 
 .breath-bar-dot[data-phase="hold"] {
   background: var(--energy-primary);
-  box-shadow: 0 0 8px var(--energy-glow);
+  box-shadow: 0 0 12px var(--energy-glow), 0 0 5px var(--energy-primary);
+  transform: translate(-50%, -50%) scale(1.15);
 }
 
 .breath-bar-dot[data-phase="exhale"] {
-  background: var(--text-tertiary);
-  box-shadow: none;
+  background: var(--energy-primary);
+  box-shadow: 0 0 10px var(--energy-glow), 0 0 3px var(--energy-primary);
+  opacity: 0.9;
 }
 
 /* Phase ticks row */

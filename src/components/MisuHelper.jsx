@@ -1,7 +1,8 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { Sparkles, Brain, Wind, X, Info } from 'lucide-react';
 import { useEnergy } from '../context/EnergyContext';
+import { useLanguage } from '../context/LanguageContext';
 import './MisuHelper.css';
 
 // 4-7-8 breathing: inhale 4s, hold 7s, exhale 8s
@@ -16,7 +17,11 @@ function getPhaseAt(elapsed) {
   let t = elapsed % TOTAL_CYCLE;
   for (const phase of PHASES) {
     if (t < phase.duration) {
-      return { phase, remaining: phase.duration - Math.floor(t), progress: t / phase.duration };
+      return { 
+        phase, 
+        remaining: Math.max(1, Math.ceil(phase.duration - t)), 
+        progress: t / phase.duration 
+      };
     }
     t -= phase.duration;
   }
@@ -24,48 +29,60 @@ function getPhaseAt(elapsed) {
 }
 
 function BreathingBar() {
+  const { t } = useLanguage();
   const [elapsed, setElapsed] = useState(0);
-  const startRef = useRef(Date.now());
+  const startRef = useRef(0);
 
   useEffect(() => {
+    startRef.current = Date.now();
     const id = setInterval(() => {
-      setElapsed((Date.now() - startRef.current) / 1000);
-    }, 100);
+      setElapsed((Date.now() - (startRef.current || Date.now())) / 1000);
+    }, 50);
     return () => clearInterval(id);
   }, []);
 
   const { phase, remaining, progress } = getPhaseAt(elapsed);
 
-  // Bar fills in on inhale/hold, drains on exhale
-  const barProgress = phase.key === 'exhale' ? 1 - progress : progress;
+  // Requirement:
+  // Dot animation on inhale goes from 0 to 50,
+  // stays in place at 50 for hold,
+  // and then goes from 50 to 100 in exhale.
+  let dotProgress = 0;
+  if (phase.key === 'inhale') {
+    dotProgress = Math.min(50, Math.max(0, progress * 50));
+  } else if (phase.key === 'hold') {
+    dotProgress = 50;
+  } else if (phase.key === 'exhale') {
+    dotProgress = Math.min(100, Math.max(50, 50 + progress * 50));
+  }
 
   return (
     <div className="breath-bar-container">
       {/* Phase label + countdown */}
       <div className="breath-bar-header">
         <span className="breath-phase-label" data-phase={phase.key}>
-          {phase.label}
+          {t(`mindfulness.phase_${phase.key}`) || phase.label}
         </span>
         <span className="breath-phase-seconds">{remaining}s</span>
       </div>
 
       {/* Horizontal bar track */}
       <div className="breath-bar-track">
-        <motion.div
+        <Motion.div
           className="breath-bar-fill"
           data-phase={phase.key}
-          animate={{ width: `${barProgress * 100}%` }}
+          animate={{ width: `${dotProgress}%` }}
           transition={{
-            duration: 0.1,
+            duration: 0.05,
             ease: 'linear',
           }}
         />
         {/* Glowing dot at the leading edge */}
-        <motion.div
+        <Motion.div
           className="breath-bar-dot"
           data-phase={phase.key}
-          animate={{ left: `${barProgress * 100}%` }}
-          transition={{ duration: 0.1, ease: 'linear' }}
+          animate={{ left: `${dotProgress}%` }}
+          transition={{ duration: 0.05, ease: 'linear' }}
         />
       </div>
 
@@ -76,7 +93,7 @@ function BreathingBar() {
             key={p.key}
             className={`breath-tick ${p.key === phase.key ? 'breath-tick--active' : ''}`}
           >
-            {p.label}
+            {t(`mindfulness.phase_${p.key}`) || p.label}
           </span>
         ))}
       </div>
@@ -85,7 +102,8 @@ function BreathingBar() {
 }
 
 export default function MisuHelper({ advice, visible, onClose, type = 'advice' }) {
-  const { currentEnergy } = useEnergy();
+  useEnergy();
+  const { t } = useLanguage();
 
   const icons = {
     advice:      <Brain    size={18} className="misu-helper__icon" />,
@@ -95,16 +113,16 @@ export default function MisuHelper({ advice, visible, onClose, type = 'advice' }
   };
 
   const titles = {
-    advice:      'Misu says',
-    mindfulness: '4-7-8 Breathing',
-    surprise:    'Nice one ✨',
-    info:        'Quick tip',
+    advice:      t('helper.advice') || 'Misu says',
+    mindfulness: t('helper.mindfulness') || '4-7-8 Breathing',
+    surprise:    t('helper.surprise') || 'Nice one ✨',
+    info:        t('helper.info') || 'Quick tip',
   };
 
   return (
     <AnimatePresence>
       {visible && (
-        <motion.div
+        <Motion.div
           className={`misu-helper misu-helper--${type}`}
           initial={{ y: 50, opacity: 0, scale: 0.9 }}
           animate={{ y: 0, opacity: 1, scale: 1 }}
@@ -117,7 +135,11 @@ export default function MisuHelper({ advice, visible, onClose, type = 'advice' }
               <div className="misu-helper__icon-container">
                 {icons[type]}
               </div>
-              <button className="misu-helper__close" onClick={onClose}>
+              <button 
+                className="misu-helper__close" 
+                onClick={() => onClose && onClose(false)}
+                aria-label="Close"
+              >
                 <X size={14} />
               </button>
             </div>
@@ -133,9 +155,8 @@ export default function MisuHelper({ advice, visible, onClose, type = 'advice' }
               </div>
             )}
           </div>
-        </motion.div>
+        </Motion.div>
       )}
     </AnimatePresence>
   );
 }
-

@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, lazy, Suspense, useCallback } from 'react';
 import { useEnergy } from './context/EnergyContext';
 import { useTasks } from './context/TaskContext';
-import { loadSettings } from './services/storage';
 import { getEnergyDef } from './utils/energy';
 import { useNotifications } from './hooks/useNotifications';
 import { useMindfulness } from './hooks/useMindfulness';
@@ -9,7 +8,7 @@ import { useOnboarding } from './hooks/useOnboarding';
 import Header from './components/Header';
 import TaskList from './components/TaskList';
 import Recommendations from './components/Recommendations';
-import EnergySelector from './components/EnergySelector';
+import EnergyBar from './components/EnergyBar';
 import MosaicBackground from './components/MosaicBackground';
 import CommandPalette from './components/CommandPalette';
 import GlassIcons from './components/GlassIcons';
@@ -62,15 +61,15 @@ function App() {
   const [toolsSheetOpen, setToolsSheetOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('home'); // 'home' | 'tasks' | 'planner'
   const isMobile = useIsMobile();
-  const { currentEnergy, dndActive, breathingActive, setBreathingActive } = useEnergy();
+  const { currentEnergy, dndActive, setBreathingActive } = useEnergy();
   const { tasks, deleteTask, weeklyPlan, setWeeklyPlan } = useTasks();
   const { t } = useLanguage();
   const energyDef = getEnergyDef(currentEnergy);
 
   // 🔔 Initialize notification system — runs all scheduled checks silently
-  const { permission, askPermission } = useNotifications();
+  useNotifications();
 
-  const { advice, helperVisible, helperType, setHelperVisible } = useMindfulness(showDND, showMusic, showPomodoro);
+  const { advice, helperVisible, helperType, handleClose } = useMindfulness(showDND, showMusic, showPomodoro);
   const { showOnboarding, tourKey, finishOnboarding, replayOnboarding } = useOnboarding();
 
   // L6: useSensors is a hook — must be called at the top level, not inside useMemo.
@@ -167,6 +166,7 @@ function App() {
       if (action === 'toggle-dnd') setShowDND(p => !p);
       if (action === 'toggle-calendar') setShowCalendar(p => !p);
       if (action === 'toggle-checklist') setShowChecklist(p => !p);
+      if (action === 'toggle-breathing') setBreathingActive(b => !b);
       if (action === 'open-settings') setSettingsOpen(true);
       if (action === 'clear-completed') {
         tasks.filter(t => t.completed).forEach(t => deleteTask(t.id));
@@ -174,7 +174,7 @@ function App() {
     };
     window.addEventListener('misu:command', handler);
     return () => window.removeEventListener('misu:command', handler);
-  }, [tasks, deleteTask]);
+  }, [tasks, deleteTask, setBreathingActive]);
 
   // Close other widgets when Shield activates
   useEffect(() => {
@@ -273,45 +273,8 @@ function App() {
                 }}
               >
                 <div style={{ gridColumn: 'span 2' }}>
-                  {/* Hero card */}
-                  <motion.div
-                    className="bento-grid__hero bento-card bento-card--accent hero-card"
-                    variants={{
-                      hidden: { opacity: 0, y: 20 },
-                      show: { opacity: 1, y: 0 }
-                    }}
-                  >
-                    <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
-                      <MosaicBackground
-                        colorA={energyDef.vividColorA}
-                        colorB={energyDef.vividColorB}
-                        colorC={
-                          currentEnergy === 1 ? '#5BC9F5' : // Touch of Light Blue for energy 1
-                          currentEnergy === 2 ? '#DC143C' : // Touch of Crimson Red for energy 2
-                          currentEnergy === 4 ? '#8A2BE2' : // Touch of BlueViolet for energy 4
-                          undefined
-                        }
-                        tileSize={20}
-                        speed={dndActive ? 0.04 : 0.35}
-                      />
-                    </div>
-                    <div className="hero-card__content">
-                      <motion.h2
-                        className="hero-card__title"
-                        layoutId="hero-title"
-                      >
-                        {t('hero.title')}{' '}
-                        <span style={{ fontStyle: 'italic' }}>{t(`energy.${currentEnergy}.label`)}</span>{' '}
-                        {t('hero.energySuffix')}
-                      </motion.h2>
-                      <p className="hero-card__subtitle">
-                        {t(`energy.${currentEnergy}.desc`)}
-                      </p>
-                    </div>
-                    <div className="hero-card__energy">
-                      <EnergySelector />
-                    </div>
-                  </motion.div>
+                  {/* Hero card / Energy Bar */}
+                  <EnergyBar isMobile={false} dndActive={dndActive} />
                 </div>
 
                 {/* Tasks */}
@@ -407,34 +370,8 @@ function App() {
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
               >
-                {/* Hero card */}
-                <div className="bento-card bento-card--accent hero-card mobile-hero-card">
-                  <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
-                    <MosaicBackground
-                      colorA={energyDef.vividColorA}
-                      colorB={energyDef.vividColorB}
-                      colorC={
-                        currentEnergy === 1 ? '#5BC9F5' :
-                        currentEnergy === 2 ? '#DC143C' :
-                        currentEnergy === 4 ? '#8A2BE2' :
-                        undefined
-                      }
-                      tileSize={18}
-                      speed={dndActive ? 0.04 : 0.35}
-                    />
-                  </div>
-                  <div className="hero-card__content" style={{ position: 'relative', zIndex: 1 }}>
-                    <h2 className="hero-card__title">
-                      {t('hero.title')}{' '}
-                      <span style={{ fontStyle: 'italic' }}>{t(`energy.${currentEnergy}.label`)}</span>{' '}
-                      {t('hero.energySuffix')}
-                    </h2>
-                    <p className="hero-card__subtitle">{t(`energy.${currentEnergy}.desc`)}</p>
-                  </div>
-                  <div className="hero-card__energy" style={{ position: 'relative', zIndex: 1 }}>
-                    <EnergySelector />
-                  </div>
-                </div>
+                {/* Hero card / Energy Bar */}
+                <EnergyBar isMobile={true} dndActive={dndActive} />
 
                 {/* Recommendations */}
                 <div className="bento-card mobile-section-card">
@@ -566,7 +503,7 @@ function App() {
         visible={helperVisible}
         advice={t(advice) || ''}
         type={helperType}
-        onClose={setHelperVisible}
+        onClose={handleClose}
       />
 
       {/* First-time onboarding tour */}

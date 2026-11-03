@@ -190,9 +190,17 @@ export function TaskProvider({ children, initialTasks }) {
   }, []);
 
   const toggleComplete = useCallback((id) => {
-    setTasks(prev => prev.map(t => 
-      t.id === id ? { ...t, completed: !t.completed } : t
-    ));
+    setTasks(prev => prev.map(t => {
+      if (t.id === id) {
+        const nextCompleted = !t.completed;
+        return {
+          ...t,
+          completed: nextCompleted,
+          completedAt: nextCompleted ? new Date().toISOString() : null
+        };
+      }
+      return t;
+    }));
   }, []);
 
   const importTasksFromJSON = useCallback((importedTasks) => {

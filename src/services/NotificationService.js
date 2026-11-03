@@ -16,11 +16,15 @@ const SCHEDULED_KEY = 'misu:notif-scheduled';
 export const DEFAULT_PREFS = {
   enabled: true,
   pomodoro: true,        // Pomodoro session start/end
-  deadlines: true,       // 24h before task deadline
-  inactivity: true,      // Long inactivity nudge
+  deadlines: true,       // 24h before task deadline & day-of
+  inactivity: true,      // Inactivity nudge
   weeklyReminder: true,  // Monday morning plan reminder
   taskUpcoming: true,    // Tasks due today (morning check)
   energyCheck: true,     // Mid-afternoon energy check
+  mindfulness: true,     // Breathing / mindfulness break reminders
+  streak: true,          // All tasks completed celebration
+  dailyWrapup: true,     // Evening daily wrap-up & progress celebration
+  focusShield: true,     // Focus shield activation confirmation
 };
 
 // ── Persist & load preferences ────────────────────────────────
@@ -29,6 +33,7 @@ export function loadNotifPrefs() {
     const raw = localStorage.getItem(SETTINGS_KEY);
     return raw ? { ...DEFAULT_PREFS, ...JSON.parse(raw) } : { ...DEFAULT_PREFS };
   } catch {
+    /* ignore parse error */
     return { ...DEFAULT_PREFS };
   }
 }
@@ -51,6 +56,7 @@ export async function requestPermission() {
     const result = await Notification.requestPermission();
     return result;
   } catch {
+    /* ignore request error */
     return 'denied';
   }
 }
@@ -59,7 +65,10 @@ export async function requestPermission() {
 function getSeenMap() {
   try {
     return JSON.parse(localStorage.getItem(DEDUP_KEY) || '{}');
-  } catch { return {}; }
+  } catch {
+    /* ignore parse error */
+    return {}; 
+  }
 }
 
 function setSeenMap(map) {
@@ -112,6 +121,16 @@ export function sendNotification({ title, body, icon, tag, dedupKey, dedupWindow
       silent,
       badge: '/misu-logo-color.svg',
     });
+
+    notif.onclick = () => {
+      window.focus();
+      try {
+        notif.close();
+      } catch {
+        /* ignore close error */
+      }
+    };
+
     return notif;
   } catch (err) {
     console.warn('[Misu Notifications] Failed to create notification:', err);
@@ -144,7 +163,9 @@ export function scheduleNotification(id, notifOpts, when) {
       const reg = JSON.parse(localStorage.getItem(SCHEDULED_KEY) || '{}');
       delete reg[id];
       localStorage.setItem(SCHEDULED_KEY, JSON.stringify(reg));
-    } catch {}
+    } catch {
+      /* ignore storage errors */
+    }
   }, delayMs);
 
   timers.set(id, handle);
@@ -154,7 +175,9 @@ export function scheduleNotification(id, notifOpts, when) {
     const reg = JSON.parse(localStorage.getItem(SCHEDULED_KEY) || '{}');
     reg[id] = { notifOpts, fireAt: Date.now() + delayMs };
     localStorage.setItem(SCHEDULED_KEY, JSON.stringify(reg));
-  } catch {}
+  } catch {
+    /* ignore storage errors */
+  }
 
   return id;
 }
@@ -169,7 +192,9 @@ export function cancelScheduled(id) {
     const reg = JSON.parse(localStorage.getItem(SCHEDULED_KEY) || '{}');
     delete reg[id];
     localStorage.setItem(SCHEDULED_KEY, JSON.stringify(reg));
-  } catch {}
+  } catch {
+    /* ignore storage errors */
+  }
 }
 
 export function cancelAllScheduled() {
@@ -182,34 +207,34 @@ export function cancelAllScheduled() {
 export const NotifTemplates = {
   pomodoroStart(taskTitle, lang = 'en') {
     const msgs = {
-      en: { title: 'Focus Session Started', body: taskTitle ? `Working on: ${taskTitle}` : `25 minutes of deep focus.` },
-      es: { title: 'Sesión de Enfoque Iniciada', body: taskTitle ? `Trabajando en: ${taskTitle}` : '25 minutos de enfoque profundo.' },
-      it: { title: 'Sessione Focus Avviata', body: taskTitle ? `Lavorando su: ${taskTitle}` : '25 minuti di focus profondo.' },
+      en: { title: 'Focus Session Started', body: taskTitle ? `Working on: ${taskTitle}` : 'Time for deep, uninterrupted focus.' },
+      es: { title: 'Sesión de Enfoque Iniciada', body: taskTitle ? `Trabajando en: ${taskTitle}` : 'Momento de enfoque profundo y sin interrupciones.' },
+      it: { title: 'Sessione Focus Avviata', body: taskTitle ? `Lavorando su: ${taskTitle}` : 'Momento di concentrazione profonda senza interruzioni.' },
     };
     return msgs[lang] || msgs.en;
   },
 
   pomodoroEnd(lang = 'en') {
     const msgs = {
-      en: { title: 'Focus Session Complete', body: 'Take a short break to recover.' },
-      es: { title: 'Sesión de Enfoque Completada', body: 'Toma un breve descanso para recuperar.' },
-      it: { title: 'Sessione Focus Completata', body: 'Fai una breve pausa per recuperare.' },
+      en: { title: 'Focus Session Complete', body: 'Great work! Take a short break to recover and recharge.' },
+      es: { title: 'Sesión de Enfoque Completada', body: '¡Buen trabajo! Toma un breve descanso para recuperarte.' },
+      it: { title: 'Sessione Focus Completata', body: 'Ottimo lavoro! Fai una breve pausa per ricaricarti.' },
     };
     return msgs[lang] || msgs.en;
   },
 
   breakEnd(lang = 'en') {
     const msgs = {
-      en: { title: 'Break Over', body: 'Ready to resume your focus.' },
-      es: { title: 'Descanso Terminado', body: 'Listo para retomar el enfoque.' },
-      it: { title: 'Pausa Terminata', body: 'Pronto a riprendere la concentrazione.' },
+      en: { title: 'Break Over', body: 'Ready to refocus? Your next session is ready.' },
+      es: { title: 'Descanso Terminado', body: '¿Listo para retomar tu ritmo? Tu próxima sesión te espera.' },
+      it: { title: 'Pausa Terminata', body: 'Pronto a ripartire? La tua prossima sessione ti aspetta.' },
     };
     return msgs[lang] || msgs.en;
   },
 
   longBreakEnd(lang = 'en') {
     const msgs = {
-      en: { title: 'Long Break Over', body: 'Energy restored. Start a new cycle when ready.' },
+      en: { title: 'Long Break Over', body: 'Energy restored. Start a new cycle whenever you are ready.' },
       es: { title: 'Descanso Largo Terminado', body: 'Energía restaurada. Inicia un nuevo ciclo cuando estés listo.' },
       it: { title: 'Pausa Lunga Terminata', body: 'Energia ripristinata. Inizia un nuovo ciclo quando sei pronto.' },
     };
@@ -218,9 +243,9 @@ export const NotifTemplates = {
 
   deadlineTomorrow(taskTitle, lang = 'en') {
     const msgs = {
-      en: { title: 'Deadline Tomorrow', body: `"${taskTitle}" is due tomorrow. Plan accordingly.` },
-      es: { title: 'Vence Mañana', body: `"${taskTitle}" vence mañana. Planifica tu tiempo.` },
-      it: { title: 'Scadenza Domani', body: `"${taskTitle}" scade domani. Pianifica il tuo tempo.` },
+      en: { title: 'Deadline Tomorrow', body: `"${taskTitle}" is due tomorrow. Plan your schedule accordingly.` },
+      es: { title: 'Vence Mañana', body: `"${taskTitle}" vence mañana. Planifica tu tiempo con antelación.` },
+      it: { title: 'Scadenza Domani', body: `"${taskTitle}" scade domani. Pianifica il tuo tempo di conseguenza.` },
     };
     return msgs[lang] || msgs.en;
   },
@@ -236,9 +261,9 @@ export const NotifTemplates = {
 
   weeklyReminder(taskCount, lang = 'en') {
     const msgs = {
-      en: { title: 'Weekly Plan', body: `You have ${taskCount} task${taskCount !== 1 ? 's' : ''} this week. Time to plan.` },
-      es: { title: 'Plan Semanal', body: `Tienes ${taskCount} tarea${taskCount !== 1 ? 's' : ''} esta semana. Es hora de planificar.` },
-      it: { title: 'Piano Settimanale', body: `Hai ${taskCount} attività questa settimana. È ora di pianificare.` },
+      en: { title: 'Weekly Plan', body: `You have ${taskCount} task${taskCount !== 1 ? 's' : ''} lined up this week. Time to plan.` },
+      es: { title: 'Plan Semanal', body: `Tienes ${taskCount} tarea${taskCount !== 1 ? 's' : ''} esta semana. Es hora de planificar tu agenda.` },
+      it: { title: 'Piano Settimanale', body: `Hai ${taskCount} attività questa settimana. È ora di pianificare la tua agenda.` },
     };
     return msgs[lang] || msgs.en;
   },
@@ -254,27 +279,81 @@ export const NotifTemplates = {
 
   inactivityNudge(lang = 'en') {
     const msgs = {
-      en: { title: 'System Idle', body: 'Regain your focus when you are ready to continue.' },
-      es: { title: 'Sistema Inactivo', body: 'Recupera tu enfoque cuando estés listo para continuar.' },
-      it: { title: 'Sistema Inattivo', body: 'Recupera la concentrazione quando sei pronto a continuare.' },
+      en: { title: 'Pause Detected', body: 'You have been away for a while. Return to your flow or take a calming breath.' },
+      es: { title: 'Pausa Detectada', body: 'Llevas un rato inactivo. Vuelve a tus tareas o haz una pausa de calma.' },
+      it: { title: 'Pausa Rilevata', body: 'Sei stato inattivo per un po\'. Torna alle tue attività o concediti una pausa di respiro.' },
     };
     return msgs[lang] || msgs.en;
   },
 
   energyCheckIn(lang = 'en') {
     const msgs = {
-      en: { title: 'Energy Check', body: 'Time to update your current energy level.' },
-      es: { title: 'Control de Energía', body: 'Es momento de actualizar tu nivel de energía actual.' },
-      it: { title: 'Controllo Energia', body: 'È il momento di aggiornare il tuo livello di energia attuale.' },
+      en: { title: 'Energy Check-In', body: 'How is your energy right now? Update your mood to align your afternoon tasks.' },
+      es: { title: 'Control de Energía', body: '¿Cómo está tu energía ahora? Actualiza tu nivel para alinear tus tareas de la tarde.' },
+      it: { title: 'Controllo Energia', body: 'Com\'è la tua energia adesso? Aggiorna il livello per allineare i compiti del pomeriggio.' },
     };
     return msgs[lang] || msgs.en;
   },
 
   overdue(taskTitle, lang = 'en') {
     const msgs = {
-      en: { title: 'Overdue Task', body: `"${taskTitle}" is pending. Action is required.` },
-      es: { title: 'Tarea Pendiente', body: `"${taskTitle}" está atrasada. Se requiere acción.` },
-      it: { title: 'Attività in Sospeso', body: `"${taskTitle}" è in ritardo. È richiesta un'azione.` },
+      en: { title: 'Overdue Task', body: `"${taskTitle}" was due. Take a moment to reschedule or complete it.` },
+      es: { title: 'Tarea Vencida', body: `"${taskTitle}" está vencida. Tómate un momento para reprogramarla o completarla.` },
+      it: { title: 'Attività Scaduta', body: `"${taskTitle}" è scaduta. Prenditi un momento per riprogrammarla o completarla.` },
+    };
+    return msgs[lang] || msgs.en;
+  },
+
+  overdueSummary(count, lang = 'en') {
+    const msgs = {
+      en: { title: 'Overdue Tasks', body: `You have ${count} overdue tasks. Take a moment to review and reschedule.` },
+      es: { title: 'Tareas Vencidas', body: `Tienes ${count} tareas atrasadas. Tómate un momento para revisarlas y reprogramar.` },
+      it: { title: 'Attività Scadute', body: `Hai ${count} attività scadute. Prenditi un momento per rivederle e riprogrammarle.` },
+    };
+    return msgs[lang] || msgs.en;
+  },
+
+  mindfulnessBreak(lang = 'en') {
+    const msgs = {
+      en: { title: 'Mindfulness & Breathing', body: 'Time for a 4-7-8 breathing reset. Inhale calm, exhale tension.' },
+      es: { title: 'Pausa de Respiración', body: 'Momento de una pausa de respiración 4-7-8. Inhala calma, exhala tensión.' },
+      it: { title: 'Pausa di Respirazione', body: 'È il momento di un reset 4-7-8. Inspira calma, espira la tensione.' },
+    };
+    return msgs[lang] || msgs.en;
+  },
+
+  allTasksCompleted(lang = 'en') {
+    const msgs = {
+      en: { title: 'All Tasks Completed! 🎉', body: 'Outstanding focus! You finished everything planned for today.' },
+      es: { title: '¡Todas las tareas listas! 🎉', body: '¡Excelente enfoque! Has terminado todo lo programado para hoy.' },
+      it: { title: 'Tutte le attività completate! 🎉', body: 'Lavoro straordinario! Hai completato tutto ciò che era pianificato per oggi.' },
+    };
+    return msgs[lang] || msgs.en;
+  },
+
+  dailyWrapup(completedCount, pendingCount, lang = 'en') {
+    const msgs = {
+      en: { 
+        title: 'Evening Wrap-Up', 
+        body: `Great effort today! Finished ${completedCount} task${completedCount !== 1 ? 's' : ''}${pendingCount > 0 ? ` with ${pendingCount} pending` : ''}. Time to unwind!` 
+      },
+      es: { 
+        title: 'Cierre del Día', 
+        body: `¡Gran esfuerzo hoy! Completaste ${completedCount} tarea${completedCount !== 1 ? 's' : ''}${pendingCount > 0 ? ` y ${pendingCount} pendiente${pendingCount !== 1 ? 's' : ''}` : ''}. ¡Momento de descansar!` 
+      },
+      it: { 
+        title: 'Riepilogo Serale', 
+        body: `Ottimo lavoro oggi! Hai completato ${completedCount} attività${pendingCount > 0 ? ` con ${pendingCount} in sospeso` : ''}. Ora rilassati!` 
+      },
+    };
+    return msgs[lang] || msgs.en;
+  },
+
+  focusShieldActive(lang = 'en') {
+    const msgs = {
+      en: { title: 'Focus Shield Active 🛡️', body: 'Distractions are minimized. Enter your deep work zone.' },
+      es: { title: 'Escudo de Enfoque Activo 🛡️', body: 'Distracciones minimizadas. Entra en tu estado de flujo.' },
+      it: { title: 'Scudo di Concentrazione Attivo 🛡️', body: 'Distrazioni ridotte al minimo. Entra nel tuo stato di concentrazione.' },
     };
     return msgs[lang] || msgs.en;
   },

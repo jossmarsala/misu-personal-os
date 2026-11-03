@@ -8,7 +8,7 @@ import {
   Timer, Music, Shield, Calendar, Settings,
   Sun, Moon, Plus, CheckCheck, Trash2, Globe,
   Zap, Battery, BatteryLow, BatteryMedium, BatteryFull,
-  Search, X, ArrowRight, ClipboardList, Clock
+  Search, X, ArrowRight, ClipboardList, Clock, Wind
 } from 'lucide-react';
 import { getEnergyDef, ENERGY_LEVELS } from '../utils/energy';
 import './CommandPalette.css';
@@ -176,6 +176,13 @@ export default function CommandPalette() {
               <div className="cmdk-item-content">
                 <span className="cmdk-item-label">Focus Shield</span>
                 <span className="cmdk-item-hint">Block distractions</span>
+              </div>
+            </Command.Item>
+            <Command.Item value="toggle breathing exercise mindfulness 4-7-8" onSelect={() => fireCommand('toggle-breathing')} className="cmdk-item">
+              <div className="cmdk-item-icon"><Wind size={18} /></div>
+              <div className="cmdk-item-content">
+                <span className="cmdk-item-label">{t('mindfulness.breathingTitle') || 'Breathing Exercise'}</span>
+                <span className="cmdk-item-hint">4-7-8 breathing reset</span>
               </div>
             </Command.Item>
           </Command.Group>

@@ -311,7 +311,7 @@ export default function SettingsModal({ onClose, onReplayTour }) {
                     type="button"
                     aria-expanded={notifCatsOpen}
                   >
-                    <span>Notification types</span>
+                    <span>{t('settings.notifTypes') || 'Notification types'}</span>
                     <ChevronDown size={11} className="settings-section__chevron" />
                   </button>
                   {notifCatsOpen && [
@@ -321,6 +321,10 @@ export default function SettingsModal({ onClose, onReplayTour }) {
                     { key: 'weeklyReminder', labelKey: 'settings.notifWeeklyReminder', defaultLabel: 'Weekly reminder' },
                     { key: 'energyCheck',    labelKey: 'settings.notifEnergyCheck',    defaultLabel: 'Afternoon energy check' },
                     { key: 'inactivity',     labelKey: 'settings.notifInactivity',     defaultLabel: 'Inactivity nudge' },
+                    { key: 'mindfulness',    labelKey: 'settings.notifMindfulness',    defaultLabel: 'Mindfulness & breathing' },
+                    { key: 'streak',         labelKey: 'settings.notifStreak',         defaultLabel: 'Completion celebrations' },
+                    { key: 'dailyWrapup',    labelKey: 'settings.notifDailyWrapup',    defaultLabel: 'Evening wrap-up' },
+                    { key: 'focusShield',    labelKey: 'settings.notifFocusShield',    defaultLabel: 'Focus shield alerts' },
                   ].map(({ key, labelKey, defaultLabel }) => (
                     <div key={key} className="settings-notif-row settings-notif-row--sub">
                       <span className="settings-notif-row__title">{t(labelKey) || defaultLabel}</span>
