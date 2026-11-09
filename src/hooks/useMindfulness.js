@@ -9,6 +9,7 @@ const FLAGS = {
   FIRST_COMPLETE:    'misu_seen_first_complete_tip',
   MUSIC_INTRO:       'misu_seen_music_intro',
   POMODORO_INTRO:    'misu_seen_pomodoro_intro',
+  WHISPER_INTRO:     'misu_seen_whisper_intro',
   MORNING_GREETED:   'misu_morning_greeted', // resets daily
 };
 
@@ -160,15 +161,25 @@ export function useMindfulness(dndVisible, musicVisible, pomodoroVisible) {
 
   // ─── Energy level changed ───────────────────────────────────
   useEffect(() => {
-    // Heavy workload warning when switching to peak energy (4) with many tasks
+    // Heavy workload warning when switching to peak energy (4) with many tasks (once per day)
     if (currentEnergy === 4 && prevEnergyRef.current !== 4) {
       const heavyTasks = tasksRef.current.filter(t => !t.completed && (t.estimatedHours || 0) > 3);
       if (heavyTasks.length >= 3) {
-        showTipRef.current('tips.heavyWorkload', 'advice');
+        const key = `misu_heavy_workload_${new Date().toDateString()}`;
+        if (!localStorage.getItem(key)) {
+          localStorage.setItem(key, 'true');
+          showTipRef.current('tips.heavyWorkload', 'advice');
+        }
       }
     }
-    // Whisper mode guidance when shifting down to resting level (1)
-    if (currentEnergy === 1 && prevEnergyRef.current !== 1 && prevEnergyRef.current !== undefined) {
+    // Whisper mode guidance when shifting down to resting level (1) (first-time tip)
+    if (
+      currentEnergy === 1 &&
+      prevEnergyRef.current !== 1 &&
+      prevEnergyRef.current !== undefined &&
+      !hasSeen(FLAGS.WHISPER_INTRO)
+    ) {
+      markSeen(FLAGS.WHISPER_INTRO);
       showTipRef.current('tips.whisperMode', 'info');
     }
     prevEnergyRef.current = currentEnergy;
