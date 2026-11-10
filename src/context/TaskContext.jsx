@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, useRef } f
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '../services/supabaseClient';
 import { useAuth } from './AuthContext';
+import { recordTaskCompletion, syncTasksWithDailyTracker, setupMidnightReset } from '../utils/dailyTaskTracker';
 
 // Debounce helper — avoids spamming Supabase on rapid task changes (L7)
 function useDebounceRef(fn, delay) {
@@ -54,6 +55,11 @@ export function TaskProvider({ children, initialTasks }) {
     };
   }, []);
 
+  // Monitor midnight reset for daily completed tasks
+  useEffect(() => {
+    return setupMidnightReset();
+  }, []);
+
   // Fetch from Supabase on mount
   useEffect(() => {
     const init = async () => {
@@ -73,6 +79,7 @@ export function TaskProvider({ children, initialTasks }) {
           if (data.payload.tasks) {
             setTasks(data.payload.tasks);
             localStorage.setItem('misu-offline-tasks', JSON.stringify(data.payload.tasks));
+            syncTasksWithDailyTracker(data.payload.tasks);
           }
           if (data.payload.weeklyPlan) {
             setWeeklyPlan(data.payload.weeklyPlan);
@@ -190,17 +197,21 @@ export function TaskProvider({ children, initialTasks }) {
   }, []);
 
   const toggleComplete = useCallback((id) => {
-    setTasks(prev => prev.map(t => {
-      if (t.id === id) {
-        const nextCompleted = !t.completed;
-        return {
-          ...t,
-          completed: nextCompleted,
-          completedAt: nextCompleted ? new Date().toISOString() : null
-        };
-      }
-      return t;
-    }));
+    setTasks(prev => {
+      const target = prev.find(t => t.id === id);
+      const nextCompleted = target ? !target.completed : false;
+      recordTaskCompletion(id, nextCompleted);
+      return prev.map(t => {
+        if (t.id === id) {
+          return {
+            ...t,
+            completed: nextCompleted,
+            completedAt: nextCompleted ? new Date().toISOString() : null
+          };
+        }
+        return t;
+      });
+    });
   }, []);
 
   const importTasksFromJSON = useCallback((importedTasks) => {

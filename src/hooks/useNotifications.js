@@ -18,6 +18,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTasks } from '../context/TaskContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useEnergy } from '../context/EnergyContext';
+import { getDailyCompletedCount } from '../utils/dailyTaskTracker';
 import {
   loadNotifPrefs,
   saveNotifPrefs,
@@ -311,7 +312,7 @@ export function useNotifications() {
     if (!isEvening || wasSeenToday('daily-wrapup')) return;
     if (getPermissionStatus() !== 'granted') return;
 
-    const completedToday = tasks.filter(t => t.completed).length;
+    const completedToday = getDailyCompletedCount();
     const activeRemaining = tasks.filter(t => !t.completed).length;
 
     if (completedToday > 0 || activeRemaining > 0) {

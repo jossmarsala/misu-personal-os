@@ -1,5 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { getDeadlineStatus, getDaysUntil } from '../utils/dateUtils';
+import {
+  getDailyCompletedCount,
+  recordTaskCompletion,
+  syncTasksWithDailyTracker,
+  setupMidnightReset,
+  getDailyCompletedData,
+  resetDailyCompletedCount,
+} from '../utils/dailyTaskTracker';
 
 const COOLDOWNS = {
   tasksCompleted: 4 * 1000,         // 4s debounce between rapid task completions
@@ -77,28 +85,43 @@ export function useMotivationalMessage({ tasks = [], currentEnergy, t }) {
     return () => clearTimer();
   }, [clearTimer]);
 
+  // Handle midnight reset (automatic rollover)
+  useEffect(() => {
+    return setupMidnightReset(() => {
+      if (activeMessage?.type === 'tasksCompleted') {
+        dismissMessage();
+      }
+    });
+  }, [activeMessage, dismissMessage]);
+
   // 1. Task Completion Trigger (real-time celebration of daily progress)
   useEffect(() => {
     const currentCompleted = tasks.filter(t => t.completed);
     const currentCompletedSet = new Set(currentCompleted.map(t => t.id));
 
     if (prevCompletedSetRef.current === null) {
+      syncTasksWithDailyTracker(tasks);
       prevCompletedSetRef.current = currentCompletedSet;
       return;
     }
 
     const newlyCompleted = currentCompleted.filter(t => !prevCompletedSetRef.current.has(t.id));
+    const newlyUncompleted = Array.from(prevCompletedSetRef.current).filter(id => !currentCompletedSet.has(id));
     prevCompletedSetRef.current = currentCompletedSet;
+
+    newlyUncompleted.forEach(id => {
+      recordTaskCompletion(id, false);
+    });
 
     if (newlyCompleted.length > 0) {
       const now = Date.now();
       setStoredTime('tasksCompleted', now);
 
-      const todayStr = new Date().toDateString();
-      const completedToday = tasks.filter(t => 
-        t.completed && (!t.completedAt || new Date(t.completedAt).toDateString() === todayStr)
-      );
-      const count = Math.max(1, completedToday.length);
+      newlyCompleted.forEach(t => {
+        recordTaskCompletion(t.id, true);
+      });
+
+      const count = getDailyCompletedCount();
 
       const timer = setTimeout(() => {
         showMessage({
@@ -212,6 +235,12 @@ export function useMotivationalMessage({ tasks = [], currentEnergy, t }) {
   // Expose test helper on window for development/testing
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      window.__misuDailyTracker = {
+        getDailyCompletedData,
+        getDailyCompletedCount,
+        recordTaskCompletion,
+        resetDailyCompletedCount,
+      };
       window.__misuTestMotivational = (type, customCount = 3) => {
         if (type === 'tasksCompleted') {
           showMessage({
